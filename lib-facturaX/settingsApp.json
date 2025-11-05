@@ -1,0 +1,18 @@
+{
+  "qrScheme": "BCD/002/1/SCT/{BIC}/{KI}/{IBAN}/EUR{SUM}//{RENR}//",
+  "tplBill": "C:\\Users\\andre\\Documents\\eclipse.workspace\\facturaX\\templates\\template-rechnung_deu_v2.12.xlsx",
+  "tplDeliveryNote": "C:\\Users\\andre\\Documents\\eclipse.workspace\\facturaX\\templates\\template-lieferschein_deu_v2.12.xlsx",
+  "tplOffer": "C:\\Users\\andre\\Documents\\eclipse.workspace\\facturaX\\templates\\template-angebot_deu_v2.12.xlsx",
+  "tplOfferConfirm": "C:\\Users\\andre\\Documents\\eclipse.workspace\\facturaX\\templates\\template-auftragsbestaetigung_deu_v2.12.xlsx",
+  "tplOfferRev": "C:\\Users\\andre\\Documents\\eclipse.workspace\\facturaX\\templates\\template-angebot_rev_deu_v2.12.xlsx",
+  "tplOrder": "C:\\Users\\andre\\Documents\\eclipse.workspace\\facturaX\\templates\\template-bestellung_deu_v2.12.xlsx",
+  "tplP109a": "C:\\Users\\andre\\Documents\\eclipse.workspace\\facturaX\\templates\\template-p109a_deu_v2.12.xlsx",
+  "tplSpesen": "C:\\Users\\andre\\Documents\\eclipse.workspace\\facturaX\\templates\\template-spesen-deu_v2.12.xlsx",
+  "tplReminder": "C:\\Users\\andre\\Documents\\eclipse.workspace\\facturaX\\templates\\template-zahlungserinnerung_deu_v2.12.xlsx",
+  "tplStrictReminder": "C:\\Users\\andre\\Documents\\eclipse.workspace\\facturaX\\templates\\template-mahnung_deu_v2.12.xlsx",
+  "tplDescription": "C:\\Users\\andre\\Documents\\eclipse.workspace\\facturaX\\templates\\template-leistungsbeschreibung_deu_v2.12.pdf",
+  "tplDescriptionBase": "C:\\Users\\andre\\Documents\\eclipse.workspace\\facturaX\\templates\\basetext-leistungsbeschreibung_deu_v2.12.html",
+  "tplDescriptionStyle": "C:\\Users\\andre\\Documents\\eclipse.workspace\\facturaX\\templates\\stylesheet-leistungsbeschreibung_v2.12.css",
+  "work": "C:\\Users\\andre\\Documents\\",
+  "year": 2025
+}

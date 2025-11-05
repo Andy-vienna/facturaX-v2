@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>facturaX-v2</name>
+	<comment></comment>
+	<projects>
+		<project>lib-facturaX</project>
+		<project>lib-fXstarterApp</project>
+		<project>lib-fXhtmlApp</project>
+		<project>lib-fXtrayApp</project>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.m2e.core.maven2Builder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.m2e.core.maven2Nature</nature>
+	</natures>
+</projectDescription>

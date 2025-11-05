@@ -1,0 +1,45 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	
+	<groupId>org.andy</groupId>
+	<artifactId>facturax-parent</artifactId>
+	<version>2.0.3</version>
+	<packaging>pom</packaging>
+	<name>FacturaX Parent</name>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+	</properties>
+
+	<modules>
+		<module>lib-facturaX</module>
+		<module>lib-fXstarterApp</module>
+		<module>lib-fXtrayApp</module>
+		<module>lib-fXhtmlApp</module>
+	</modules>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.andy</groupId>
+				<artifactId>lib-facturaX</artifactId>
+			</dependency>
+			<dependency>
+				<groupId>org.andy</groupId>
+				<artifactId>lib-fXstarterApp</artifactId>
+			</dependency>
+			<dependency>
+				<groupId>org.andy</groupId>
+				<artifactId>lib-fXtrayApp</artifactId>
+			</dependency>
+			<dependency>
+				<groupId>org.andy</groupId>
+				<artifactId>lib-fXhtmlApp</artifactId>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+</project>

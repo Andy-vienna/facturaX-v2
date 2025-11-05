@@ -1,0 +1,16 @@
+@page { size: 210mm 297mm; margin: 130pt 55pt 50pt 55pt; }
+@page:first { margin-top: 130pt; }
+body { font-family: 'Arial', sans-serif; font-size:10pt; line-height:1.35; color:#000; }
+/* Überschrift H1 */
+h1 { font-size:16pt; margin:0 0 8pt; }
+/* Überschriften H2 und H3 */
+h2,h3 { margin:10pt 0 6pt; }
+p { margin:6pt 0; }
+/* ungeordnete/geordnete Liste */
+ul,ol { margin:6pt 0 6pt 18pt; }
+/* Zitat */
+blockquote { border-left: 4px solid #ccc; padding:6pt 10pt; color:#ba55d3; margin:8pt 0; font-weight: 700; }
+/* code */
+pre { background:#f6f8fa; padding:8pt; border-radius:4pt; overflow:hidden; font-family: 'Consolas','Courier New',monospace; font-size:9pt; }
+/* Links */
+a { color:#0645AD; text-decoration: underline; }
