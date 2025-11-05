@@ -36,6 +36,7 @@ public class ExcelAuftragsbestaetigung implements Identified {
 
 	public static final String CLASS_ID = ExcelAuftragsbestaetigung.class.getSimpleName();
 	private static final Logger logger = LogManager.getLogger(ExcelAuftragsbestaetigung.class);
+	private static ErzeugePDF doPdf = new ErzeugePDF();
 
 	private static final int START_ROW_OFFSET = 16;
 	private static final int COLUMN_A = 0;
@@ -186,8 +187,8 @@ public class ExcelAuftragsbestaetigung implements Identified {
 		//#######################################################################
 		// Datei als pdf speichern
 		//#######################################################################
-		ErzeugePDF.toPDF(sExcelOut, sPdfOut);
-		ErzeugePDF.setPdfMetadata(sNr.replace("AN", "AB"), "AB", sPdfOut);
+		doPdf.toPDF(sExcelOut, sPdfOut);
+		doPdf.setPdfMetadata(sNr.replace("AN", "AB"), "AB", sPdfOut);
 
 		boolean bLockedPDF = Einstellungen.isLocked(sPdfOut);
 		while(bLockedPDF) {

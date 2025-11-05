@@ -10,6 +10,7 @@ import org.andy.fx.code.dataStructure.entityMaster.Tax;
 import org.andy.fx.code.dataStructure.entityMaster.Text;
 import org.andy.fx.code.dataStructure.entityMaster.User;
 import org.andy.fx.code.dataStructure.entityProductive.Angebot;
+import org.andy.fx.code.dataStructure.entityProductive.Arbeitszeit;
 import org.andy.fx.code.dataStructure.entityProductive.Ausgaben;
 import org.andy.fx.code.dataStructure.entityProductive.Bestellung;
 import org.andy.fx.code.dataStructure.entityProductive.Einkauf;
@@ -155,6 +156,7 @@ public class HibernateUtil {
         sources.addAnnotatedClass(Ausgaben.class);
         sources.addAnnotatedClass(Spesen.class);
         sources.addAnnotatedClass(WorkTime.class);
+        sources.addAnnotatedClass(Arbeitszeit.class);
         sources.addAnnotatedClass(SVSteuer.class);
 
         Metadata metadata = sources.getMetadataBuilder().build();

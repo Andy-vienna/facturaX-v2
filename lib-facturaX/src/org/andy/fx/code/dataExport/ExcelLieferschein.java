@@ -30,6 +30,7 @@ public class ExcelLieferschein implements Identified {
 
 	public static final String CLASS_ID = ExcelLieferschein.class.getSimpleName();
 	private static final Logger logger = LogManager.getLogger(ExcelLieferschein.class);
+	private static ErzeugePDF doPdf = new ErzeugePDF();
 
 	private static final int START_ROW_OFFSET = 16;
 	private static final int COLUMN_A = 0;
@@ -124,8 +125,8 @@ public class ExcelLieferschein implements Identified {
 		//#######################################################################
 		// Datei als pdf speichern
 		//#######################################################################
-		ErzeugePDF.toPDF(sExcelOut, sPdfOut);
-		ErzeugePDF.setPdfMetadata(sNr, "BE", sPdfOut);
+		doPdf.toPDF(sExcelOut, sPdfOut);
+		doPdf.setPdfMetadata(sNr, "BE", sPdfOut);
 
 		boolean bLockedXLSX = Einstellungen.isLocked(sExcelOut);
 		boolean bLockedPDF = Einstellungen.isLocked(sPdfOut);

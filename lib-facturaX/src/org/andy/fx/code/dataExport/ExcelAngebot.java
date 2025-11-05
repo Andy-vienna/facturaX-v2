@@ -36,6 +36,7 @@ public class ExcelAngebot implements Identified {
 
 	public static final String CLASS_ID = ExcelAngebot.class.getSimpleName();
 	private static final Logger logger = LogManager.getLogger(ExcelAngebot.class);
+	private static ErzeugePDF doPdf = new ErzeugePDF();
 
 	private static final int START_ROW_OFFSET = 16;
 	private static final int COLUMN_A = 0;
@@ -180,8 +181,8 @@ public class ExcelAngebot implements Identified {
 		//#######################################################################
 		// Datei als pdf speichern
 		//#######################################################################
-		ErzeugePDF.toPDF(sExcelOut, sPdfOut);
-		ErzeugePDF.setPdfMetadata(sNr, "AN", sPdfOut);
+		doPdf.toPDF(sExcelOut, sPdfOut);
+		doPdf.setPdfMetadata(sNr, "AN", sPdfOut);
 
 		boolean bLockedXLSX = Einstellungen.isLocked(sExcelOut);
 		boolean bLockedPDF = Einstellungen.isLocked(sPdfOut);

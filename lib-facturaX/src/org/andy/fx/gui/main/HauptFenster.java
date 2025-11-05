@@ -133,6 +133,12 @@ public class HauptFenster extends JFrame {
 
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LogManager.getLogger(HauptFenster.class);
+    
+    private final DateTimeFormatter fmt = new DateTimeFormatterBuilder()
+            .parseCaseInsensitive()
+            .appendPattern("[MMMM][MMM]") // voll oder kurz
+            .toFormatter(Locale.GERMAN);
+	
     private static App a = new App();
 
     private TableHeader header = new TableHeader();
@@ -177,7 +183,8 @@ public class HauptFenster extends JFrame {
 
     // Auswahl
     private String vZelleAN, vStateAN, vZelleRE, vStateRE, vZelleBE, vStateBE, vZelleLS, vStateLS;
-    private int month = LocalDate.now().getMonthValue();
+    private int monthWT = LocalDate.now().getMonthValue();
+    private int monthSP = LocalDate.now().getMonthValue();
 
     private static String u, r, m; // user, Rolle, Mail
     private static int tc; // Tab-Config
@@ -388,11 +395,6 @@ public class HauptFenster extends JFrame {
     
     private void doWorkTimePanel(String user) throws IOException {
     	
-    	final DateTimeFormatter fmt = new DateTimeFormatterBuilder()
-                .parseCaseInsensitive()
-                .appendPattern("[MMMM][MMM]") // voll oder kurz
-                .toFormatter(Locale.GERMAN);
-    	
     	String[] select = { "", "Januar", "Februar", "März", "April", "Mai", "Juni",
                 "Juli", "August", "September", "Oktober", "November", "Dezember"};
 
@@ -422,11 +424,11 @@ public class HauptFenster extends JFrame {
     		}
     		pageWorkTime.add(new WorkTimePanelFactory(cmbSelect.getSelectedItem().toString(), user));
     		Month m = Month.from(fmt.parse(cmbSelect.getSelectedItem().toString())); // z.B. "Februar", "März"
-    		month = m.ordinal() + 1; // 0..11
+    		monthWT = m.ordinal() + 1; // 1..12
     		pageWorkTime.revalidate(); pageWorkTime.repaint();
         });
     	
-    	cmbSelect.setSelectedIndex(month); // aktuellen Monat laden
+    	cmbSelect.setSelectedIndex(monthWT); // aktuellen Monat laden
     	
     }
     
@@ -462,8 +464,13 @@ public class HauptFenster extends JFrame {
     			return;
     		}
             pageTravel.add(new TimeRangePanelFactory(cmbSelect.getSelectedItem().toString()));
+            Month m = Month.from(fmt.parse(cmbSelect.getSelectedItem().toString())); // z.B. "Februar", "März"
+    		monthSP = m.ordinal() + 1; // 1..12
             pageTravel.revalidate(); pageTravel.repaint();
         });
+    	
+    	cmbSelect.setSelectedIndex(monthSP); // aktuellen Monat laden
+    	
     }
     
     //###################################################################################################################################################

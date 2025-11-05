@@ -20,6 +20,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class ExcelP109a {
 	
 	private static final Logger logger = LogManager.getLogger(ExcelP109a.class);
+	private static ErzeugePDF doPdf = new ErzeugePDF();
 	
 	static String sExcelIn = null, sExcelOut = null, sPdfOut = null;
 	
@@ -121,7 +122,7 @@ public class ExcelP109a {
 		//#######################################################################
 		// PDF-A1 Datei erzeugen
 		//#######################################################################
-		ErzeugePDF.toPDF(sExcelOut, sPdfOut);
+		doPdf.toPDF(sExcelOut, sPdfOut);
 		
 		//#######################################################################
 		// Ursprungs-Excel löschen

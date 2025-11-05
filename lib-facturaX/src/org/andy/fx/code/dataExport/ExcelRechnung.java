@@ -43,6 +43,7 @@ public class ExcelRechnung implements Identified {
 
 	public static final String CLASS_ID = ExcelRechnung.class.getSimpleName();
 	private static final Logger logger = LogManager.getLogger(ExcelRechnung.class);
+	private static ErzeugePDF doPdf = new ErzeugePDF();
 
 	private static final int START_ROW_OFFSET = 16;
 	private static final int COLUMN_A = 0;
@@ -230,7 +231,7 @@ public class ExcelRechnung implements Identified {
 		//#######################################################################
 		// PDF-A1 Datei erzeugen
 		//#######################################################################
-		ErzeugePDF.toPDF(sExcelOut, sPdfOut);
+		doPdf.toPDF(sExcelOut, sPdfOut);
 
 		//#######################################################################
 		// eRechnung erstellen nach hinterlegtem Format (ZUGFeRD oder XRechnung)

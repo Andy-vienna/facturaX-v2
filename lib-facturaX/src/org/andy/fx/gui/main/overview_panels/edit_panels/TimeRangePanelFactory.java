@@ -114,14 +114,14 @@ public class TimeRangePanelFactory extends JPanel {
         	h.setSpPrinted(0);
         	hlpRepo.save(h);
         }
-        buildPanel(m, days, String.valueOf(yearInt));
+        buildPanel(m, days, yearInt);
     }
 	
 	//###################################################################################################################################################
 	// private Teil
 	//###################################################################################################################################################
     
-	private void buildPanel(Month m, int daysInMonth, String jahr) {
+	private void buildPanel(Month m, int daysInMonth, int jahr) {
 		Dimension size = new Dimension(0,0); int x = 0;
 		
 		for (int i = 0; i < trp.length; i++) trp[i] = null;
@@ -253,7 +253,7 @@ public class TimeRangePanelFactory extends JPanel {
 		btn[1].setEnabled(true);
 	}
 	
-	private void doWriteExpenses(ActionEvent e, int daysInMonth, Month m, String jahr, String stunden, String summe) {
+	private void doWriteExpenses(ActionEvent e, int daysInMonth, Month m, int jahr, String stunden, String summe) {
 		String html = String.format(msg, this.month);
 		Window w = SwingUtilities.getWindowAncestor((Component) e.getSource());
 		int res = JOptionPane.showOptionDialog(null, html, "Bestätigung", // Sicherheitsabfrage
@@ -272,7 +272,7 @@ public class TimeRangePanelFactory extends JPanel {
 	    );
 	}
 	
-	private void doExpenses(int daysInMonth, Month m, String jahr, String stunden, String summe) {
+	private void doExpenses(int daysInMonth, Month m, int jahr, String stunden, String summe) {
 		AusgabenRepository ausgabenRepo = new AusgabenRepository();
 		Ausgaben a = new Ausgaben();
 		try {

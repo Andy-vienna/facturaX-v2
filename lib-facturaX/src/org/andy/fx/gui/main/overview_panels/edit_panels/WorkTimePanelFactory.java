@@ -8,8 +8,12 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
+import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -33,8 +37,11 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import org.andy.fx.code.dataExport.ExcelArbeitszeit;
+import org.andy.fx.code.dataStructure.entityProductive.Arbeitszeit;
 import org.andy.fx.code.dataStructure.entityProductive.Helper;
 import org.andy.fx.code.dataStructure.entityProductive.WorkTime;
+import org.andy.fx.code.dataStructure.repositoryProductive.ArbeitszeitRepository;
 import org.andy.fx.code.dataStructure.repositoryProductive.HelperRepository;
 import org.andy.fx.code.dataStructure.repositoryProductive.WorkTimeRepository;
 import org.andy.fx.code.main.Einstellungen;
@@ -173,7 +180,7 @@ public class WorkTimePanelFactory extends JPanel {
 		
 		btn[1] = createButton("<html>Monats-<br>abschluss</html>", ButtonIcon.EXPORT.icon(), null);
 		btn[1].setBounds(1330, (times.length * 25) + 85, HauptFenster.getButtonx(), HauptFenster.getButtony());
-		btn[1].addActionListener(e -> doCloseMonth(e));
+		btn[1].addActionListener(e -> doCloseMonth(e, daysInMonth, m, jahr, user));
 		add(btn[1]);
 		
 		btn[2] = createButton("<html>Tag<br>einfügen</html>", ButtonIcon.INSERT.icon(), null);
@@ -192,6 +199,8 @@ public class WorkTimePanelFactory extends JPanel {
 		if (hlp.get(0).getTiPrinted() > 0 && getBit(hlp.get(0).getTiPrinted(), monthIndex)) {
 			btn[0].setVisible(false); btn[1].setVisible(false); btn[2].setVisible(false);
 			hinweis.setVisible(true);
+			
+			//--> hier Dateianzeige mit Downloadmöglichkeit einbauen (analog Betriebsausgaben)
 		}
         
 		doLoadData();
@@ -292,7 +301,7 @@ public class WorkTimePanelFactory extends JPanel {
 		btn[1].setEnabled(true);
 	}
 	
-	private void doCloseMonth(ActionEvent e) {
+	private void doCloseMonth(ActionEvent e, int daysInMonth, Month m, int year, String user) {
 		String html = String.format(msg, this.month);
 		Window w = SwingUtilities.getWindowAncestor((Component) e.getSource());
 		int res = JOptionPane.showOptionDialog(null, html, "Bestätigung", // Sicherheitsabfrage
@@ -304,10 +313,55 @@ public class WorkTimePanelFactory extends JPanel {
 	        "Bitte warten",
 	        "Monat wird abgeschlossen …",
 	        () -> {
+	        	doWorkTime(daysInMonth, m, year, user);
 	        	doSaveClosed(monthIndex); // Monat für Änderungen sperren
 			},
 	        HauptFenster::actScreen // Übersicht aktualisieren
 	    );
+	}
+	
+	private void doWorkTime(int daysInMonth, Month m, int year, String user) {
+		ArbeitszeitRepository azRepo = new ArbeitszeitRepository();
+		Arbeitszeit a = new Arbeitszeit();
+		try {
+			ExcelArbeitszeit.wtExport(daysInMonth, m, year, user); // Excel und pdf erzeugen
+		} catch (Exception e1) {
+			logger.error("error exporting travel expenses to excel(pdf: ", e1);
+			return;
+		}
+		int monat = m.ordinal() + 1; // 1..12
+		String sExcelOut = ExcelArbeitszeit.getsExcelOut(); String sPdfOut = ExcelArbeitszeit.getsPdfOut();
+		String name = Paths.get(sPdfOut).getFileName().toString(); // Dateiname aus Pfad extrahieren
+
+		a.setJahr(year);
+		a.setMonat(monat);
+		a.setUserName(user);
+		a.setDateiname(name);
+		
+		Path path = Paths.get(sPdfOut);
+			try {
+			a.setDatei(Files.readAllBytes(path)); // ByteArray für Dateiinhalt
+		} catch (IOException e1) {
+			logger.error("Fehler laden der Datei " + sPdfOut + ": " + e1.getMessage());
+		}
+		
+		azRepo.save(a); // Ausgaben-Datensatz speichern*/
+		
+		//#######################################################################
+		// Ursprungs-Excel und -pdf löschen
+		//#######################################################################
+		boolean bLockedpdf = Einstellungen.isLocked(sPdfOut);
+		boolean bLockedxlsx = Einstellungen.isLocked(sExcelOut);
+		while(bLockedpdf || bLockedxlsx) {
+			System.out.println("warte auf Dateien ...");
+		}
+		File xlFile = new File(sExcelOut);
+		File pdFile = new File(sPdfOut);
+		if(xlFile.delete() && pdFile.delete()) {
+
+		}else {
+			logger.error("spExport() - xlsx- und pdf-Datei konnte nicht gelöscht werden");
+		}
 	}
 	
 	private void doSaveClosed(int index) {

@@ -28,6 +28,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class ExcelSpesen {
 	
 	private static final Logger logger = LogManager.getLogger(ExcelSpesen.class);
+	private static ErzeugePDF doPdf = new ErzeugePDF();
 	private static final String HEADER_STYLE = "&\"Arial,Regular\"&11&K7F7F7F";
 	private static final DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 	private static XSSFWorkbook wb = null;
@@ -52,8 +53,9 @@ public class ExcelSpesen {
 	// Angebot erzeugen und pdf exportieren
 	//###################################################################################################################################################
 
-	public static void spExport(int daysInMonth, Month m, String jahr, String stunden, String summe) throws Exception {
+	public static void spExport(int daysInMonth, Month m, int year, String stunden, String summe) throws Exception {
 		String monat = m.getDisplayName(TextStyle.FULL, Locale.GERMAN);
+		String jahr = String.valueOf(year);
 		
 		String sExcelIn = Einstellungen.getAppSettings().tplSpesen;
 		sExcelOut = Einstellungen.getAppSettings().work + "Spesen_" + monat + "_" + jahr + ".xlsx";
@@ -63,11 +65,10 @@ public class ExcelSpesen {
 		final Cell spStunden[] = new Cell[31]; final Cell spBetrag[] = new Cell[31]; final Cell spLand[] = new Cell[31];
 		final Cell spKommentar[] = new Cell[31]; Cell spGesStunden = null; Cell spGesSumme = null;
 		
-    	LocalDate from = LocalDate.of(Einstellungen.getAppSettings().year, m, 1);
-    	LocalDate to = LocalDate.of(Einstellungen.getAppSettings().year, m, daysInMonth);
+    	LocalDate from = LocalDate.of(year, m, 1);
+    	LocalDate to = LocalDate.of(year, m, daysInMonth);
 		
-		ls = new ArrayList<>();
-        ls = repo.findByDateBetween(from, to);
+		ls = new ArrayList<>(); ls = repo.findByDateBetween(from, to);
 		
 		//#######################################################################
 		// Angebots-Excel erzeugen
@@ -139,8 +140,8 @@ public class ExcelSpesen {
 		//#######################################################################
 		// Datei als pdf speichern
 		//#######################################################################
-		ErzeugePDF.toPDF(sExcelOut, sPdfOut);
-		ErzeugePDF.setPdfMetadata(monat, "SP", sPdfOut);
+		doPdf.toPDF(sExcelOut, sPdfOut);
+		doPdf.setPdfMetadata(monat, "SP", sPdfOut);
 
 		boolean bLockedXLSX = Einstellungen.isLocked(sExcelOut);
 		boolean bLockedPDF = Einstellungen.isLocked(sPdfOut);

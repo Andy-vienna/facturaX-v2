@@ -15,23 +15,24 @@ import org.andy.fx.code.misc.ExportHelper;
 
 public class ErzeugePDF {
 
-	private static final Logger logger = LogManager.getLogger(ErzeugePDF.class);
-	private static App a = new App();
+	private final Logger logger = LogManager.getLogger(ErzeugePDF.class);
+	private App a = new App();
 
-	private static final String OFFER = "Angebot";
-	private static final String CONFIRMATION = "Auftragsbestätigung";
-	private static final String BILL = "Rechnung";
-	private static final String ORDER = "Bestellung";
-	private static final String REMINDER = "Zahlungserinnerung";
-	private static final String TRAVEL = "Spesenabrechnung";
-	private static final String UNKNOWN = "unknown";
+	private final String OFFER = "Angebot";
+	private final String CONFIRMATION = "Auftragsbestätigung";
+	private final String BILL = "Rechnung";
+	private final String ORDER = "Bestellung";
+	private final String REMINDER = "Zahlungserinnerung";
+	private final String TRAVEL = "Spesenabrechnung";
+	private final String WORKTIME = "Arbeitszeit";
+	private final String UNKNOWN = "unknown";
 
 	/** Excel als pdf exportieren
 	 * @param sFileExcel
 	 * @param sFilePDF
 	 * @throws OwnException
 	 */
-	public static void toPDF(String sFileExcel, String sFilePDF) {
+	public void toPDF(String sFileExcel, String sFilePDF) {
 		ActiveXComponent excel = new ActiveXComponent("Excel.Application");
 		Dispatch workbook = null;
 		try {
@@ -54,7 +55,7 @@ public class ErzeugePDF {
 		converter.toPdfA1A(sFilePDF);
 	}
 
-	public static void setPdfMetadata(String sNr, String sTyp, String sPdf) throws Exception {
+	public void setPdfMetadata(String sNr, String sTyp, String sPdf) throws Exception {
 		//String[] tmp = SQLmasterData.getsArrOwner();
 
 		String sTitel = decodeTyp(sTyp); // Titel festlegen
@@ -76,7 +77,7 @@ public class ErzeugePDF {
 
 	}
 
-	private static String decodeTyp(String sTyp) throws Exception {
+	private String decodeTyp(String sTyp) throws Exception {
 		switch(sTyp) {
 			case "AN": return OFFER;
 			case "AB": return CONFIRMATION;
@@ -84,6 +85,7 @@ public class ErzeugePDF {
 			case "BE": return ORDER;
 			case "ZE": return REMINDER;
 			case "SP": return TRAVEL;
+			case "AZ": return WORKTIME;
 			default  : return UNKNOWN;
 		}
 	}

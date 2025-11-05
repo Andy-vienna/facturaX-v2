@@ -31,6 +31,7 @@ public class ExcelZahlungserinnerung implements Identified {
 
 	public static final String CLASS_ID = ExcelZahlungserinnerung.class.getSimpleName();
 	private static final Logger logger = LogManager.getLogger(ExcelZahlungserinnerung.class);
+	private static ErzeugePDF doPdf = new ErzeugePDF();
 
 	//###################################################################################################################################################
 	// Zahlungserinnerung erzeugen und als pdf exportieren
@@ -106,8 +107,8 @@ public class ExcelZahlungserinnerung implements Identified {
 		//#######################################################################
 		// Datei als pdf speichern
 		//#######################################################################
-		ErzeugePDF.toPDF(sExcelOut, sPdfOut);
-		ErzeugePDF.setPdfMetadata(sNr, "ZE", sPdfOut);
+		doPdf.toPDF(sExcelOut, sPdfOut);
+		doPdf.setPdfMetadata(sNr, "ZE", sPdfOut);
 
 		boolean bLockedPDF = Einstellungen.isLocked(sPdfOut);
 		while(bLockedPDF) {
