@@ -5,7 +5,8 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-import org.andy.gui.ClockTrayApp;
+import org.andy.code.httpsServer.ServerHttps;
+import org.andy.gui.main.ClockTrayApp;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -64,6 +65,8 @@ public class StartUp {
 		//-----------------------------------------------------------------------------------------------------------------------
 		// 7) UI auf EDT starten
 		SwingUtilities.invokeLater(() -> {
+			//-------------------------------------------------------------------------------------------------------------------
+			// 7.1) // UI-Manager initialisieren
 			try {
 				FlatIntelliJLaf.setup();
 				UIManager.setLookAndFeel(new FlatIntelliJLaf());
@@ -72,14 +75,24 @@ public class StartUp {
 				UIManager.put("Component.arc", 10);
 				UIManager.put("TextComponent.arc", 10);
 
-			} catch (Exception ex) {
-				logger.error("cannot load FlatIntelliJLaf theme", ex);
+			} catch (Exception ex1) {
+				logger.error("cannot load FlatIntelliJLaf theme", ex1);
 			}
+			//-------------------------------------------------------------------------------------------------------------------
+			// 7.2) // HTTPS Server initialisieren und starten
+			try {
+				ServerHttps.startServer();
+			} catch (Exception ex2) {
+				logger.error("HTTPS Server kann nicht gestartet werden: " + ex2.getMessage());
+			}
+			//-------------------------------------------------------------------------------------------------------------------
+			// 7.1) // App-UI starten
 			try {
 				ClockTrayApp.runApp();
-			} catch (Exception e1) {
-				logger.error("fX-Zeiterfassung Tray-App kann nicht gestartet werden: " + e1.getMessage());
-			}	
+			} catch (Exception ex3) {
+				logger.error("fX-Zeiterfassung Tray-App kann nicht gestartet werden: " + ex3.getMessage());
+			}
+			//-------------------------------------------------------------------------------------------------------------------
 		});
 	}
 
@@ -130,5 +143,5 @@ public class StartUp {
 	public static Path getFileDB() {
 		return fileDB;
 	}
-
+	
 }

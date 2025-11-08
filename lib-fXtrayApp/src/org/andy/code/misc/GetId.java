@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -64,6 +65,47 @@ public class GetId {
 	        Files.write(f, values, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
 
 	        return values.toArray(String[]::new);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	public LocalDateTime loadTs() {
+		try {
+			Files.createDirectories(dir);
+			Path f = dir.resolve("loadTs.id");
+			if (Files.exists(f)) {
+				String val = Files.readString(f, StandardCharsets.UTF_8).trim();
+				return LocalDateTime.parse(val);
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		return LocalDateTime.MIN; // falls kein vorheriger Stand
+	}
+
+	public long loadId() {
+		try {
+			Files.createDirectories(dir);
+			Path f = dir.resolve("loadId.id");
+			if (Files.exists(f)) {
+				String val = Files.readString(f, StandardCharsets.UTF_8).trim();
+				return Long.parseLong(val);
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		return 0L; // falls kein vorheriger Stand
+	}
+	
+	public void saveWatermark(LocalDateTime ts, long id) {
+		try {
+			Files.createDirectories(dir);
+			Path fTs = dir.resolve("loadTs.id");
+			Files.writeString(fTs, ts.toString(), StandardCharsets.UTF_8);
+			
+			Path fId = dir.resolve("loadId.id");
+			Files.writeString(fId, String.valueOf(id), StandardCharsets.UTF_8);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

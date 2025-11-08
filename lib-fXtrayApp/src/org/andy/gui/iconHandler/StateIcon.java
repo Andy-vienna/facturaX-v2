@@ -1,7 +1,8 @@
-package org.andy.gui;
+package org.andy.gui.iconHandler;
 
 import java.awt.Image;
 import java.net.URL;
+
 import javax.swing.ImageIcon;
 
 public enum StateIcon {
@@ -18,9 +19,8 @@ public enum StateIcon {
         this.image = new ImageIcon(url).getImage();   // hier umstellen
     }
 
-    // statt ImageIcon zurückgeben:
     public Image image() { 
         return image; 
     }
-
+    
 }

@@ -1,6 +1,6 @@
 package org.andy.code.dataStructure;
 
-import org.andy.code.dataStructure.entity.WorkTime;
+import org.andy.code.dataStructure.entity.WorkTimeRaw;
 import org.andy.code.main.Einstellungen;
 import org.andy.code.misc.App;
 import org.apache.logging.log4j.Level;
@@ -68,7 +68,7 @@ public class HibernateUtil {
                 .build();
 
         MetadataSources sources = new MetadataSources(serviceRegistry);
-        sources.addAnnotatedClass(WorkTime.class);
+        sources.addAnnotatedClass(WorkTimeRaw.class);
 
         Metadata metadata = sources.getMetadataBuilder().build();
         return metadata.getSessionFactoryBuilder().build();

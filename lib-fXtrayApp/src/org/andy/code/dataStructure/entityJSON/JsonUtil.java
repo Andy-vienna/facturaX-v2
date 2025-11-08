@@ -8,7 +8,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class JsonUtil {
 
-	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+	private final static Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
 	// ###################################################################################################################################################
 	// json-Files lesen
@@ -20,6 +20,11 @@ public class JsonUtil {
 		try (Reader r = Files.newBufferedReader(p, UTF_8)) {
 			return GSON.fromJson(r, JsonDb.class);
 		}
+	}
+	
+	public static JsonHttps parseString(String https) {
+	    if (https == null || https.isBlank()) return new JsonHttps();
+	    return GSON.fromJson(https, JsonHttps.class);
 	}
 
 }
