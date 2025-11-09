@@ -27,6 +27,11 @@ public class LastEventHandler implements HttpHandler {
 		// -------------------------------------------------------------------------
 		// Event GET auswerten
 		if ("GET".equalsIgnoreCase(exchange.getRequestMethod())) {
+			try {
+			    Thread.sleep(500); // 500 ms Wartezeit ...
+			} catch (InterruptedException ie) {
+			    Thread.currentThread().interrupt(); // Interrupt respektieren
+			}
 			String query = exchange.getRequestURI().getQuery();
 			String username = null;
 			// ---------------------------------------------------------------------
@@ -44,7 +49,6 @@ public class LastEventHandler implements HttpHandler {
 			}
 			// ---------------------------------------------------------------------
 			// letzten Eintrag für username finden
-			logger.debug("Letzter Event für User '" + username + "' wurde abgefragt.");
 			WorkTimeRawRepository repo = new WorkTimeRawRepository();
 			WorkTimeRaw wtr = repo.findLastEvent(username);
 			// ---------------------------------------------------------------------

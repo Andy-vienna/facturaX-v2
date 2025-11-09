@@ -1,7 +1,7 @@
 package org.andy.fx.code.dataStructure.entityProductive;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,35 +18,23 @@ public class WorkTime {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
+	@Column(name="breaktime", nullable = false)
+	private BigDecimal breakTime;
+	
+	@Column(name ="reason", length = 255, nullable = false)
+	private String reason;
+	
+	@Column(name = "ts_in", nullable = false)
+	private OffsetDateTime tsIn;
+	
+	@Column(name = "ts_out", nullable = false)
+	private OffsetDateTime tsOut;
+	
 	@Column(name = "username", nullable = false, length = 64)
 	private String userName;
 	
-	@Column(name = "ts_local_IN", nullable = false)
-	private LocalDateTime tsLocalIN;
-	
-	@Column(name = "ts_local_BREAK_START")
-	private LocalDateTime tsLocalBS;
-	
-	@Column(name = "ts_local_BREAK_END")
-	private LocalDateTime tsLocalBE;
-	
-	@Column(name = "ts_local_OUT")
-	private LocalDateTime tsLocalOUT;
-	
-	@Column(name = "last_event", nullable = false, length = 16)
-	private String lastEvent;
-	
-	@Column(name ="note", length = 255)
-	private String note;
-	
-	@Column(name = "source", nullable = false, length = 32)
-	private String source;
-	
-	@Column(name = "device_id", nullable = false, length = 64)
-	private String deviceId;
-	
-	@Column(name="sum")
-	private BigDecimal sumHours;
+	@Column(name="worktime", nullable = false)
+	private BigDecimal workTime;
 	
 	// ###################################################################################################################################################
 	// Getter und Setter
@@ -60,6 +48,38 @@ public class WorkTime {
 		this.id = id;
 	}
 
+	public BigDecimal getBreakTime() {
+		return breakTime;
+	}
+
+	public void setBreakTime(BigDecimal breakTime) {
+		this.breakTime = breakTime;
+	}
+
+	public String getReason() {
+		return reason;
+	}
+
+	public void setReason(String reason) {
+		this.reason = reason;
+	}
+
+	public OffsetDateTime getTsIn() {
+		return tsIn;
+	}
+
+	public void setTsIn(OffsetDateTime tsIn) {
+		this.tsIn = tsIn;
+	}
+
+	public OffsetDateTime getTsOut() {
+		return tsOut;
+	}
+
+	public void setTsOut(OffsetDateTime tsOut) {
+		this.tsOut = tsOut;
+	}
+
 	public String getUserName() {
 		return userName;
 	}
@@ -68,76 +88,12 @@ public class WorkTime {
 		this.userName = userName;
 	}
 
-	public LocalDateTime getTsLocalIN() {
-		return tsLocalIN;
+	public BigDecimal getWorkTime() {
+		return workTime;
 	}
 
-	public void setTsLocalIN(LocalDateTime tsLocalIN) {
-		this.tsLocalIN = tsLocalIN;
-	}
-
-	public LocalDateTime getTsLocalBS() {
-		return tsLocalBS;
-	}
-
-	public void setTsLocalBS(LocalDateTime tsLocalBS) {
-		this.tsLocalBS = tsLocalBS;
-	}
-
-	public LocalDateTime getTsLocalBE() {
-		return tsLocalBE;
-	}
-
-	public void setTsLocalBE(LocalDateTime tsLocalBE) {
-		this.tsLocalBE = tsLocalBE;
-	}
-
-	public LocalDateTime getTsLocalOUT() {
-		return tsLocalOUT;
-	}
-
-	public void setTsLocalOUT(LocalDateTime tsLocalOUT) {
-		this.tsLocalOUT = tsLocalOUT;
+	public void setWorkTime(BigDecimal workTime) {
+		this.workTime = workTime;
 	}
 	
-	public String getLastEvent() {
-		return lastEvent;
-	}
-
-	public void setLastEvent(String lastEvent) {
-		this.lastEvent = lastEvent;
-	}
-
-	public String getNote() {
-		return note;
-	}
-
-	public void setNote(String note) {
-		this.note = note;
-	}
-
-	public String getSource() {
-		return source;
-	}
-
-	public void setSource(String source) {
-		this.source = source;
-	}
-
-	public String getDeviceId() {
-		return deviceId;
-	}
-
-	public void setDeviceId(String deviceId) {
-		this.deviceId = deviceId;
-	}
-
-	public BigDecimal getSumHours() {
-		return sumHours;
-	}
-
-	public void setSumHours(BigDecimal sumHours) {
-		this.sumHours = sumHours;
-	}
-		
 }

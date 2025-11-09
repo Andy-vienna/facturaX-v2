@@ -19,6 +19,7 @@ public enum ButtonIcon {
     FORWARD("forward.png"),
     GEMINI("gemini.png"),
     GOOGLE("google.png"),
+    IMPORT("import.png"),
     INSERT("insert.png"),
     MAIL("mail.png"),
     NEW("new.png"),

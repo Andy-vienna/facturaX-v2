@@ -18,7 +18,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
+import java.time.OffsetDateTime;
 import java.time.YearMonth;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
@@ -46,9 +48,9 @@ import org.andy.fx.code.dataStructure.repositoryProductive.HelperRepository;
 import org.andy.fx.code.dataStructure.repositoryProductive.WorkTimeRepository;
 import org.andy.fx.code.main.Einstellungen;
 import org.andy.fx.code.misc.BD;
-import org.andy.fx.code.misc.GetId;
 import org.andy.fx.gui.iconHandler.ButtonIcon;
 import org.andy.fx.gui.main.HauptFenster;
+import org.andy.fx.gui.main.dialogs.WorkTimeDialog;
 import org.andy.fx.gui.misc.BusyDialog;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -60,11 +62,10 @@ public class WorkTimePanelFactory extends JPanel {
 	private final Font font = new Font("Tahoma", Font.BOLD, 14);
     private final Color titleColor = Color.BLUE;
     
-    private GetId deviceId = new GetId();
     private DayTimes times[] = null;
     private WorkTimePanel[] wtp = new WorkTimePanel[50];
     private JTextField stunden = new JTextField();
-    private JButton[] btn = new JButton[3];
+    private JButton[] btn = new JButton[4];
     
     private final DateTimeFormatter fmt = new DateTimeFormatterBuilder()
             .parseCaseInsensitive()
@@ -129,8 +130,8 @@ public class WorkTimePanelFactory extends JPanel {
 	private void buildPanel(Month m, int daysInMonth, int jahr) {
 		Dimension size = new Dimension(0,0); int x = 0;
 		
-		JLabel[] header = new JLabel[7];
-		String[] lbl = new String[] { "Datum", "Anfang", "Ende", "Pause von", "Pause bis", "Stunden", "Bemerkung" };
+		JLabel[] header = new JLabel[6];
+		String[] lbl = new String[] { "Datum", "Anfang", "Ende", "Pause (h)", "Stunden", "Bemerkung" };
 		for (int i = 0; i < lbl.length; i++) {
 			header[i] = new JLabel(lbl[i]);
 			header[i].setHorizontalAlignment(SwingConstants.CENTER);
@@ -151,18 +152,18 @@ public class WorkTimePanelFactory extends JPanel {
 		
 		JSeparator sep = new JSeparator();
 		sep.setForeground(Color.DARK_GRAY);
-        sep.setBounds(760, 60 + (x * 25), 150, 5);
+        sep.setBounds(610, 60 + (x * 25), 150, 5);
         sep.setOrientation(SwingConstants.HORIZONTAL);
         add(sep);
         
         JLabel lblSum = new JLabel("Summen:");
 		lblSum.setFont(new Font("Tahoma", Font.BOLD, 12));
-		lblSum.setBounds(610, 65 + (x * 25), 150, 25);
+		lblSum.setBounds(460, 65 + (x * 25), 150, 25);
 		lblSum.setHorizontalAlignment(SwingConstants.RIGHT);
 		add(lblSum);
 		
 		stunden.setFont(new Font("Tahoma", Font.BOLD, 12));
-		stunden.setBounds(760, 65 + (x * 25), 150, 25);
+		stunden.setBounds(610, 65 + (x * 25), 150, 25);
 		stunden.setHorizontalAlignment(SwingConstants.RIGHT);
 		stunden.setFocusable(false);
 		stunden.getDocument().addDocumentListener(new DocumentListener() {
@@ -173,21 +174,27 @@ public class WorkTimePanelFactory extends JPanel {
 		add(stunden);
 		
 		btn[0] = createButton("<html>Zeiten<br>speichern</html>", ButtonIcon.SAVE.icon(), null);
-		btn[0].setBounds(1200, (times.length * 25) + 85, HauptFenster.getButtonx(), HauptFenster.getButtony());
+		btn[0].setBounds(1050, (times.length * 25) + 85, HauptFenster.getButtonx(), HauptFenster.getButtony());
 		btn[0].setEnabled(true);
-		btn[0].addActionListener(_ -> doSave());
+		btn[0].addActionListener(_ -> doUpdate());
 		add(btn[0]);
 		
 		btn[1] = createButton("<html>Monats-<br>abschluss</html>", ButtonIcon.EXPORT.icon(), null);
-		btn[1].setBounds(1330, (times.length * 25) + 85, HauptFenster.getButtonx(), HauptFenster.getButtony());
+		btn[1].setBounds(1180, (times.length * 25) + 85, HauptFenster.getButtonx(), HauptFenster.getButtony());
 		btn[1].addActionListener(e -> doCloseMonth(e, daysInMonth, m, jahr, user));
 		add(btn[1]);
 		
 		btn[2] = createButton("<html>Tag<br>einfügen</html>", ButtonIcon.INSERT.icon(), null);
-		btn[2].setBounds(10, (times.length * 25) + 85, HauptFenster.getButtonx(), HauptFenster.getButtony());
+		btn[2].setBounds(190, (times.length * 25) + 85, HauptFenster.getButtonx(), HauptFenster.getButtony());
 		btn[2].setEnabled(true);
 		btn[2].addActionListener(_ -> doInsertDay(daysInMonth, m, jahr));
 		add(btn[2]);
+		
+		btn[3] = createButton("<html>Stepelungen<br>laden</html>", ButtonIcon.IMPORT.icon(), null);
+		btn[3].setBounds(10, (times.length * 25) + 85, HauptFenster.getButtonx() + 50, HauptFenster.getButtony());
+		btn[3].setEnabled(true);
+		btn[3].addActionListener(e -> doImportRawData(e, m, jahr, user));
+		add(btn[3]);
 		
 		JLabel hinweis = new JLabel("Arbeitszeit für " + month + " bereits abgeschlossen, keine Änderungen mehr möglich ...");
 		hinweis.setFont(font); hinweis.setForeground(titleColor);
@@ -209,7 +216,7 @@ public class WorkTimePanelFactory extends JPanel {
 		if (times.length > 0) {
 			setPreferredSize(new Dimension(size.width + 20, (times.length * size.height) + 155));
 		} else {
-			setPreferredSize(new Dimension(1470, 155));
+			setPreferredSize(new Dimension(1320, 155));
 		}
 		
 	}
@@ -218,24 +225,23 @@ public class WorkTimePanelFactory extends JPanel {
 	// Datenbank Operationen
 	//###################################################################################################################################################
 	
-	private record DayTimes(long id, LocalDate date, LocalTime wStart, LocalTime wEnd, LocalTime bStart, LocalTime bEnd, BigDecimal sum, String projekt) {}
+	private record DayTimes(long id, LocalDate date, LocalTime wStart, LocalTime wEnd, BigDecimal breakTime, BigDecimal workTime, String reason) {}
 	private DayTimes[] findRange(List<WorkTime> listWt) {
 		WorkTime w = null;
-		LocalDate wDay = null; LocalTime wStart = null; LocalTime wEnd = null;	LocalTime bStart = null; LocalTime bEnd = null;
-		BigDecimal sum = BD.ZERO; String projekt = ""; int num = 0;
+		LocalDate wDay = null; LocalTime wStart = null; LocalTime wEnd = null;
+		BigDecimal breakTime = BD.ZERO; BigDecimal workTime = BD.ZERO; String reason = ""; int num = 0;
 		
 		DayTimes[] times = new DayTimes[listWt.size()]; // Anzahl der vollständigen Tage mit IN + OUT
 		try {
 			for (num = 0; num < listWt.size(); num++) {
 				w = listWt.get(num);
-				if (w.getTsLocalIN() != null) wDay = w.getTsLocalIN().toLocalDate();
-				if (w.getTsLocalIN() != null) { wStart = w.getTsLocalIN().toLocalTime(); } else { wStart = LocalTime.of(0,  0); }
-				if (w.getTsLocalBS() != null) { bStart = w.getTsLocalBS().toLocalTime(); } else { bStart = LocalTime.of(0,  0); }
-				if (w.getTsLocalBE() != null) { bEnd = w.getTsLocalBE().toLocalTime(); } else { bEnd = LocalTime.of(0,  0); }
-				if (w.getTsLocalOUT() != null) { wEnd = w.getTsLocalOUT().toLocalTime(); } else { wEnd = LocalTime.of(0,  0); }
-				if (w.getNote() != null || !w.getNote().isBlank()) projekt = w.getNote().trim();
-				if (w.getSumHours() != null) sum = w.getSumHours();
-				times[num] = new DayTimes(w.getId(), wDay, wStart, wEnd, bStart, bEnd, sum, projekt);
+				if (w.getTsIn() != null) wDay = w.getTsIn().toLocalDate();
+				if (w.getTsIn() != null) { wStart = w.getTsIn().toLocalTime(); } else { wStart = LocalTime.of(0,  0); }
+				if (w.getTsOut() != null) { wEnd = w.getTsOut().toLocalTime(); } else { wEnd = LocalTime.of(0,  0); }
+				if (w.getReason() != null || !w.getReason().isBlank()) reason = w.getReason().trim();
+				if (w.getBreakTime() != null) breakTime = w.getBreakTime();
+				if (w.getWorkTime() != null) workTime = w.getWorkTime();
+				times[num] = new DayTimes(w.getId(), wDay, wStart, wEnd, breakTime, workTime, reason);
 			}
 		} catch (IndexOutOfBoundsException ex) {
 			System.out.println("da war nix mehr ...");
@@ -252,48 +258,50 @@ public class WorkTimePanelFactory extends JPanel {
 			wtp[i].setDatum(times[i].date);
 			wtp[i].setStart(times[i].wStart);
 			wtp[i].setEnd(times[i].wEnd);
-			wtp[i].setBreakStart(times[i].bStart);
-			wtp[i].setBreakEnd(times[i].bEnd);
-			wtp[i].setStunden(times[i].sum);
-			wtp[i].setProjekt(times[i].projekt());	
+			wtp[i].setPause(times[i].breakTime);
+			wtp[i].setStunden(times[i].workTime);
+			wtp[i].setProjekt(times[i].reason());	
 		}
+	}
+	
+	private void doImportRawData(ActionEvent e, Month m, int year, String user) {
+		
+		Component c = (Component) e.getSource();
+    	Window owner = SwingUtilities.getWindowAncestor(c);
+    	WorkTimeDialog.show(owner, m, year, user);
+
 	}
 	
 	private void doInsertDay(int daysInMonth, Month m, int year) {
 		LocalDate ld = LocalDate.of(year, m, daysInMonth); LocalTime lt = LocalTime.of(0, 0);
-		LocalDateTime ldt = LocalDateTime.of(ld, lt);
+		ZoneId zone = ZoneId.systemDefault();
+		OffsetDateTime odt = LocalDateTime.of(ld, lt).atZone(zone).toOffsetDateTime();
 		
 		WorkTime nw = new WorkTime();
 		nw.setUserName(user);
-		nw.setTsLocalIN(ldt);
-		nw.setTsLocalBS(ldt);
-		nw.setTsLocalBE(ldt);
-		nw.setTsLocalOUT(ldt);
-		nw.setLastEvent("IN");
-		nw.setSumHours(BD.ZERO);
-		nw.setNote("### eingefügte Zeile ###");
-		nw.setSource("DESKTOP");
-		nw.setDeviceId(deviceId.deviceId());
+		nw.setTsIn(odt);
+		nw.setTsOut(odt);
+		nw.setBreakTime(BD.ZERO);
+		nw.setWorkTime(BD.ZERO);
+		nw.setReason("");
 		repo.save(nw); // neuen Datensatz in DB schreiben
 		
 		HauptFenster.actScreen(); // Übersicht aktualisieren
 	}
 	
-	private void doSave() {
+	private void doUpdate() {
+		ZoneId zone = ZoneId.systemDefault();
 		for (int i = 0; i < times.length; i++) {
 			WorkTime w = repo.findById(id[i]);
 			
-			LocalDateTime IN = LocalDateTime.of(wtp[i].getDatum(), wtp[i].getStart());
-			LocalDateTime BS = LocalDateTime.of(wtp[i].getDatum(), wtp[i].getBreakStart());
-			LocalDateTime BE = LocalDateTime.of(wtp[i].getDatum(), wtp[i].getBreakEnd());
-			LocalDateTime OUT = LocalDateTime.of(wtp[i].getDatum(), wtp[i].getEnd());
+			OffsetDateTime IN = LocalDateTime.of(wtp[i].getDatum(), wtp[i].getStart()).atZone(zone).toOffsetDateTime();
+			OffsetDateTime OUT = LocalDateTime.of(wtp[i].getDatum(), wtp[i].getEnd()).atZone(zone).toOffsetDateTime();
 			
-			w.setTsLocalIN(IN);
-			w.setTsLocalBS(BS);
-			w.setTsLocalBE(BE);
-			w.setTsLocalOUT(OUT);
-			w.setNote(wtp[i].getProjekt());
-			w.setSumHours(wtp[i].getStunden());
+			w.setTsIn(IN);
+			w.setTsOut(OUT);
+			w.setReason(wtp[i].getProjekt());
+			w.setBreakTime(wtp[i].getPause());
+			w.setWorkTime(wtp[i].getStunden());
 			
 			repo.update(w);
 		}

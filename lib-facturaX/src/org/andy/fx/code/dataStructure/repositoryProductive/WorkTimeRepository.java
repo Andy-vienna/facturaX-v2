@@ -1,7 +1,8 @@
 package org.andy.fx.code.dataStructure.repositoryProductive;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 import org.andy.fx.code.dataStructure.HibernateUtil;
@@ -27,14 +28,15 @@ public class WorkTimeRepository {
     }
 
     public List<WorkTime> findDaysForUser(LocalDate dateStart, LocalDate dateEnd, String userName) {
-        LocalDateTime start = dateStart.atStartOfDay();
-        LocalDateTime end = dateEnd.plusDays(1).atStartOfDay();
-
+    	ZoneId zone = ZoneId.systemDefault();
+		OffsetDateTime start = dateStart.atStartOfDay(zone).toOffsetDateTime();
+		OffsetDateTime end   = dateEnd.plusDays(1).atStartOfDay(zone).toOffsetDateTime();
+    	
         try (Session session = HibernateUtil.getSessionFactoryDb2().openSession()) {
             return session.createQuery(
                     "from WorkTime e " +
-                    "where e.userName = :u and e.tsLocalIN >= :s and e.tsLocalIN < :e " +
-                    "order by e.tsLocalIN",
+                    "where e.userName = :u and e.tsIn >= :s and e.tsIn < :e " +
+                    "order by e.tsIn",
                     WorkTime.class)
                 .setParameter("u", userName)
                 .setParameter("s", start)
@@ -44,14 +46,15 @@ public class WorkTimeRepository {
     }
     
     public List<WorkTime> findDayForUser(LocalDate date, String userName) {
-        LocalDateTime start = date.atStartOfDay();
-        LocalDateTime end = date.plusDays(1).atStartOfDay();
+    	ZoneId zone = ZoneId.systemDefault();
+		OffsetDateTime start = date.atStartOfDay(zone).toOffsetDateTime();
+		OffsetDateTime end   = date.plusDays(1).atStartOfDay(zone).toOffsetDateTime();
 
         try (Session session = HibernateUtil.getSessionFactoryDb2().openSession()) {
             return session.createQuery(
                     "from WorkTime e " +
-                    "where e.userName = :u and e.tsLocalIN >= :s and e.tsLocalIN < :e " +
-                    "order by e.tsLocalIN",
+                    "where e.userName = :u and e.tsIn >= :s and e.tsIn < :e " +
+                    "order by e.tsIn",
                     WorkTime.class)
                 .setParameter("u", userName)
                 .setParameter("s", start)

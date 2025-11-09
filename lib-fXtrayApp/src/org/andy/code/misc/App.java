@@ -24,8 +24,7 @@ public class App {
 	// ###################################################################################################################################################
 	
 	public App() {
-		boolean DEBUG = Boolean.getBoolean("app.debug");
-		String[] tmp = selectBuildInfo(DEBUG);
+		String[] tmp = selectBuildInfo();
 		TIME = tmp[0];
 		JDK = tmp[1];
 		VERSION = tmp[2];
@@ -36,9 +35,8 @@ public class App {
 	// Hilfsmethoden
 	// ###################################################################################################################################################
 	
-	public String[] selectBuildInfo(boolean debug) {
+	public String[] selectBuildInfo() {
 	    String[] tmp = new String[4];
-	    //if (debug) return new String[]{"date not relevant for debug", "debug-mode", "debug", "fX"};
 
 	    try (InputStream is = StartUp.class.getResourceAsStream("/META-INF/MANIFEST.MF")) {
 	        if (is == null) return new String[]{"no build date", "no Java version", null, null};

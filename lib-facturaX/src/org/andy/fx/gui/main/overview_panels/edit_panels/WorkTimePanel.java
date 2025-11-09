@@ -19,8 +19,10 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.AbstractDocument;
 
 import org.andy.fx.code.misc.BD;
+import org.andy.fx.code.misc.CommaHelper;
 import org.andy.fx.gui.iconHandler.ButtonIcon;
 
 import com.github.lgooddatepicker.components.DatePicker;
@@ -37,9 +39,9 @@ public final class WorkTimePanel extends JPanel {
 	private int posx = 0; private int posy = 0;	private final int w = 150; private final int h = 25;
 	private BigDecimal hours = BD.ZERO;
 	private DatePicker datum = new DatePicker();
-	private TimePicker[] zeit = new TimePicker[4];
-	private JTextField[] ztf = new JTextField[4];
-	private JTextField diff; private JTextField projekt;
+	private TimePicker[] zeit = new TimePicker[2];
+	private JTextField[] ztf = new JTextField[2];
+	private JTextField[] txtField = new JTextField[2]; private JTextField projekt;
 	private JButton btn = new JButton();
 	
 	private ActionListener bal = _ -> doBtnAction();
@@ -75,18 +77,25 @@ public final class WorkTimePanel extends JPanel {
 		wireTimeListeners();
 		posx = posx + (zeit.length * w);
 		
-		diff = new JTextField(); diff.setFocusable(false);
-		diff.setFont(new Font("Tahoma", Font.BOLD, 12)); diff.setBounds(posx, posy, w, h); diff.setHorizontalAlignment(SwingConstants.RIGHT);
-		diff.getDocument().addDocumentListener(new DocumentListener() {
-			  @Override public void insertUpdate(DocumentEvent e) { diffOnChange(); }
-			  @Override public void removeUpdate(DocumentEvent e) { diffOnChange(); }
-			  @Override public void changedUpdate(DocumentEvent e) { }
-		});
-		add(diff);
-		posx = posx + w;
+		for (int i = 0; i < txtField.length; i++) {
+			final int x = i;
+			txtField[i] = new JTextField(); txtField[i].setFocusable(false);
+			txtField[i].setFont(new Font("Tahoma", Font.BOLD, 12)); txtField[i].setBounds(posx + (i * w), posy, w, h);
+			txtField[i].setHorizontalAlignment(SwingConstants.RIGHT);
+			txtField[i].getDocument().addDocumentListener(new DocumentListener() {
+				  @Override public void insertUpdate(DocumentEvent e) { diffOnChange(txtField[x]); }
+				  @Override public void removeUpdate(DocumentEvent e) { diffOnChange(txtField[x]); }
+				  @Override public void changedUpdate(DocumentEvent e) { }
+			});
+			attachCommaToDot(txtField[i]);
+			add(txtField[i]);
+		}
+		txtField[0].setFocusable(true); // Pausenzeit soll eingebbar sein
+		posx = posx + (txtField.length * w);
 		
 		projekt = new JTextField();
-		projekt.setFont(new Font("Tahoma", Font.PLAIN, 12)); projekt.setBounds(posx, posy, 500, h);	projekt.setHorizontalAlignment(SwingConstants.LEFT);
+		projekt.setFont(new Font("Tahoma", Font.PLAIN, 12)); projekt.setBounds(posx, posy, 500, h);
+		projekt.setHorizontalAlignment(SwingConstants.LEFT); projekt.setBackground(Color.PINK);
 		projekt.getDocument().addDocumentListener(new DocumentListener() {
 			  @Override public void insertUpdate(DocumentEvent e) { projektOnChange(); }
 			  @Override public void removeUpdate(DocumentEvent e) { projektOnChange(); }
@@ -117,34 +126,40 @@ public final class WorkTimePanel extends JPanel {
 	}
 	private void timeOnChange() {
 		final Color GREEN   = new Color(144,238,144); final Color YELLOW = new Color(255,250,205);
-		LocalTime t0 = zeit[0].getTime(); LocalTime t1 = zeit[1].getTime(); LocalTime t2 = zeit[2].getTime(); LocalTime t3 = zeit[3].getTime();
+		LocalTime t0 = zeit[0].getTime(); LocalTime t1 = zeit[1].getTime();
 	    boolean gt0_0 = t0 != null && t0.toSecondOfDay() > 0; boolean gt0_1 = t1 != null && t1.toSecondOfDay() > 0;
-	    boolean gt0_2 = t2 != null && t2.toSecondOfDay() > 0; boolean gt0_3 = t3 != null && t3.toSecondOfDay() > 0;
 	    ztf[0].setBackground(gt0_0 ? GREEN : YELLOW); ztf[1].setBackground(gt0_1 ? GREEN : YELLOW);
-	    ztf[2].setBackground(gt0_2 ? GREEN : YELLOW); ztf[3].setBackground(gt0_3 ? GREEN : YELLOW);
 	}
-	private void diffOnChange() {
-		if (diff.getText().isBlank() || diff.getText().equals("0.00 h")) return;
-		diff.setBackground(new Color(144,238,144)); // light green
+	private void diffOnChange(JTextField txt) {
+		if (txt.getText().isBlank() || txt.getText().equals("0.00 h")) return;
+		txt.setBackground(new Color(144,238,144)); // light green
 	}
 	private void projektOnChange() {
-		if (projekt.getText().isBlank() || projekt.getText().equals("")) return;
+		if (projekt.getText().isBlank() || projekt.getText().equals("")) {
+			projekt.setBackground(Color.PINK);
+			return;
+		}
 		projekt.setBackground(new Color(144,238,144)); // light green
-		if (projekt.getText().contains("###")) projekt.setBackground(Color.PINK);
 	}
+	
 	private void doBtnAction() {
 
+		String tmp = null;
 		LocalTime wts = zeit[0].getTime(); LocalTime wte = zeit[1].getTime();
-		LocalTime bts = zeit[2].getTime(); LocalTime bte = zeit[3].getTime();
 		BigDecimal hour = BigDecimal.valueOf(60);
 		
 		BigDecimal workMins = calcMinutes(wts, wte);
-		BigDecimal breakMins = calcMinutes(bts, bte);
+		BigDecimal breakMins = BD.ZERO;
+		if (txtField[0].getText() != null && !txtField[0].getText().isEmpty() && !txtField[0].getText().isBlank()) {
+			tmp = txtField[0].getText().replace(" h", "");
+			txtField[0].setText(tmp + " h");
+			breakMins = new BigDecimal(tmp).multiply(hour);
+		}
+		
 		BigDecimal mins = workMins.subtract(breakMins);
 		hours = mins.divide(hour, 2, RoundingMode.HALF_UP);
 		
-		diff.setBackground(new Color(144,238,144)); // light green
-		diff.setText(hours.toString() + " h");
+		txtField[1].setText(hours.toString() + " h");
 	}
 	
 	//###################################################################################################################################################
@@ -157,6 +172,10 @@ public final class WorkTimePanel extends JPanel {
 		}
 		return BD.ZERO;
 	}
+	
+	private void attachCommaToDot(JTextField field) {
+        ((AbstractDocument) field.getDocument()).setDocumentFilter(new CommaHelper.CommaToDotFilter());
+    }
 	
 	//###################################################################################################################################################
 	// Getter und Setter
@@ -178,22 +197,6 @@ public final class WorkTimePanel extends JPanel {
 		this.zeit[0].setTime(zeit);
 	}
 	
-	public LocalTime getBreakStart() {
-		return zeit[2].getTime();
-	}
-
-	public void setBreakStart(LocalTime zeit) {
-		this.zeit[2].setTime(zeit);
-	}
-	
-	public LocalTime getBreakEnd() {
-		return zeit[3].getTime();
-	}
-
-	public void setBreakEnd(LocalTime zeit) {
-		this.zeit[3].setTime(zeit);
-	}
-	
 	public LocalTime getEnd() {
 		return zeit[1].getTime();
 	}
@@ -203,14 +206,25 @@ public final class WorkTimePanel extends JPanel {
 	}
 	
 	public BigDecimal getStunden() {
-		if (diff.getText().isBlank()) return BD.ZERO;
-		String text = diff.getText().replace(" h", "").trim();
+		if (txtField[1].getText().isBlank()) return BD.ZERO;
+		String text = txtField[1].getText().replace(" h", "").trim();
 		return new BigDecimal(text);
 	}
 
 	public void setStunden(BigDecimal hours) {
-		if (hours.compareTo(BD.ZERO) == 0) { this.diff.setText(""); return;	}
-		this.diff.setText(hours + " h");
+		if (hours.compareTo(BD.ZERO) == 0) { this.txtField[1].setText(""); return;	}
+		this.txtField[1].setText(hours + " h");
+	}
+	
+	public BigDecimal getPause() {
+		if (txtField[0].getText().isBlank()) return BD.ZERO;
+		String text = txtField[0].getText().replace(" h", "").trim();
+		return new BigDecimal(text);
+	}
+
+	public void setPause(BigDecimal hours) {
+		if (hours.compareTo(BD.ZERO) == 0) { this.txtField[0].setText(""); return;	}
+		this.txtField[0].setText(hours + " h");
 	}
 	
 	public String getProjekt() {

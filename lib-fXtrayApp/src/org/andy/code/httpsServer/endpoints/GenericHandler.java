@@ -11,15 +11,11 @@ import org.andy.code.dataStructure.entityJSON.JsonHttps;
 import org.andy.code.dataStructure.entityJSON.JsonUtil;
 import org.andy.code.dataStructure.repository.WorkTimeRawRepository;
 import org.andy.gui.main.ClockTrayApp;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 public class GenericHandler implements HttpHandler {
-
-	private static final Logger logger = LogManager.getLogger(GenericHandler.class);
 
 	private static String requestBody = null;
 	private static ArrayList<JsonHttps> receive = new ArrayList<>();
@@ -50,10 +46,8 @@ public class GenericHandler implements HttpHandler {
 		JsonHttps recv = parseData(requestBody); // Empfangenen Sting parsen
 		if (recv.event.contains("IN") || recv.event.contains("BREAK") || recv.event.contains("OUT")) {
 			receive.add(recv); // pro emfangenem JSON einen neuen Eintrag in die ArrayList schreiben
-			logger.debug("daten empfangen: " + requestBody);
 			isData = false;
 		} else {
-			logger.debug("status empfangen");
 			isData = true;
 		}
 		if (isData)
@@ -74,8 +68,6 @@ public class GenericHandler implements HttpHandler {
 		WorkTimeRawRepository repo = new WorkTimeRawRepository();
 		for (int n = 0; n < receive.size(); n++) {
 			erg = receive.get(n);
-			logger.debug(n + "|" + erg.event + "|" + erg.username + "|" + erg.source + "|" + erg.tz + "|" + erg.ts + "|"
-					+ erg.deviceId);
 			OffsetDateTime odt = OffsetDateTime.parse(erg.ts);
 			ClockTrayApp.wt = repo.record(erg.event, erg.source, erg.tz, odt, erg.username, erg.deviceId);
 		}

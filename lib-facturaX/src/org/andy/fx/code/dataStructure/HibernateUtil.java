@@ -21,6 +21,7 @@ import org.andy.fx.code.dataStructure.entityProductive.Rechnung;
 import org.andy.fx.code.dataStructure.entityProductive.SVSteuer;
 import org.andy.fx.code.dataStructure.entityProductive.Spesen;
 import org.andy.fx.code.dataStructure.entityProductive.WorkTime;
+import org.andy.fx.code.dataStructure.entityProductive.WorkTimeRaw;
 import org.andy.fx.code.main.Einstellungen;
 import org.andy.fx.code.misc.App;
 import org.apache.logging.log4j.Level;
@@ -156,6 +157,7 @@ public class HibernateUtil {
         sources.addAnnotatedClass(Ausgaben.class);
         sources.addAnnotatedClass(Spesen.class);
         sources.addAnnotatedClass(WorkTime.class);
+        sources.addAnnotatedClass(WorkTimeRaw.class);
         sources.addAnnotatedClass(Arbeitszeit.class);
         sources.addAnnotatedClass(SVSteuer.class);
 

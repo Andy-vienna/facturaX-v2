@@ -7,9 +7,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.Duration;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
@@ -49,9 +47,7 @@ public class ExcelArbeitszeit {
 	
 	private static final WorkTimeRepository repo = new WorkTimeRepository();
     private static List<WorkTime> wt = null;
-    
-    private final static BigDecimal hour = BigDecimal.valueOf(60);
-	
+
 	private ExcelArbeitszeit() {} // Instanzierung verhindern
 	
 	//###################################################################################################################################################
@@ -111,21 +107,17 @@ public class ExcelArbeitszeit {
 				wtKommentar[i] = ws.getRow(j).getCell(COLUMN_F);
 				if (wtKommentar[i] == null) wtKommentar[i] = ws.getRow(j).createCell(COLUMN_F);
 				
-				LocalDate date = LocalDate.parse(wt.get(i).getTsLocalIN().toLocalDate().toString(), DateTimeFormatter.ISO_LOCAL_DATE);
+				LocalDate date = LocalDate.parse(wt.get(i).getTsIn().toLocalDate().toString(), DateTimeFormatter.ISO_LOCAL_DATE);
 		        String datum = date.format(outputFormatter);
 		        
-		        LocalTime bts = wt.get(i).getTsLocalBS().toLocalTime(); LocalTime bte = wt.get(i).getTsLocalBE().toLocalTime();
-		        BigDecimal breakMins = calcMinutes(bts, bte);
-		        BigDecimal breakHours = breakMins.divide(hour, 2, RoundingMode.HALF_UP);
-				
 		        wtDatum[i].setCellValue(datum);
-				wtVon[i].setCellValue(wt.get(i).getTsLocalIN().toLocalTime().toString());
-				wtBis[i].setCellValue(wt.get(i).getTsLocalOUT().toLocalTime().toString());
-				wtPause[i].setCellValue(breakHours.doubleValue());
-				wtStunden[i].setCellValue(wt.get(i).getSumHours().setScale(2, RoundingMode.HALF_UP).doubleValue());
-				wtKommentar[i].setCellValue(wt.get(i).getNote().trim());
+				wtVon[i].setCellValue(wt.get(i).getTsIn().toLocalTime().toString());
+				wtBis[i].setCellValue(wt.get(i).getTsOut().toLocalTime().toString());
+				wtPause[i].setCellValue(wt.get(i).getBreakTime().doubleValue());
+				wtStunden[i].setCellValue(wt.get(i).getWorkTime().setScale(2, RoundingMode.HALF_UP).doubleValue());
+				wtKommentar[i].setCellValue(wt.get(i).getReason().trim());
 				
-				sumHours = sumHours.add(wt.get(i).getSumHours());
+				sumHours = sumHours.add(wt.get(i).getWorkTime());
 			}
 			wtGesStunden = ws.getRow(33).getCell(COLUMN_E);
 			if (wtGesStunden == null) wtGesStunden = ws.getRow(33).createCell(COLUMN_E);
@@ -155,19 +147,6 @@ public class ExcelArbeitszeit {
 		while(bLockedXLSX || bLockedPDF) {
 			System.out.println("warte auf Datei ...");
 		}
-	}
-	
-	//###################################################################################################################################################
-	// Hilfsmethoden
-	//###################################################################################################################################################
-	
-	private static BigDecimal calcMinutes(LocalTime a, LocalTime b) {
-		if (a.getHour() > 0 || a.getMinute() > 0) {
-			if (Duration.between(a, b).toMinutes() > 0) {
-				return BigDecimal.valueOf(Duration.between(a, b).toMinutes());
-			}
-		}
-		return BD.ZERO;
 	}
 	
 	//###################################################################################################################################################
