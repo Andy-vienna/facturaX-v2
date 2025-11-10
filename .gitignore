@@ -2,6 +2,7 @@
 *.log
 /target/
 /secrets/*.json
+/info/
 
 
 

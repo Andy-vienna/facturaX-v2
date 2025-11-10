@@ -1,5 +1,7 @@
 package org.andy.fx.gui.main.overview_panels.edit_panels;
 
+import static org.andy.fx.code.misc.FileSelect.choosePath;
+import static org.andy.fx.code.misc.FileSelect.getNotSelected;
 import static org.andy.fx.gui.misc.CreateButton.createButton;
 
 import java.awt.Color;
@@ -8,6 +10,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -50,6 +54,7 @@ import org.andy.fx.code.main.Einstellungen;
 import org.andy.fx.code.misc.BD;
 import org.andy.fx.gui.iconHandler.ButtonIcon;
 import org.andy.fx.gui.main.HauptFenster;
+import org.andy.fx.gui.main.dialogs.DateianzeigeDialog;
 import org.andy.fx.gui.main.dialogs.WorkTimeDialog;
 import org.andy.fx.gui.misc.BusyDialog;
 import org.apache.logging.log4j.LogManager;
@@ -66,6 +71,7 @@ public class WorkTimePanelFactory extends JPanel {
     private WorkTimePanel[] wtp = new WorkTimePanel[50];
     private JTextField stunden = new JTextField();
     private JButton[] btn = new JButton[4];
+    private JLabel lblFileTyp = new JLabel();
     
     private final DateTimeFormatter fmt = new DateTimeFormatterBuilder()
             .parseCaseInsensitive()
@@ -80,9 +86,10 @@ public class WorkTimePanelFactory extends JPanel {
     
     private final WorkTimeRepository repo = new WorkTimeRepository();
     private final HelperRepository hlpRepo = new HelperRepository();
-    private List<WorkTime> wt = null; private List<Helper> hlp = null;
-    private long[] id; private String user;
-    private int monthIndex = 0; private String month = null;
+    private List<WorkTime> wt = null; private Helper hlp = null;
+    private long[] id;
+    private OffsetDateTime[] originalIn = null; private OffsetDateTime[] originalOut = null;
+    private String user; private int monthIndex = 0; private String month = null;
 	
 	//###################################################################################################################################################
 	// public Teil
@@ -110,11 +117,13 @@ public class WorkTimePanelFactory extends JPanel {
         LocalDate from = LocalDate.of(yearInt, m, 1);
         LocalDate to   = LocalDate.of(yearInt, m, days);
 
-        wt = new ArrayList<>(); hlp = new ArrayList<>();
-        wt = repo.findDaysForUser(from, to, user); hlp = hlpRepo.findAll();
-        if (hlp.size() < 1) {
+        wt = new ArrayList<>(); hlp = new Helper();
+        wt = repo.findDaysForUser(from, to, user); hlp = hlpRepo.findByUser(user);
+        if (hlp == null) {
         	Helper h = new Helper();
+        	h.setSpPrinted(0);
         	h.setTiPrinted(0);
+        	h.setUserName(user);
         	hlpRepo.save(h);
         }
         
@@ -196,25 +205,57 @@ public class WorkTimePanelFactory extends JPanel {
 		btn[3].addActionListener(e -> doImportRawData(e, m, jahr, user));
 		add(btn[3]);
 		
-		JLabel hinweis = new JLabel("Arbeitszeit für " + month + " bereits abgeschlossen, keine Änderungen mehr möglich ...");
+		JLabel hinweis = new JLabel("<html>Arbeitszeit vom " + month + " bereits abgeschlossen, keine Änderungen mehr möglich ...<br>"
+				+ "download durch Klick auf Dateisymbol</html>");
 		hinweis.setFont(font); hinweis.setForeground(titleColor);
-		hinweis.setBounds(10 + size.width - 655, (times.length * 25) + 100, 650, 40);
+		hinweis.setBounds(10 + size.width - 655, (times.length * 25) + 95, 650, 50);
 		hinweis.setHorizontalAlignment(SwingConstants.RIGHT); hinweis.setVisible(false);
 		add(hinweis);
 		
+		// Anzeige Filetyp
+	    lblFileTyp.setHorizontalAlignment(SwingConstants.CENTER);
+		lblFileTyp.setBounds(10 + size.width - 655, (times.length * 25) + 100, 50, 40);
+		lblFileTyp.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if(lblFileTyp.getIcon() != null) {
+					ArbeitszeitRepository azRepo = new ArbeitszeitRepository();
+					String outputPath;
+					outputPath = choosePath(Einstellungen.getAppSettings().work);
+					Path path = Paths.get(outputPath);
+					if (outputPath.equals(getNotSelected())) {
+						return; // nichts ausgewählt
+					}
+					try {
+						azRepo.exportFile(user, jahr, monthIndex + 1, path);
+					} catch (Exception e1) {
+						logger.error("Fehler beim speichern der Datei " + outputPath + ": " + e1.getMessage());
+					}
+				}
+			}
+		});
+		lblFileTyp.setVisible(false);
+		add(lblFileTyp);
+		int heightExtension = 155;
+		
 		btn[0].setVisible(true); btn[1].setVisible(true);
-		if (hlp.get(0).getTiPrinted() > 0 && getBit(hlp.get(0).getTiPrinted(), monthIndex)) {
-			btn[0].setVisible(false); btn[1].setVisible(false); btn[2].setVisible(false);
+		hlp = hlpRepo.findByUser(user);
+		if (hlp.getTiPrinted() > 0 && getBit(hlp.getTiPrinted(), monthIndex)) {
+			ArbeitszeitRepository azRepo = new ArbeitszeitRepository();
+			Arbeitszeit az = azRepo.findByYearMonth(user, jahr, monthIndex + 1);
+			btn[0].setVisible(false); btn[1].setVisible(false); btn[2].setVisible(false); btn[3].setVisible(false);
 			hinweis.setVisible(true);
 			
-			//--> hier Dateianzeige mit Downloadmöglichkeit einbauen (analog Betriebsausgaben)
+			setIcon(az.getDateiname());
+			lblFileTyp.setVisible(true); heightExtension = heightExtension + 0;
+			
 		}
         
 		doLoadData();
 		stunden.setText(doSummeStunden(times.length) + " h");
 		
 		if (times.length > 0) {
-			setPreferredSize(new Dimension(size.width + 20, (times.length * size.height) + 155));
+			setPreferredSize(new Dimension(size.width + 20, (times.length * size.height) + heightExtension));
 		} else {
 			setPreferredSize(new Dimension(1320, 155));
 		}
@@ -231,13 +272,19 @@ public class WorkTimePanelFactory extends JPanel {
 		LocalDate wDay = null; LocalTime wStart = null; LocalTime wEnd = null;
 		BigDecimal breakTime = BD.ZERO; BigDecimal workTime = BD.ZERO; String reason = ""; int num = 0;
 		
+		originalIn = new OffsetDateTime[listWt.size()]; originalOut = new OffsetDateTime[listWt.size()];
 		DayTimes[] times = new DayTimes[listWt.size()]; // Anzahl der vollständigen Tage mit IN + OUT
 		try {
 			for (num = 0; num < listWt.size(); num++) {
 				w = listWt.get(num);
-				if (w.getTsIn() != null) wDay = w.getTsIn().toLocalDate();
-				if (w.getTsIn() != null) { wStart = w.getTsIn().toLocalTime(); } else { wStart = LocalTime.of(0,  0); }
-				if (w.getTsOut() != null) { wEnd = w.getTsOut().toLocalTime(); } else { wEnd = LocalTime.of(0,  0); }
+				
+				originalIn[num] = w.getTsIn(); originalOut[num] = w.getTsOut();
+				LocalDate d = originalIn[num].toLocalDate();
+				LocalTime tIn = originalIn[num].toLocalTime(); LocalTime tOut = originalOut[num].toLocalTime();
+				
+				if (w.getTsIn() != null) wDay = d;
+				if (w.getTsIn() != null) { wStart = tIn; } else { wStart = LocalTime.of(0,  0); }
+				if (w.getTsOut() != null) { wEnd = tOut; } else { wEnd = LocalTime.of(0,  0); }
 				if (w.getReason() != null || !w.getReason().isBlank()) reason = w.getReason().trim();
 				if (w.getBreakTime() != null) breakTime = w.getBreakTime();
 				if (w.getWorkTime() != null) workTime = w.getWorkTime();
@@ -260,7 +307,9 @@ public class WorkTimePanelFactory extends JPanel {
 			wtp[i].setEnd(times[i].wEnd);
 			wtp[i].setPause(times[i].breakTime);
 			wtp[i].setStunden(times[i].workTime);
-			wtp[i].setProjekt(times[i].reason());	
+			wtp[i].setProjekt(times[i].reason());
+			wtp[i].setOriginalIn(originalIn[i]);
+			wtp[i].setOriginalOut(originalOut[i]);
 		}
 	}
 	
@@ -273,8 +322,13 @@ public class WorkTimePanelFactory extends JPanel {
 	}
 	
 	private void doInsertDay(int daysInMonth, Month m, int year) {
-		LocalDate ld = LocalDate.of(year, m, daysInMonth); LocalTime lt = LocalTime.of(0, 0);
-		ZoneId zone = ZoneId.systemDefault();
+		LocalTime lt = null;
+		switch(Einstellungen.getDbSettings().dbType) {
+        	case "mssql" -> lt = LocalTime.of(0, 0);
+        	case "postgre" -> lt = LocalTime.of(1, 0);
+		}
+		LocalDate ld = LocalDate.of(year, m, daysInMonth);
+		ZoneId zone = ZoneId.of("Europe/Vienna");
 		OffsetDateTime odt = LocalDateTime.of(ld, lt).atZone(zone).toOffsetDateTime();
 		
 		WorkTime nw = new WorkTime();
@@ -290,12 +344,11 @@ public class WorkTimePanelFactory extends JPanel {
 	}
 	
 	private void doUpdate() {
-		ZoneId zone = ZoneId.systemDefault();
 		for (int i = 0; i < times.length; i++) {
 			WorkTime w = repo.findById(id[i]);
 			
-			OffsetDateTime IN = LocalDateTime.of(wtp[i].getDatum(), wtp[i].getStart()).atZone(zone).toOffsetDateTime();
-			OffsetDateTime OUT = LocalDateTime.of(wtp[i].getDatum(), wtp[i].getEnd()).atZone(zone).toOffsetDateTime();
+			OffsetDateTime IN = LocalDateTime.of(wtp[i].getDatum(), wtp[i].getStart()).atOffset(originalIn[i].getOffset());
+			OffsetDateTime OUT = LocalDateTime.of(wtp[i].getDatum(), wtp[i].getEnd()).atOffset(originalOut[i].getOffset());
 			
 			w.setTsIn(IN);
 			w.setTsOut(OUT);
@@ -373,7 +426,7 @@ public class WorkTimePanelFactory extends JPanel {
 	}
 	
 	private void doSaveClosed(int index) {
-		Helper h = hlp.get(0);
+		Helper h = hlp;
 		int val = h.getTiPrinted() + calcValuePrinted(index);
 		h.setTiPrinted(val);
 		hlpRepo.update(h);
@@ -382,6 +435,15 @@ public class WorkTimePanelFactory extends JPanel {
 	//###################################################################################################################################################
 	// Hilfsmethoden
 	//###################################################################################################################################################
+	
+	private void setIcon(String fileName) {
+		try {
+			DateianzeigeDialog.setFileIcon(lblFileTyp, fileName);
+			lblFileTyp.setHorizontalAlignment(SwingConstants.CENTER);
+		} catch (IOException e) {
+			logger.error("setIcon() - " + e);
+		}
+	}
 	
 	private void onChange() {
 		if (stunden.getText().isBlank() || stunden.getText().equals("0.00 h")) return;

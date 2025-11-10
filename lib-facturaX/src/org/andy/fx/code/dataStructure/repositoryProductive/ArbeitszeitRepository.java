@@ -20,18 +20,19 @@ public class ArbeitszeitRepository {
     public List<Arbeitszeit> findAllByJahr(int jahr) {
         try (Session session = HibernateUtil.getSessionFactoryDb2().openSession()) {
             return session.createQuery(
-                    "FROM Arbeitszeit r WHERE r.jahr = :jahr ORDER BY r.datum", Arbeitszeit.class)
+                    "FROM Arbeitszeit r WHERE r.jahr = :jahr ORDER BY monat", Arbeitszeit.class)
                     .setParameter("jahr", jahr)
                     .getResultList();
         }
     }
     
-    public Arbeitszeit findByYearMonth(int year, int month){
+    public Arbeitszeit findByYearMonth(String user, int year, int month){
     	try (Session session = HibernateUtil.getSessionFactoryDb2().openSession()) {
             return session.createQuery(
-                    "FROM Arbeitszeit r WHERE r.jahr = :year AND r.monat = :month", Arbeitszeit.class)
+                    "FROM Arbeitszeit r WHERE r.jahr = :year AND r.monat = :month AND r.userName = :username", Arbeitszeit.class)
                     .setParameter("year", year)
                     .setParameter("month", month)
+                    .setParameter("username", user)
                     .getSingleResult();
         }
     }
@@ -45,8 +46,8 @@ public class ArbeitszeitRepository {
         }
     }
     
-    public void exportFileById(int year, int month, Path targetDir) throws Exception {
-    	Arbeitszeit arbeitszeit = findByYearMonth(year, month);
+    public void exportFile(String user, int year, int month, Path targetDir) throws Exception {
+    	Arbeitszeit arbeitszeit = findByYearMonth(user, year, month);
         if (arbeitszeit == null) throw new IllegalArgumentException("Keine Datei mit Jahr=" + year + " Monat=" + month + " gefunden");
         byte[] data = arbeitszeit.getDatei();
         if (data == null) throw new IllegalStateException("Dateiinhalt ist NULL");

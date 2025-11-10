@@ -44,16 +44,17 @@ public class GetId {
 	}
 	
 	public String[] appInfo() {
+		@SuppressWarnings("unused")
 		String[] tmp;
 		try {
 			Files.createDirectories(dir);
 			Path f = dir.resolve("app.info");
-			if (Files.exists(f)) {
+			/*if (Files.exists(f)) {
 	            // alle Zeilen lesen, trimmen, leere Zeilen entfernen
 	            List<String> lines = Files.readAllLines(f, StandardCharsets.UTF_8);
 	            tmp = lines.stream().map(String::trim).filter(s -> !s.isEmpty()).toArray(String[]::new);
 	            if (tmp[0].equals(a.VERSION)) return tmp;
-	        }
+	        }*/
 			
 			String version = a.VERSION;
 			String built = a.TIME;

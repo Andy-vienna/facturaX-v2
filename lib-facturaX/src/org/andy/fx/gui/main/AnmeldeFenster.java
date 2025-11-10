@@ -1,13 +1,39 @@
 package org.andy.fx.gui.main;
 
 import static org.andy.fx.gui.misc.CreateButton.createGradientButton;
-import java.awt.*;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.Window;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Objects;
+
 import javax.imageio.ImageIO;
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JRootPane;
+import javax.swing.JTextField;
+import javax.swing.KeyStroke;
+import javax.swing.SwingConstants;
+import javax.swing.SwingWorker;
+import javax.swing.WindowConstants;
 
 import org.andy.fx.code.dataStructure.entityMaster.User;
 import org.andy.fx.code.dataStructure.repositoryMaster.UserRepository;
@@ -16,6 +42,8 @@ import org.andy.fx.code.googleServices.GoogleOAuthDesktop;
 import org.andy.fx.code.main.StartUp;
 import org.andy.fx.code.misc.Password;
 import org.andy.fx.gui.iconHandler.ButtonIcon;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public final class AnmeldeFenster {
 
@@ -23,6 +51,8 @@ public final class AnmeldeFenster {
         void onSuccess(User user);
         void onCancel();
     }
+    
+    private static final Logger logger = LogManager.getLogger(AnmeldeFenster.class);
 
     private final JFrame frame = new JFrame("Anmeldung");
     private final JTextField userField = new JTextField(12);
@@ -172,6 +202,7 @@ public final class AnmeldeFenster {
                         passField.requestFocusInWindow();
                     }
                 } catch (Exception ex) {
+                	logger.debug("Fehler beim Start der Anwendung: " + ex.getMessage());
                     JOptionPane.showMessageDialog(frame,
                             "Fehler beim Start der Anwendung.",
                             "Anmeldung",

@@ -6,6 +6,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import org.andy.code.httpsServer.ServerHttps;
+import org.andy.code.misc.App;
+import org.andy.code.misc.GetId;
 import org.andy.gui.main.ClockTrayApp;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,6 +17,9 @@ import com.formdev.flatlaf.FlatIntelliJLaf;
 public class StartUp {
 
 	private static final Logger logger = LogManager.getLogger(StartUp.class);
+	
+	@SuppressWarnings("unused")
+	private App a = new App(); private static GetId id = new GetId();
 
 	private static java.nio.channels.FileChannel LOCK_CH;
 	private static java.nio.channels.FileLock LOCK;
@@ -93,6 +98,8 @@ public class StartUp {
 				logger.error("fX-Zeiterfassung Tray-App kann nicht gestartet werden: " + ex3.getMessage());
 			}
 			//-------------------------------------------------------------------------------------------------------------------
+			// App-Infos schreiben
+	    	@SuppressWarnings("unused")	String[] tmp = id.appInfo();
 		});
 	}
 

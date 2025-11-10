@@ -21,6 +21,9 @@ public class Helper {
 	@Column(name = "tiprinted")
     private int tiPrinted;
 	
+	@Column(name = "username", nullable = false, length = 64)
+	private String userName;
+	
 	//###################################################################################################################################################
 	// Getter und Setter
 	//###################################################################################################################################################
@@ -47,6 +50,14 @@ public class Helper {
 
 	public void setTiPrinted(int tiPrinted) {
 		this.tiPrinted = tiPrinted;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 	
 }

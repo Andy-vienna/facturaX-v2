@@ -11,6 +11,7 @@ import java.math.RoundingMode;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.OffsetDateTime;
 import java.util.Locale;
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -43,6 +44,7 @@ public final class WorkTimePanel extends JPanel {
 	private JTextField[] ztf = new JTextField[2];
 	private JTextField[] txtField = new JTextField[2]; private JTextField projekt;
 	private JButton btn = new JButton();
+	private OffsetDateTime originalIn = null; private OffsetDateTime originalOut = null;
 	
 	private ActionListener bal = _ -> doBtnAction();
 
@@ -235,6 +237,22 @@ public final class WorkTimePanel extends JPanel {
 
 	public void setProjekt(String text) {
 		this.projekt.setText(text);
+	}
+
+	public OffsetDateTime getOriginalIn() {
+		return originalIn;
+	}
+
+	public void setOriginalIn(OffsetDateTime original) {
+		this.originalIn = original;
+	}
+	
+	public OffsetDateTime getOriginalOut() {
+		return originalOut;
+	}
+
+	public void setOriginalOut(OffsetDateTime original) {
+		this.originalOut = original;
 	}
 
 }

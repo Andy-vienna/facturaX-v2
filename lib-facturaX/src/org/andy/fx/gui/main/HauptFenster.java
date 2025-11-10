@@ -337,7 +337,7 @@ public class HauptFenster extends JFrame {
 		}
         if (TabMask.visible(tc, TabMask.Tab.TRAVEL)) {
 			try {
-				doSpesenPanel();
+				doSpesenPanel(u);
 			} catch (IOException e) {
 				logger.error("error creating panel for travel expenses: " + e.getMessage());
 			}
@@ -434,7 +434,7 @@ public class HauptFenster extends JFrame {
     
     //###################################################################################################################################################
     
-    private void doSpesenPanel() throws IOException {
+    private void doSpesenPanel(String user) throws IOException {
     	
     	String[] select = { "", "Januar", "Februar", "März", "April", "Mai", "Juni",
                 "Juli", "August", "September", "Oktober", "November", "Dezember"};
@@ -463,7 +463,7 @@ public class HauptFenster extends JFrame {
     			pageTravel.revalidate(); pageTravel.repaint();
     			return;
     		}
-            pageTravel.add(new TimeRangePanelFactory(cmbSelect.getSelectedItem().toString()));
+            pageTravel.add(new TimeRangePanelFactory(cmbSelect.getSelectedItem().toString(), user));
             Month m = Month.from(fmt.parse(cmbSelect.getSelectedItem().toString())); // z.B. "Februar", "März"
     		monthSP = m.ordinal() + 1; // 1..12
             pageTravel.revalidate(); pageTravel.repaint();
@@ -1421,7 +1421,7 @@ public class HauptFenster extends JFrame {
         if (TabMask.visible(tc, TabMask.Tab.TRAVEL)) {
 			tabPanel.removeTabAt(tabPanel.indexOfTab("Reisespesen"));
 			try {
-				doSpesenPanel();
+				doSpesenPanel(u);
 			} catch (IOException e) {
 				logger.error("error creating panel for travel expenses: " + e.getMessage());
 			}

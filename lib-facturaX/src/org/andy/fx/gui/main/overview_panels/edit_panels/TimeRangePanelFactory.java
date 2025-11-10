@@ -78,16 +78,17 @@ public class TimeRangePanelFactory extends JPanel {
     
     private final SpesenRepository repo = new SpesenRepository();
     private final HelperRepository hlpRepo = new HelperRepository();
-    private List<Spesen> ls = null; private List<Helper> hlp = null;
+    private List<Spesen> ls = null; private Helper hlp = null;
     private int monthIndex = 0; private String month = null;
+    private String user;
 	
 	//###################################################################################################################################################
 	// public Teil
 	//###################################################################################################################################################
 	
-    public TimeRangePanelFactory(String month) {
+    public TimeRangePanelFactory(String month, String user) {
         setLayout(null);
-        this.month = month;
+        this.month = month; this.user = user;
         TitledBorder border = BorderFactory.createTitledBorder(
             BorderFactory.createLineBorder(Color.GRAY),
             "Spesenabrechnung " + month + " " + Einstellungen.getAppSettings().year
@@ -107,11 +108,13 @@ public class TimeRangePanelFactory extends JPanel {
         LocalDate from = LocalDate.of(yearInt, m, 1);
         LocalDate to   = LocalDate.of(yearInt, m, days);
 
-        ls = new ArrayList<>(); hlp = new ArrayList<>();
-        ls = repo.findByDateBetween(from, to); hlp = hlpRepo.findAll();
-        if (hlp.size() < 1) {
+        ls = new ArrayList<>(); hlp = new Helper();
+        ls = repo.findByDateBetween(from, to); hlp = hlpRepo.findByUser(user);
+        if (hlp == null) {
         	Helper h = new Helper();
         	h.setSpPrinted(0);
+        	h.setTiPrinted(0);
+        	h.setUserName(user);
         	hlpRepo.save(h);
         }
         buildPanel(m, days, yearInt);
@@ -186,7 +189,8 @@ public class TimeRangePanelFactory extends JPanel {
 		add(hinweis);
 		
 		btn[0].setVisible(true); btn[1].setVisible(true);
-		if (hlp.get(0).getSpPrinted() > 0 && getBit(hlp.get(0).getSpPrinted(), monthIndex)) {
+		hlp = hlpRepo.findByUser(user);
+		if (hlp.getSpPrinted() > 0 && getBit(hlp.getSpPrinted(), monthIndex)) {
 			btn[0].setVisible(false);
 			btn[1].setVisible(false);
 			hinweis.setVisible(true);
@@ -322,7 +326,7 @@ public class TimeRangePanelFactory extends JPanel {
 	}
 	
 	private void doSavePrinted(int index) {
-		Helper h = hlp.get(0);
+		Helper h = hlp;
 		int val = h.getSpPrinted() + calcValuePrinted(index);
 		h.setSpPrinted(val);
 		hlpRepo.update(h);
