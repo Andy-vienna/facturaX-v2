@@ -10,6 +10,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -51,6 +53,7 @@ import org.andy.fx.code.dataStructure.repositoryProductive.ArbeitszeitRepository
 import org.andy.fx.code.dataStructure.repositoryProductive.HelperRepository;
 import org.andy.fx.code.dataStructure.repositoryProductive.WorkTimeRepository;
 import org.andy.fx.code.main.Einstellungen;
+import org.andy.fx.code.misc.App;
 import org.andy.fx.code.misc.BD;
 import org.andy.fx.gui.iconHandler.ButtonIcon;
 import org.andy.fx.gui.main.HauptFenster;
@@ -64,13 +67,17 @@ public class WorkTimePanelFactory extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = LogManager.getLogger(WorkTimePanelFactory.class);
+	@SuppressWarnings("unused") private static App a = new App();
 	private final Font font = new Font("Tahoma", Font.BOLD, 14);
     private final Color titleColor = Color.BLUE;
     
+    private JPanel currentlySelectedPanel = null; // Zeiger für die aktuell angewählte Zeile
+    private long panelId = 0; // Integer für das angewählte Panel
+
     private DayTimes times[] = null;
     private WorkTimePanel[] wtp = new WorkTimePanel[50];
     private JTextField stunden = new JTextField();
-    private JButton[] btn = new JButton[4];
+    private JButton[] btn = new JButton[5];
     private JLabel lblFileTyp = new JLabel();
     
     private final DateTimeFormatter fmt = new DateTimeFormatterBuilder()
@@ -87,7 +94,7 @@ public class WorkTimePanelFactory extends JPanel {
     private final WorkTimeRepository repo = new WorkTimeRepository();
     private final HelperRepository hlpRepo = new HelperRepository();
     private List<WorkTime> wt = null; private Helper hlp = null;
-    private long[] id;
+    private static long[] id;
     private OffsetDateTime[] originalIn = null; private OffsetDateTime[] originalOut = null;
     private String user; private int monthIndex = 0; private String month = null;
 	
@@ -138,6 +145,10 @@ public class WorkTimePanelFactory extends JPanel {
     
 	private void buildPanel(Month m, int daysInMonth, int jahr) {
 		Dimension size = new Dimension(0,0); int x = 0;
+
+		// Listener, die wir an die Kind-Panels weitergeben
+        PanelClickListener clickListener = new PanelClickListener();
+        ChildFocusListener focusListener = new ChildFocusListener();
 		
 		JLabel[] header = new JLabel[6];
 		String[] lbl = new String[] { "Datum", "Anfang", "Ende", "Pause (h)", "Stunden", "Bemerkung" };
@@ -155,6 +166,14 @@ public class WorkTimePanelFactory extends JPanel {
 			size = wtp[0].getPreferredSize();
 			wtp[i].setDatum(d);
 			wtp[i].setBounds(10, 60 + (i * 25), size.width, size.height);
+
+			// 2. Verwende die neuen Hilfsmethoden, um die Listener hinzuzufügen
+			wtp[i].addRecursiveMouseListener(clickListener);
+			wtp[i].addRecursiveFocusListener(focusListener);
+
+            // Speichere eine ID (optional, aber nützlich für das Label)
+			wtp[i].putClientProperty("panelId", i + 1);
+            
 			add(wtp[i]);
 			x = times.length;
 		}
@@ -193,17 +212,23 @@ public class WorkTimePanelFactory extends JPanel {
 		btn[1].addActionListener(e -> doCloseMonth(e, daysInMonth, m, jahr, user));
 		add(btn[1]);
 		
-		btn[2] = createButton("<html>Tag<br>einfügen</html>", ButtonIcon.INSERT.icon(), null);
-		btn[2].setBounds(190, (times.length * 25) + 85, HauptFenster.getButtonx(), HauptFenster.getButtony());
+		btn[2] = createButton("<html>Zeile<br>einfügen</html>", ButtonIcon.INSERT.icon(), null);
+		btn[2].setBounds(170, (times.length * 25) + 85, HauptFenster.getButtonx(), HauptFenster.getButtony());
 		btn[2].setEnabled(true);
-		btn[2].addActionListener(_ -> doInsertDay(daysInMonth, m, jahr));
+		btn[2].addActionListener(_ -> doInsertLine(daysInMonth, m, jahr));
 		add(btn[2]);
 		
 		btn[3] = createButton("<html>Stepelungen<br>laden</html>", ButtonIcon.IMPORT.icon(), null);
-		btn[3].setBounds(10, (times.length * 25) + 85, HauptFenster.getButtonx() + 50, HauptFenster.getButtony());
+		btn[3].setBounds(10, (times.length * 25) + 85, HauptFenster.getButtonx() + 30, HauptFenster.getButtony());
 		btn[3].setEnabled(true);
 		btn[3].addActionListener(e -> doImportRawData(e, m, jahr, user));
 		add(btn[3]);
+		
+		btn[4] = createButton("<html>Zeile<br>löschen</html>", ButtonIcon.DEL.icon(), null);
+		btn[4].setBounds(300, (times.length * 25) + 85, HauptFenster.getButtonx(), HauptFenster.getButtony());
+		btn[4].setEnabled(true);
+		btn[4].addActionListener(_ -> doDeleteLine(panelId));
+		add(btn[4]);
 		
 		JLabel hinweis = new JLabel("<html>Arbeitszeit vom " + month + " bereits abgeschlossen, keine Änderungen mehr möglich ...<br>"
 				+ "download durch Klick auf Dateisymbol</html>");
@@ -243,7 +268,7 @@ public class WorkTimePanelFactory extends JPanel {
 		if (hlp.getTiPrinted() > 0 && getBit(hlp.getTiPrinted(), monthIndex)) {
 			ArbeitszeitRepository azRepo = new ArbeitszeitRepository();
 			Arbeitszeit az = azRepo.findByYearMonth(user, jahr, monthIndex + 1);
-			btn[0].setVisible(false); btn[1].setVisible(false); btn[2].setVisible(false); btn[3].setVisible(false);
+			btn[0].setVisible(false); btn[1].setVisible(false); btn[2].setVisible(false); btn[3].setVisible(false); btn[4].setVisible(false);
 			hinweis.setVisible(true);
 			
 			setIcon(az.getDateiname());
@@ -321,7 +346,7 @@ public class WorkTimePanelFactory extends JPanel {
 
 	}
 	
-	private void doInsertDay(int daysInMonth, Month m, int year) {
+	private void doInsertLine(int daysInMonth, Month m, int year) {
 		LocalTime lt = null;
 		switch(Einstellungen.getDbSettings().dbType) {
         	case "mssql" -> lt = LocalTime.of(0, 0);
@@ -360,6 +385,15 @@ public class WorkTimePanelFactory extends JPanel {
 		}
 		stunden.setText(doSummeStunden(times.length) + " h");
 		btn[1].setEnabled(true);
+	}
+	
+	private void doDeleteLine(long id) {
+		if (id == 0) return;
+		long data = WorkTimePanelFactory.id[(int) (panelId - 1)];
+		repo.delete(data);
+		panelId = 0; // unbedingt Panelzeiger zurück setzen
+		
+		HauptFenster.actScreen(); // Übersicht aktualisieren
 	}
 	
 	private void doCloseMonth(ActionEvent e, int daysInMonth, Month m, int year, String user) {
@@ -472,4 +506,33 @@ public class WorkTimePanelFactory extends JPanel {
 	    return ((x >>> i) & 1) == 1;
 	}
 	
+	//###################################################################################################################################################
+	// Fokus-Methoden um das aktive Panel zu loggen
+	//###################################################################################################################################################
+	
+    private void setActivePanel(JPanel panelToSelect) {
+        if (panelToSelect == null || panelToSelect == currentlySelectedPanel) { return; }
+        currentlySelectedPanel = panelToSelect;
+        panelId = (int) panelToSelect.getClientProperty("panelId");
+        if (App.DEBUG) System.out.println("Panel " + panelId + " ist ausgewählt. - Datensatz-Id: " + id[(int) (panelId - 1)]);
+    }
+
+    private class PanelClickListener extends MouseAdapter {
+        @Override
+        public void mousePressed(MouseEvent e) {
+            Object source = e.getSource();
+            if (source instanceof JPanel) { setActivePanel((JPanel) source); }
+        }
+    }
+
+    private class ChildFocusListener extends FocusAdapter {
+        @Override
+        public void focusGained(FocusEvent e) {
+            Component childComponent = (Component) e.getSource();
+            JPanel parentPanel = (JPanel) SwingUtilities.getAncestorOfClass(WorkTimePanel.class, childComponent);
+            if (parentPanel != null) { setActivePanel(parentPanel); }
+        }
+    }
+	
 }
+

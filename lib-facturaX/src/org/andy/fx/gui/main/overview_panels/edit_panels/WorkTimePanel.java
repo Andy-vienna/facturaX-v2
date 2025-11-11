@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusListener;
+import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -253,6 +255,43 @@ public final class WorkTimePanel extends JPanel {
 
 	public void setOriginalOut(OffsetDateTime original) {
 		this.originalOut = original;
+	}
+	
+	//###################################################################################################################################################
+	// Fokus-Methoden um das aktive Panel zu loggen
+	//###################################################################################################################################################
+
+	public void addRecursiveMouseListener(MouseListener listener) {
+		this.addMouseListener(listener);
+	}
+
+	public void addRecursiveFocusListener(FocusListener listener) {
+		// DatePicker
+		datum.getComponentDateTextField().addFocusListener(listener);
+
+		// TimePickers (ztf[] sind die Textfelder darin)
+		for (int i = 0; i < zeit.length; i++) {
+			if (ztf[i] != null) {
+				ztf[i].addFocusListener(listener);
+			}
+			if (zeit[i] != null) {
+				zeit[i].getComponentSpinnerPanel().addFocusListener(listener);
+			}
+		}
+
+		// TextFields
+		// txtField[1] ist laut Code 'setFocusable(false)'
+		if (txtField[0] != null) {
+			txtField[0].addFocusListener(listener);
+		}
+		if (projekt != null) {
+			projekt.addFocusListener(listener);
+		}
+
+		// Button
+		if (btn != null) {
+			btn.addFocusListener(listener);
+		}
 	}
 
 }

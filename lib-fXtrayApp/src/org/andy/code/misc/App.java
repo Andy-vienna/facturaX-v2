@@ -11,6 +11,7 @@ import org.andy.code.main.StartUp;
 
 public class App {
 	
+	public boolean DEBUG = false;
 	public static String DB = null;
 	public String JDK = null;
 	public String LICENSE = null;
@@ -24,6 +25,7 @@ public class App {
 	// ###################################################################################################################################################
 	
 	public App() {
+		DEBUG = Boolean.getBoolean("app.debug");
 		String[] tmp = selectBuildInfo();
 		TIME = tmp[0];
 		JDK = tmp[1];

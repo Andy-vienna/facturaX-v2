@@ -14,6 +14,7 @@ import org.andy.fx.code.main.StartUp;
 
 public class App {
 	
+	public static boolean DEBUG = false;
 	public static String DB = null;
 	public String JDK = null;
 	public String LICENSE = null;
@@ -27,7 +28,7 @@ public class App {
 	// ###################################################################################################################################################
 	
 	public App() {
-		boolean DEBUG = Boolean.getBoolean("app.debug");
+		DEBUG = Boolean.getBoolean("app.debug");
 		LicMode lm = selectLicense(DEBUG);
 		String[] tmp = selectBuildInfo(DEBUG);
 		TIME = tmp[0];
