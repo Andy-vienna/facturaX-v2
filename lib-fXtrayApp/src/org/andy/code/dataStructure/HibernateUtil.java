@@ -1,7 +1,7 @@
 package org.andy.code.dataStructure;
 
 import org.andy.code.dataStructure.entity.WorkTimeRaw;
-import org.andy.code.main.Einstellungen;
+import org.andy.code.main.Settings;
 import org.andy.code.misc.App;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
@@ -47,9 +47,9 @@ public class HibernateUtil {
                 "org.hibernate.hikaricp.internal.HikariCPConnectionProvider");
 
         // ---- HikariCP-Einstellungen (DB2) ----
-        settings.put("hibernate.hikari.jdbcUrl", Einstellungen.getsData());
-        settings.put("hibernate.hikari.username", Einstellungen.getDbSettings().dbUser);
-        settings.put("hibernate.hikari.password", Einstellungen.getDbSettings().dbPass);
+        settings.put("hibernate.hikari.jdbcUrl", Settings.getsData());
+        settings.put("hibernate.hikari.username", Settings.getSettings().dbUser);
+        settings.put("hibernate.hikari.password", Settings.getSettings().dbPass);
 
         settings.put("hibernate.hikari.maximumPoolSize", "10");
         settings.put("hibernate.hikari.minimumIdle", "2");
@@ -61,7 +61,7 @@ public class HibernateUtil {
         // Hibernate
         settings.put("hibernate.show_sql", "false");
         settings.put("hibernate.format_sql", "false");
-        settings.put("hibernate.hbm2ddl.auto", Einstellungen.getDbSettings().dbMode);
+        settings.put("hibernate.hbm2ddl.auto", "none");
 
         StandardServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
                 .applySettings(settings)

@@ -1,5 +1,8 @@
 package org.andy.fx.code.dataStructure;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.andy.fx.code.dataStructure.entityMaster.Artikel;
 import org.andy.fx.code.dataStructure.entityMaster.Bank;
 import org.andy.fx.code.dataStructure.entityMaster.Gwb;
@@ -10,7 +13,6 @@ import org.andy.fx.code.dataStructure.entityMaster.Tax;
 import org.andy.fx.code.dataStructure.entityMaster.Text;
 import org.andy.fx.code.dataStructure.entityMaster.User;
 import org.andy.fx.code.dataStructure.entityProductive.Angebot;
-import org.andy.fx.code.dataStructure.entityProductive.Arbeitszeit;
 import org.andy.fx.code.dataStructure.entityProductive.Ausgaben;
 import org.andy.fx.code.dataStructure.entityProductive.Bestellung;
 import org.andy.fx.code.dataStructure.entityProductive.Einkauf;
@@ -20,8 +22,6 @@ import org.andy.fx.code.dataStructure.entityProductive.Lieferschein;
 import org.andy.fx.code.dataStructure.entityProductive.Rechnung;
 import org.andy.fx.code.dataStructure.entityProductive.SVSteuer;
 import org.andy.fx.code.dataStructure.entityProductive.Spesen;
-import org.andy.fx.code.dataStructure.entityProductive.WorkTime;
-import org.andy.fx.code.dataStructure.entityProductive.WorkTimeRaw;
 import org.andy.fx.code.main.Einstellungen;
 import org.andy.fx.code.misc.App;
 import org.apache.logging.log4j.Level;
@@ -32,9 +32,6 @@ import org.hibernate.boot.Metadata;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class HibernateUtil {
 
@@ -156,9 +153,6 @@ public class HibernateUtil {
         sources.addAnnotatedClass(Einkauf.class);
         sources.addAnnotatedClass(Ausgaben.class);
         sources.addAnnotatedClass(Spesen.class);
-        sources.addAnnotatedClass(WorkTime.class);
-        sources.addAnnotatedClass(WorkTimeRaw.class);
-        sources.addAnnotatedClass(Arbeitszeit.class);
         sources.addAnnotatedClass(SVSteuer.class);
 
         Metadata metadata = sources.getMetadataBuilder().build();

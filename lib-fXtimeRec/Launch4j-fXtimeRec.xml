@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch4jConfig>
+  <dontWrapJar>false</dontWrapJar>
+  <headerType>gui</headerType>
+  <jar>C:\Users\andre\Documents\eclipse.workspace\facturaX-v2\lib-fXtimeRec\target\fXtimeRec-1.0.0.jar</jar>
+  <outfile>C:\Users\andre\Documents\eclipse.workspace\tools.release\facturaX\tray-app\fXTime.exe</outfile>
+  <errTitle></errTitle>
+  <cmdLine></cmdLine>
+  <chdir>.</chdir>
+  <priority>normal</priority>
+  <downloadUrl></downloadUrl>
+  <supportUrl></supportUrl>
+  <stayAlive>false</stayAlive>
+  <restartOnCrash>false</restartOnCrash>
+  <manifest></manifest>
+  <icon>C:\Users\andre\Documents\eclipse.workspace\facturaX-v2\lib-fXtimeRec\src\org\resources\icons\icon.ico</icon>
+  <jre>
+    <path>%JAVA_HOME%;%PATH%</path>
+    <requiresJdk>true</requiresJdk>
+    <requires64Bit>true</requires64Bit>
+    <minVersion>24</minVersion>
+    <maxVersion>25</maxVersion>
+    <opt>--enable-native-access=ALL-UNNAMED</opt>
+  </jre>
+</launch4jConfig>

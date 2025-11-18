@@ -1,0 +1,202 @@
+package org.andy.gui.main.panels;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.Month;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.util.List;
+import java.util.Locale;
+
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+
+import org.andy.code.dataStructure.entity.TimeAccount;
+import org.andy.code.dataStructure.entity.WorkTimeSheet;
+import org.andy.code.dataStructure.repository.TimeAccountRepository;
+import org.andy.code.dataStructure.repository.WorkTimeSheetRepository;
+import org.andy.code.main.Settings;
+import org.andy.code.misc.BD;
+import org.andy.code.misc.BankHoliday;
+
+public class TimeAccountPanel extends JPanel {
+	
+	private static final long serialVersionUID = 1L;
+	private final Font font = new Font("Tahoma", Font.BOLD, 14);
+    private final Color titleColor = Color.BLUE;
+    
+    private static JTextField[] account = new JTextField[9];
+    
+    private final DateTimeFormatter fmt = new DateTimeFormatterBuilder()
+            .parseCaseInsensitive()
+            .appendPattern("[MMMM][MMM]") // voll oder kurz
+            .toFormatter(Locale.GERMAN);
+    
+    private final TimeAccountRepository taRepo = new TimeAccountRepository();
+    private final WorkTimeSheetRepository tsRepo = new WorkTimeSheetRepository();
+    private TimeAccount ta = null;
+    private List<WorkTimeSheet> ts = null;
+    
+    private String user;  private BigDecimal kumulOvertime = BD.ZERO;
+    
+    private static BigDecimal aktWorktime = BD.ZERO;
+    private static BigDecimal aktOvertime = BD.ZERO;
+
+	//###################################################################################################################################################
+	// public Teil
+	//###################################################################################################################################################
+	
+    public TimeAccountPanel(String month, String user) {
+        setLayout(null);
+        this.user = user;
+        TitledBorder border = BorderFactory.createTitledBorder(
+            BorderFactory.createLineBorder(Color.GRAY),
+            "Kontenübersicht"
+        );
+        border.setTitleFont(font);
+        border.setTitleColor(titleColor);
+        border.setTitleJustification(TitledBorder.LEFT);
+        border.setTitlePosition(TitledBorder.TOP);
+        setBorder(border);
+
+        int yearInt = Settings.getSettings().year;
+        Month m = Month.from(fmt.parse(month)); // z.B. "Februar", "März"
+      
+        ta = new TimeAccount();
+        ta = taRepo.findByUser(user);
+        if (ta == null) {
+        	TimeAccount h = new TimeAccount();
+        	h.setTiPrinted(0);
+        	h.setUserName(user);
+        	taRepo.save(h);
+        }
+        
+        buildPanel(m, yearInt);
+    }
+	
+	//###################################################################################################################################################
+	// private Teil
+	//###################################################################################################################################################
+    
+    private void buildPanel(Month m, int year) {
+		Dimension size = new Dimension(0,0); int y = 30;
+		
+		JLabel[] label = new JLabel[9];
+		String[] lbl = new String[] { "Stunden pro Woche lt. Vertrag:", "Stunden pro Tag:", "Arbeitstage im Monat:",
+				"Stunden im akt. Monat SOLL:", "", "Stunden im akt. Monat IST:", "Überstunden akt. Monat:", "", "Überstunden aus abgeschl. Monaten:"  };
+		for (int i = 0; i < lbl.length; i++) {
+			label[i] = new JLabel(lbl[i]);
+			label[i].setHorizontalAlignment(SwingConstants.RIGHT);
+			label[i].setBounds(10, y + (i * 25), 200, 25);
+			add(label[i]);
+			size.height = y + (i * 25);
+		}
+		size.width = 210;
+		
+		for (int i = 0; i < account.length; i++) {
+			account[i] = new JTextField();
+			account[i].setHorizontalAlignment(SwingConstants.RIGHT);
+			account[i].setBounds(size.width + 5, y + (i * 25), 150, 25);
+			account[i].getDocument().addDocumentListener(new DocumentListener() {
+				  @Override public void insertUpdate(DocumentEvent e) { onChange(); }
+				  @Override public void removeUpdate(DocumentEvent e) { onChange(); }
+				  @Override public void changedUpdate(DocumentEvent e) { }
+			});
+			account[i].setFocusable(false);
+			add(account[i]);
+		}
+		account[4].setVisible(false); account[7].setVisible(false);
+		size.width = 365;
+		
+		JSeparator sep1 = new JSeparator();
+		sep1.setForeground(Color.DARK_GRAY);
+        sep1.setBounds(10, 40 + (4 * 25), size.width - 10, 8);
+        sep1.setOrientation(SwingConstants.HORIZONTAL);
+        add(sep1);
+        
+        JSeparator sep2 = new JSeparator();
+		sep2.setForeground(Color.DARK_GRAY);
+        sep2.setBounds(10, 40 + (7 * 25), size.width - 10, 8);
+        sep2.setOrientation(SwingConstants.HORIZONTAL);
+        add(sep2);
+        
+        size.width = 375;
+        size.height = size.height + 45;
+		
+		loadData(year, m);
+		
+		setPreferredSize(size);
+    }
+    
+    
+    
+    private void loadData(int year, Month m) {
+    	ta = taRepo.findByUser(user); ts = tsRepo.findByUserYear(user, year);
+    	kumulOvertime = BD.ZERO;
+    	for (int n = 0; n < ts.size(); n++) {
+    		WorkTimeSheet wts = ts.get(n);
+    		kumulOvertime = kumulOvertime.add(wts.getOvertime());
+    	}
+    	aktWorktime = WorkTimePanel.getWorktime();
+    	aktOvertime = WorkTimePanel.getOvertime();
+    	
+    	YearMonth ym = YearMonth.of(year, m);
+		int workDays = BankHoliday.workdaysInMonth(ym, "at", "w"); // Anzahl Arbeitstage im Monat
+		
+		BigDecimal hoursDay = ta.getContractHours().divide(BD.FIVE).setScale(2, RoundingMode.HALF_UP);
+		BigDecimal hoursMonth = hoursDay.multiply(new BigDecimal(workDays)).setScale(2, RoundingMode.HALF_UP);
+		
+		account[0].setText(ta.getContractHours().toString());
+		account[1].setText(hoursDay.toString());
+		account[2].setText(String.valueOf(workDays));
+		account[3].setText(hoursMonth.toString());
+		
+		account[5].setText(aktWorktime.toString());
+		account[6].setText(aktOvertime.toString());
+		
+		account[8].setText(kumulOvertime.toString());
+		
+    }
+    
+	//###################################################################################################################################################
+	// Hilfsmethoden
+	//###################################################################################################################################################
+    
+    private void onChange() {
+    	
+    }
+    
+	//###################################################################################################################################################
+	// Getter und Setter
+	//###################################################################################################################################################
+
+	public BigDecimal getAktWorktime() {
+		return aktWorktime;
+	}
+
+	public static void setAktWorktime(BigDecimal aktWorktime) {
+		TimeAccountPanel.aktWorktime = aktWorktime;
+		account[4].setText(aktWorktime.toString());
+	}
+
+	public BigDecimal getAktOvertime() {
+		return aktOvertime;
+	}
+
+	public static void setAktOvertime(BigDecimal aktOvertime) {
+		TimeAccountPanel.aktOvertime = aktOvertime;
+		account[5].setText(aktOvertime.toString());
+	}
+
+}

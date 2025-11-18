@@ -1,7 +1,10 @@
-selfsigned KeyStore erzeugen (hier: 1440 Tage gültig):
+selfsigned KeyStore erzeugen (hier: 3650 Tage gültig):
 ------------------------------------------------------
-keytool -genkey -keyalg RSA -alias selfsigned -keystore keystore.jks -storepass password -validity 1440 -keysize 2048 -ext SAN=IP:192.168.1.60
+keytool -genkeypair -alias timetracker-ca -keyalg RSA -keysize 2048 -validity 3650 -keystore keystore.jks -storepass password -dname "CN=Andy, OU=Software, O=Andreas Fischer e.U., L=Wien, ST=Wien, C=AT" -ext BasicConstraints=ca:true -ext SubjectAlternativeName=ip:192.168.1.60 -ext KeyUsage=digitalSignature,keyEncipherment,keyCertSign,cRLSign
 
-server.cert exportieren für App:
+cert.cert exportieren für App:
 --------------------------------
-keytool -exportcert -alias selfsigned -keystore keystore.jks -rfc -file server.crt -storepass password
+keytool -exportcert -alias timetracker-ca -keystore keystore.jks -storepass password -rfc -file downloads\cert.crt
+
+
+

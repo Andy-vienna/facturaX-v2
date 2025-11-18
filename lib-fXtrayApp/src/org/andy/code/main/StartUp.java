@@ -1,14 +1,17 @@
 package org.andy.code.main;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import org.andy.code.httpServer.ServerHttp;
 import org.andy.code.httpsServer.ServerHttps;
 import org.andy.code.misc.App;
 import org.andy.code.misc.GetId;
 import org.andy.gui.main.ClockTrayApp;
+import org.andy.gui.main.SettingsDialog;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,7 +28,7 @@ public class StartUp {
 	private static java.nio.channels.FileLock LOCK;
 	private static java.nio.file.Path LOCK_PATH;
 
-	private static Path fileDB;
+	private static Path fileSettings;
 
 	// ###################################################################################################################################################
 	// Starten der Applikation
@@ -35,14 +38,14 @@ public class StartUp {
 
 		// 1) Logging konfigurieren
 		System.setProperty("log4j.configurationFile", "classpath:log4j2.xml");
-		logger.debug("fX-Zeiterfassung startet ..."); // zwingt Initialisierung
+		logger.debug("fXtrayApp startet ..."); // zwingt Initialisierung
 		Exit.init(); // Exit-Codes laden
 		//-----------------------------------------------------------------------------------------------------------------------
 		// 2) ShutdownHook initialisieren
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {	releaseSingleInstanceLock(); }));
 		//-----------------------------------------------------------------------------------------------------------------------
 		// 3) Einstellungs-Dateien festlegen und reagieren, wenn nicht da
-		boolean db = Einstellungen.fileExist("settingsDb.json");
+		boolean db = Settings.fileExist("settings.json");
 		if (!db) {
 			JOptionPane.showMessageDialog(null,
 					"<html>DB-Einstellungen nicht vorhanden<br>Anwendung wird beendet ...",
@@ -50,7 +53,7 @@ public class StartUp {
 			StartUp.gracefulQuit(90);
 		}
 		Path dir = Path.of(System.getProperty("user.dir"));
-		fileDB = dir.resolve("settingsDb.json"); // Dateiname anhängen
+		fileSettings = dir.resolve("settings.json"); // Dateiname anhängen
 		//-----------------------------------------------------------------------------------------------------------------------
 		// 4) Globale Fehlerbehandlung
 		Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
@@ -66,7 +69,7 @@ public class StartUp {
 		}
 		//-----------------------------------------------------------------------------------------------------------------------
 		// 6) Einstellungen laden
-		Einstellungen.LoadProgSettings(fileDB);
+		Settings.LoadAllSettings(fileSettings);
 		//-----------------------------------------------------------------------------------------------------------------------
 		// 7) UI auf EDT starten
 		SwingUtilities.invokeLater(() -> {
@@ -84,11 +87,23 @@ public class StartUp {
 				logger.error("cannot load FlatIntelliJLaf theme", ex1);
 			}
 			//-------------------------------------------------------------------------------------------------------------------
-			// 7.2) // HTTPS Server initialisieren und starten
+			// 7.2) // prüfen, ob das Zertifikat zur Verfügung steht
+			Path keystorePath = Path.of("keystore.jks"); Path certPath = Path.of("downloads\\cert.crt");
+			if (!Files.exists(keystorePath) || !Files.exists(certPath)) {
+				JOptionPane.showMessageDialog(null, "<html>kein Zertifikat vorhanden, bitte erzeugen und exportieren ...<br>"
+						+ "Anschließend bitte fXtrayApp neu starten !", "Zertifikat", JOptionPane.ERROR_MESSAGE, null);
+				SettingsDialog settings = new SettingsDialog();
+		    	settings.setVisible(true);
+		    	return;
+			}
+			//-------------------------------------------------------------------------------------------------------------------
+			// 7.3) // HTTPS Server initialisieren und starten
+			ServerHttp.startServer();
 			try {
 				ServerHttps.startServer();
-			} catch (Exception ex2) {
-				logger.error("HTTPS Server kann nicht gestartet werden: " + ex2.getMessage());
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
 			//-------------------------------------------------------------------------------------------------------------------
 			// 7.1) // App-UI starten
@@ -148,7 +163,7 @@ public class StartUp {
 	// ###################################################################################################################################################
 
 	public static Path getFileDB() {
-		return fileDB;
+		return fileSettings;
 	}
 	
 }

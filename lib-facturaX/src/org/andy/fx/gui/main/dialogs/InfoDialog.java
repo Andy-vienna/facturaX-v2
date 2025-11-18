@@ -43,17 +43,6 @@ public final class InfoDialog extends JDialog {
 			+ "<tr><td style='font-size:8px;padding-right:8px;white-space:nowrap;'>Java JDK version :</td>"
 			+ "<td><span style='font-size:8px;color:red;'>%s</span></td></tr>"
 			+ "</html>";
-	private static final String DBMODULE_HTML =
-			"<html>"
-			+ "<div style='font-size:10px;font-weight:bold;'>%s(%s)</div>"
-			+ "<table style='font-size:10px;font-weight:bold;' cellspacing='0' cellpadding='0'>"
-			+ "<tr><td width='140' style='font-size:8px;padding-right:8px;white-space:nowrap;'>built date / time :</td>"
-			+ "<td><span style='font-size:8px;color:blue;'>%s</span></td></tr>"
-			+ "<tr><td style='font-size:8px;padding-right:8px;white-space:nowrap;'>Java JDK version :</td>"
-			+ "<td><span style='font-size:8px;color:red;'>%s</span></td></tr>"
-			+ "<tr><td style='font-size:8px;padding-right:8px;white-space:nowrap;'>Database-Server :</td>"
-			+ "<td><span style='font-size:8px;color:red;'>%s</span></td></tr>"
-			+ "</html>";
 	private static final String TEXT_B_HTML =
             """
             <html style='font-family:sans-serif;'>
@@ -100,7 +89,6 @@ public final class InfoDialog extends JDialog {
         root.setBorder(new EmptyBorder(8, 5, 8, 5));
         
         String[] idStarter = id.appInfo("starter");
-        String[] idTray = id.appInfo("tray");
         String[] idHtml = id.appInfo("html");
         if (idHtml == null) {
         	idHtml = new String[4];
@@ -162,17 +150,11 @@ public final class InfoDialog extends JDialog {
         gc.insets = new Insets(0, 6, 1, 6);
         gc.gridy = 5; right.add(modA, gc);
         
-        String moduleB = String.format(DBMODULE_HTML, idTray[3], idTray[0], idTray[1], idTray[2], idTray[4]);
+        String moduleB = String.format(MODULE_HTML, idHtml[3], idHtml[0], idHtml[1], idHtml[2]);
 		JLabel modB = new JLabel(moduleB);
         modB.setForeground(new Color(20, 20, 20));
         gc.insets = new Insets(0, 6, 1, 6);
         gc.gridy = 6; right.add(modB, gc);
-        
-        String moduleC = String.format(MODULE_HTML, idHtml[3], idHtml[0], idHtml[1], idHtml[2]);
-		JLabel modC = new JLabel(moduleC);
-        modC.setForeground(new Color(20, 20, 20));
-        gc.insets = new Insets(0, 6, 1, 6);
-        gc.gridy = 7; right.add(modC, gc);
 
         root.add(right, BorderLayout.CENTER);
 

@@ -4,9 +4,10 @@
 	<comment></comment>
 	<projects>
 		<project>lib-facturaX</project>
+		<project>lib-fXtimeRec</project>
+		<project>lib-fXtrayApp</project>
 		<project>lib-fXstarterApp</project>
 		<project>lib-fXhtmlApp</project>
-		<project>lib-fXtrayApp</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

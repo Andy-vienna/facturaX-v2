@@ -18,9 +18,6 @@ public class Helper {
 	@Column(name = "spprinted")
     private int spPrinted;
 	
-	@Column(name = "tiprinted")
-    private int tiPrinted;
-	
 	@Column(name = "username", nullable = false, length = 64)
 	private String userName;
 	
@@ -42,14 +39,6 @@ public class Helper {
 
 	public void setSpPrinted(int spPrinted) {
 		this.spPrinted = spPrinted;
-	}
-	
-	public int getTiPrinted() {
-		return tiPrinted;
-	}
-
-	public void setTiPrinted(int tiPrinted) {
-		this.tiPrinted = tiPrinted;
 	}
 
 	public String getUserName() {

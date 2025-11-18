@@ -89,10 +89,9 @@ import org.andy.fx.gui.main.dialogs.InfoDialog;
 import org.andy.fx.gui.main.dialogs.MahnstufeDialog;
 import org.andy.fx.gui.main.overview_panels.SummenPanelA;
 import org.andy.fx.gui.main.overview_panels.SummenPanelB;
-import org.andy.fx.gui.main.overview_panels.edit_panels.TimeRangePanelFactory;
-import org.andy.fx.gui.main.overview_panels.edit_panels.WorkTimePanelFactory;
 import org.andy.fx.gui.main.overview_panels.edit_panels.EditPanel;
 import org.andy.fx.gui.main.overview_panels.edit_panels.EditPanelFactory;
+import org.andy.fx.gui.main.overview_panels.edit_panels.TimeRangePanelFactory;
 import org.andy.fx.gui.main.overview_panels.edit_panels.factory.AngebotPanel;
 import org.andy.fx.gui.main.overview_panels.edit_panels.factory.AusgabenPanel;
 import org.andy.fx.gui.main.overview_panels.edit_panels.factory.BestellungPanel;
@@ -164,7 +163,7 @@ public class HauptFenster extends JFrame {
     private final JPanel pagePU = new JPanel(new BorderLayout());
     private final JPanel pageEX = new JPanel(new BorderLayout());
     private final JPanel pageST = new JPanel(new BorderLayout());
-    private JPanel status, pageTravel, pageTR, pageOv, pageErg, pageWorkTime, pageWT, pageAdmin, pageSetting, pageMigration, pageVersuch;
+    private JPanel status, pageTravel, pageTR, pageOv, pageErg, pageAdmin, pageSetting, pageMigration, pageVersuch;
 
     // Panels, Tabellen, Summen
     private EditPanel offerPanel, billPanel, bestellungPanel, lieferscheinPanel, purchasePanel, svTaxPanel, expensesPanel;
@@ -183,7 +182,6 @@ public class HauptFenster extends JFrame {
 
     // Auswahl
     private String vZelleAN, vStateAN, vZelleRE, vStateRE, vZelleBE, vStateBE, vZelleLS, vStateLS;
-    private int monthWT = LocalDate.now().getMonthValue();
     private int monthSP = LocalDate.now().getMonthValue();
 
     private static String u, r, m; // user, Rolle, Mail
@@ -273,7 +271,7 @@ public class HauptFenster extends JFrame {
         
         buildMenuBar();    // Menüzeile bauen
         loadData();        // Tabellen-Daten laden
-        buildTabs(role);   // Tabs aufbauen und anzeigen
+        buildTabs();   // Tabs aufbauen und anzeigen
         buildStatusBar();  // Statuszeile bauen
     }
 
@@ -323,18 +321,10 @@ public class HauptFenster extends JFrame {
     //###################################################################################################################################################
     // Tabs
 
-    private void buildTabs(Role role) {
+    private void buildTabs() {
         tabPanel = new JTabbedPane(JTabbedPane.TOP);
         tabPanel.setFont(new Font("Tahoma", Font.BOLD, 12));
-
-        if (TabMask.visible(tc, TabMask.Tab.TIME)) {
-			try {
-				doWorkTimePanel(u);
-			} catch (IOException e) {
-				logger.error("error creating panel for work time: " + e.getMessage());
-			}
-			tabPanel.addTab("Arbeitszeit", TabIcon.TIME.icon(), pageWT);
-		}
+        
         if (TabMask.visible(tc, TabMask.Tab.TRAVEL)) {
 			try {
 				doSpesenPanel(u);
@@ -392,47 +382,6 @@ public class HauptFenster extends JFrame {
 
     //###################################################################################################################################################
     // Panels
-    
-    private void doWorkTimePanel(String user) throws IOException {
-    	
-    	String[] select = { "", "Januar", "Februar", "März", "April", "Mai", "Juni",
-                "Juli", "August", "September", "Oktober", "November", "Dezember"};
-
-        TitledBorder border = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.GRAY), null);
-        border.setTitleJustification(TitledBorder.LEFT);
-        border.setTitlePosition(TitledBorder.TOP);
-
-        pageWT = new JPanel(new BorderLayout());
-        pageWT.setBorder(border);
-
-        JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 5));
-        JLabel lbl = new JLabel("Auswahl Monat für Arbeitszeit:");
-        lbl.setFont(new Font("Arial", Font.BOLD, 12));
-        JComboBox<String> cmbSelect = new JComboBox<>(select);
-        cmbSelect.setFont(new Font("Arial", Font.BOLD, 12));
-        top.add(lbl); top.add(cmbSelect);
-
-        pageWorkTime = new JPanel(new WrapLayout(FlowLayout.LEFT, 5, 5));
-        pageWT.add(top, BorderLayout.NORTH);
-        pageWT.add(new JScrollPane(pageWorkTime), BorderLayout.CENTER);
-    	
-    	cmbSelect.addActionListener(_ -> {
-    		pageWorkTime.removeAll();
-    		if (cmbSelect.getSelectedIndex() == 0) {
-    			pageWorkTime.revalidate(); pageWorkTime.repaint();
-    			return;
-    		}
-    		pageWorkTime.add(new WorkTimePanelFactory(cmbSelect.getSelectedItem().toString(), user));
-    		Month m = Month.from(fmt.parse(cmbSelect.getSelectedItem().toString())); // z.B. "Februar", "März"
-    		monthWT = m.ordinal() + 1; // 1..12
-    		pageWorkTime.revalidate(); pageWorkTime.repaint();
-        });
-    	
-    	cmbSelect.setSelectedIndex(monthWT); // aktuellen Monat laden
-    	
-    }
-    
-    //###################################################################################################################################################
     
     private void doSpesenPanel(String user) throws IOException {
     	
@@ -1403,21 +1352,12 @@ public class HauptFenster extends JFrame {
     	int oldIdx = tabPanel.getSelectedIndex(); // aktuell angewählten Tab sichern
 
     	sTempAN = sTempRE = sTempBE = sTempLS = sTempPU = sTempEX = sTempST = null;
-        pageTR = null; pageOv = null; pageErg = null; pageWT = null;
+        pageTR = null; pageOv = null; pageErg = null; 
         
         status.removeAll();
         this.remove(status);
         loadData(); // Daten neu laden
         
-        if (TabMask.visible(tc, TabMask.Tab.TIME)) {
-			tabPanel.removeTabAt(tabPanel.indexOfTab("Arbeitszeit"));
-			try {
-				doWorkTimePanel(u);
-			} catch (IOException e) {
-				logger.error("error creating panel for work time: " + e.getMessage());
-			}
-			tabPanel.addTab("Arbeitszeit", TabIcon.TIME.icon(), pageWT);
-		}
         if (TabMask.visible(tc, TabMask.Tab.TRAVEL)) {
 			tabPanel.removeTabAt(tabPanel.indexOfTab("Reisespesen"));
 			try {

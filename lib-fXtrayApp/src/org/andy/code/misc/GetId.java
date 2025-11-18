@@ -13,7 +13,7 @@ import javax.swing.JOptionPane;
 public class GetId {
 	
 	private App a = new App();
-	private Path dir = Path.of(System.getProperty("user.home"), "AppData", "Roaming", "FacturaX", "time");
+	private Path dir = Path.of(System.getProperty("user.home"), "AppData", "Roaming", "FacturaX", "tray");
 	
 	public String deviceId() {
 		try {

@@ -5,6 +5,7 @@ import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
@@ -69,12 +70,14 @@ public class ClockTrayApp {
 		if (!SystemTray.isSupported()) throw new IllegalStateException("SystemTray nicht verfügbar");
 
 		// PopUp-Menü aufbauen
-		addItem(menu, "Kommt",        _ -> writeEvent(EVENT_IN, UiState.IN));
-		addItem(menu, "Pause Anfang", _ -> writeEvent(EVENT_BS, UiState.BREAK));
-		addItem(menu, "Pause Ende",   _ -> writeEvent(EVENT_BE, UiState.IN));
-		addItem(menu, "Geht",         _ -> writeEvent(EVENT_OU, UiState.NEUTRAL));
+		addItem(menu, "Kommt",         _ -> writeEvent(EVENT_IN, UiState.IN));
+		addItem(menu, "Pause Anfang",  _ -> writeEvent(EVENT_BS, UiState.BREAK));
+		addItem(menu, "Pause Ende",    _ -> writeEvent(EVENT_BE, UiState.IN));
+		addItem(menu, "Geht",          _ -> writeEvent(EVENT_OU, UiState.NEUTRAL));
 		menu.addSeparator();
-		addItem(menu, "Beenden",      _ -> exit());
+		addItem(menu, "Einstellungen", e -> doSettings(e));
+		menu.addSeparator();
+		addItem(menu, "Beenden",       _ -> exit());
 
 		// letzten Zustand lesen und App in diesen Zustand versetzen
 		setLastState(true);
@@ -162,11 +165,20 @@ public class ClockTrayApp {
 		};
 		return out;
 	}
+	
+	private void doSettings(ActionEvent e) {
+		SettingsDialog settings = new SettingsDialog();
+    	settings.setVisible(true);
+	}
 
 	private void exit() {
 		SystemTray.getSystemTray().remove(trayIcon);
 		StartUp.gracefulQuit(0);
 	}
+	
+	// ###################################################################################################################################################
+	// Getter und Setter
+	// ###################################################################################################################################################
 
 	public static String getUser() {
 		return user;

@@ -16,8 +16,9 @@
 
 	<modules>
 		<module>lib-facturaX</module>
-		<module>lib-fXstarterApp</module>
+		<module>lib-fXtimeRec</module>
 		<module>lib-fXtrayApp</module>
+		<module>lib-fXstarterApp</module>
 		<module>lib-fXhtmlApp</module>
 	</modules>
 
@@ -29,11 +30,15 @@
 			</dependency>
 			<dependency>
 				<groupId>org.andy</groupId>
-				<artifactId>lib-fXstarterApp</artifactId>
+				<artifactId>lib-fXtimeRec</artifactId>
 			</dependency>
 			<dependency>
 				<groupId>org.andy</groupId>
 				<artifactId>lib-fXtrayApp</artifactId>
+			</dependency>
+			<dependency>
+				<groupId>org.andy</groupId>
+				<artifactId>lib-fXstarterApp</artifactId>
 			</dependency>
 			<dependency>
 				<groupId>org.andy</groupId>

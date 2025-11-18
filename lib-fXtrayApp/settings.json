@@ -1,0 +1,13 @@
+{
+  "dbCert": true,
+  "dbData": "dbfXtime",
+  "dbEncrypt": true,
+  "dbHost": "localhost",
+  "dbPass": "P@ssw0rd",
+  "dbPort": "1433",
+  "dbType": "mssql",
+  "dbUser": "data",
+  "year": "2025",
+  "workpath": "C:\\Users\\andre\\Documents\\",
+  "template": "C:\\Users\\andre\\Documents\\eclipse.workspace\\facturaX-v2\\lib-fXtimeRec\\templates\\template-arbeitszeit-deu_v2.12.xlsx"
+}

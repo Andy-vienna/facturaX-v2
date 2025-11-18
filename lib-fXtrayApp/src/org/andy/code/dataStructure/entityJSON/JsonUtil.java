@@ -14,11 +14,11 @@ public class JsonUtil {
 	// json-Files lesen
 	// ###################################################################################################################################################
 
-	public static JsonDb loadDB(Path p) throws IOException {
+	public static JsonSettings loadSettings(Path p) throws IOException {
 		if (Files.notExists(p))
-			return new JsonDb();
+			return new JsonSettings();
 		try (Reader r = Files.newBufferedReader(p, UTF_8)) {
-			return GSON.fromJson(r, JsonDb.class);
+			return GSON.fromJson(r, JsonSettings.class);
 		}
 	}
 	

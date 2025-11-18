@@ -113,7 +113,6 @@ public class TimeRangePanelFactory extends JPanel {
         if (hlp == null) {
         	Helper h = new Helper();
         	h.setSpPrinted(0);
-        	h.setTiPrinted(0);
         	h.setUserName(user);
         	hlpRepo.save(h);
         }
