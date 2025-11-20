@@ -7,6 +7,7 @@ import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GraphicsConfiguration;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -44,6 +45,7 @@ import org.andy.code.misc.BD;
 import org.andy.gui.iconHandler.FrameIcon;
 import org.andy.gui.iconHandler.MenuIcon;
 import org.andy.gui.main.panels.EmployeePanel;
+import org.andy.gui.main.panels.StatisticYearPanel;
 import org.andy.gui.main.panels.TimeAccountPanel;
 import org.andy.gui.main.panels.WorkTimePanel;
 import org.andy.gui.misc.RoundedBorder;
@@ -225,7 +227,7 @@ public class MainWindow extends JFrame {
         cmbUser.setFont(new Font("Arial", Font.BOLD, 12));
         top.add(lblMonth); top.add(cmbMonth); top.add(lblUser); top.add(cmbUser);
 
-        pageWorkTime = new JPanel(new WrapLayout(FlowLayout.LEFT, 5, 5));
+        pageWorkTime = new JPanel(new BorderLayout(5, 5));
         pageWT.add(top, BorderLayout.NORTH);
         pageWT.add(new JScrollPane(pageWorkTime), BorderLayout.CENTER);
     	
@@ -336,8 +338,17 @@ public class MainWindow extends JFrame {
 		TimeAccount ta = taRepo.findByUser(benutzer);
 		BigDecimal hoursDay = ta.getContractHours().divide(BD.FIVE);
 		
-		pageWorkTime.add(new WorkTimePanel(inhalt, benutzer, hoursDay));
-		pageWorkTime.add(new TimeAccountPanel(inhalt, benutzer));
+		JPanel panel = new JPanel(new BorderLayout(5, 5));
+		JPanel panelRe = new JPanel(new GridLayout(2, 1, 30, 5));
+		
+		panelRe.add(new TimeAccountPanel(inhalt, benutzer));
+		panelRe.add(new StatisticYearPanel(Settings.getSettings().year, benutzer));
+		panelRe.setPreferredSize(new Dimension(555, 750));
+        
+		panel.add(new WorkTimePanel(inhalt, benutzer, hoursDay));
+        panel.add(panelRe, BorderLayout.EAST);
+        pageWorkTime.add(panel);
+
 		Month m = Month.from(fmt.parse(inhalt)); // z.B. "Februar", "März"
 		monthWT = m.ordinal() + 1; userWT = cmbUser.getSelectedIndex();
 		pageWorkTime.revalidate(); pageWorkTime.repaint();
@@ -345,10 +356,6 @@ public class MainWindow extends JFrame {
     
     private void changeDisplayedEmployee() {
     	pageEmployee.removeAll();
-		/*if (cmbEmployee.getSelectedIndex() == 0) {
-			pageEmployee.revalidate(); pageEmployee.repaint();
-			return;
-		}*/
 		String benutzer = cmbEmployee.getSelectedItem().toString();
 		
 		pageEmployee.add(new EmployeePanel(benutzer));
@@ -375,6 +382,8 @@ public class MainWindow extends JFrame {
         	case 1 -> { doWorkTimePanel(); contentPane.add(pageWT, BorderLayout.CENTER); }
         	case 2 -> { doEmployeePanel(); contentPane.add(pageEM, BorderLayout.CENTER); }
 	    }
+        
+        if (activeScreen == 1) WorkTimePanel.isButtonEnabled();
 	    
 	    buildStatusBar();
 	    contentPane.revalidate();

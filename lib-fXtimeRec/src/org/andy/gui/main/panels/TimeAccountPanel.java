@@ -36,7 +36,7 @@ public class TimeAccountPanel extends JPanel {
 	private final Font font = new Font("Tahoma", Font.BOLD, 14);
     private final Color titleColor = Color.BLUE;
     
-    private static JTextField[] account = new JTextField[9];
+    private static JTextField[] account = new JTextField[10];
     
     private final DateTimeFormatter fmt = new DateTimeFormatterBuilder()
             .parseCaseInsensitive()
@@ -92,8 +92,8 @@ public class TimeAccountPanel extends JPanel {
     private void buildPanel(Month m, int year) {
 		Dimension size = new Dimension(0,0); int y = 30;
 		
-		JLabel[] label = new JLabel[9];
-		String[] lbl = new String[] { "Stunden pro Woche lt. Vertrag:", "Stunden pro Tag:", "Arbeitstage im Monat:",
+		JLabel[] label = new JLabel[10];
+		String[] lbl = new String[] { "Stunden pro Woche lt. Vertrag:", "Stunden pro Tag entsprechend:", "", "Arbeitstage im Monat:",
 				"Stunden im akt. Monat SOLL:", "", "Stunden im akt. Monat IST:", "Überstunden akt. Monat:", "", "Überstunden aus abgeschl. Monaten:"  };
 		for (int i = 0; i < lbl.length; i++) {
 			label[i] = new JLabel(lbl[i]);
@@ -116,20 +116,32 @@ public class TimeAccountPanel extends JPanel {
 			account[i].setFocusable(false);
 			add(account[i]);
 		}
-		account[4].setVisible(false); account[7].setVisible(false);
+		account[2].setVisible(false);
+		account[4].setBackground(new Color(255,250,205)); account[4].setFont(new Font("Tahoma", Font.BOLD, 11));
+		account[5].setVisible(false);
+		account[6].setBackground(new Color(255,250,205)); account[6].setFont(new Font("Tahoma", Font.BOLD, 11)); account[6].setForeground(Color.BLUE);
+		account[7].setFont(new Font("Tahoma", Font.BOLD, 11));
+		account[8].setVisible(false);
+		account[9].setFont(new Font("Tahoma", Font.BOLD, 11));
 		size.width = 365;
 		
 		JSeparator sep1 = new JSeparator();
 		sep1.setForeground(Color.DARK_GRAY);
-        sep1.setBounds(10, 40 + (4 * 25), size.width - 10, 8);
+        sep1.setBounds(10, 40 + (2 * 25), size.width - 10, 8);
         sep1.setOrientation(SwingConstants.HORIZONTAL);
         add(sep1);
-        
-        JSeparator sep2 = new JSeparator();
+		
+		JSeparator sep2 = new JSeparator();
 		sep2.setForeground(Color.DARK_GRAY);
-        sep2.setBounds(10, 40 + (7 * 25), size.width - 10, 8);
+        sep2.setBounds(10, 40 + (5 * 25), size.width - 10, 8);
         sep2.setOrientation(SwingConstants.HORIZONTAL);
         add(sep2);
+        
+        JSeparator sep3 = new JSeparator();
+		sep3.setForeground(Color.DARK_GRAY);
+        sep3.setBounds(10, 40 + (8 * 25), size.width - 10, 8);
+        sep3.setOrientation(SwingConstants.HORIZONTAL);
+        add(sep3);
         
         size.width = 375;
         size.height = size.height + 45;
@@ -138,8 +150,6 @@ public class TimeAccountPanel extends JPanel {
 		
 		setPreferredSize(size);
     }
-    
-    
     
     private void loadData(int year, Month m) {
     	ta = taRepo.findByUser(user); ts = tsRepo.findByUserYear(user, year);
@@ -159,13 +169,25 @@ public class TimeAccountPanel extends JPanel {
 		
 		account[0].setText(ta.getContractHours().toString());
 		account[1].setText(hoursDay.toString());
-		account[2].setText(String.valueOf(workDays));
-		account[3].setText(hoursMonth.toString());
+		account[3].setText(String.valueOf(workDays));
+		account[4].setText(hoursMonth.toString());
 		
-		account[5].setText(aktWorktime.toString());
-		account[6].setText(aktOvertime.toString());
+		account[6].setText(aktWorktime.toString());
+		account[7].setText(aktOvertime.toString());
 		
-		account[8].setText(kumulOvertime.toString());
+		account[9].setText(kumulOvertime.toString());
+		
+		if (aktOvertime.compareTo(BD.ZERO) < 0) {
+			account[7].setBackground(Color.PINK);
+		} else {
+			account[7].setBackground(new Color(144,238,144));
+		}
+		
+		if (kumulOvertime.compareTo(BD.ZERO) < 0) {
+			account[9].setBackground(Color.PINK);
+		} else {
+			account[9].setBackground(new Color(144,238,144));
+		}
 		
     }
     
@@ -187,7 +209,7 @@ public class TimeAccountPanel extends JPanel {
 
 	public static void setAktWorktime(BigDecimal aktWorktime) {
 		TimeAccountPanel.aktWorktime = aktWorktime;
-		account[4].setText(aktWorktime.toString());
+		account[6].setText(aktWorktime.toString());
 	}
 
 	public BigDecimal getAktOvertime() {
@@ -196,7 +218,7 @@ public class TimeAccountPanel extends JPanel {
 
 	public static void setAktOvertime(BigDecimal aktOvertime) {
 		TimeAccountPanel.aktOvertime = aktOvertime;
-		account[5].setText(aktOvertime.toString());
+		account[7].setText(aktOvertime.toString());
 	}
 
 }

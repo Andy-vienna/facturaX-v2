@@ -44,7 +44,7 @@ public class WorkTimeSheetRepository {
     public List<WorkTimeSheet> findByUserYear(String user, int year){
     	try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.createQuery(
-                    "FROM WorkTimeSheet r WHERE r.jahr = :year AND r.userName = :username", WorkTimeSheet.class)
+                    "FROM WorkTimeSheet r WHERE r.jahr = :year AND r.userName = :username ORDER BY monat", WorkTimeSheet.class)
                     .setParameter("year", year)
                     .setParameter("username", user)
                     .list();

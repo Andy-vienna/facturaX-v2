@@ -79,7 +79,7 @@ public class WorkTimePanel extends JPanel {
     private WorkTimeElement[] wtp = new WorkTimeElement[50];
     private JTextField stunden = new JTextField();
     private JTextField stundenPM = new JTextField();
-    private JButton[] btn = new JButton[5];
+    private static JButton[] btn = new JButton[5];
     private JLabel lblFileTyp = new JLabel();
     
     private final DateTimeFormatter fmt = new DateTimeFormatterBuilder()
@@ -99,6 +99,7 @@ public class WorkTimePanel extends JPanel {
     private static long[] id; private static BigDecimal worktime = BD.ZERO; private static  BigDecimal overtime = BD.ZERO;
     private OffsetDateTime[] originalIn = null; private OffsetDateTime[] originalOut = null;
     private String user; private int monthIndex = 0; private String month = null; private BigDecimal hoursDay = null;
+    private static boolean isCalc = false; private static boolean isAfter = false;
 	
 	//###################################################################################################################################################
 	// public Teil
@@ -122,6 +123,7 @@ public class WorkTimePanel extends JPanel {
         int days = YearMonth.of(yearInt, m).lengthOfMonth();
 
         monthIndex = m.ordinal(); // 0..11
+        isAfter = false;
         
         LocalDate from = LocalDate.of(yearInt, m, 1);
         LocalDate to   = LocalDate.of(yearInt, m, days);
@@ -136,6 +138,9 @@ public class WorkTimePanel extends JPanel {
         }
         
         times = findRange(wt);
+        YearMonth current = YearMonth.now();
+		YearMonth given   = YearMonth.of(yearInt, m.getValue());
+		isAfter = current.isAfter(given);
         
         buildPanel(m, days, yearInt, hoursDay);
     }
@@ -380,7 +385,7 @@ public class WorkTimePanel extends JPanel {
 		nw.setPlusMinus(BD.ZERO);
 		nw.setReason("");
 		wtRepo.save(nw); // neuen Datensatz in DB schreiben
-		
+		isCalc = false;
 		MainWindow.actScreen(); // Übersicht aktualisieren
 	}
 	
@@ -405,9 +410,8 @@ public class WorkTimePanel extends JPanel {
 		stundenPM.setText(val[1].toString() + " h");
 		TimeAccountPanel.setAktWorktime(val[0]); TimeAccountPanel.setAktOvertime(val[1]);
 		worktime = val[0]; overtime = val[1];
-		YearMonth current = YearMonth.now();
-		YearMonth given   = YearMonth.of(year, m.getValue());
-		if (current.isAfter(given)) btn[1].setEnabled(current.isAfter(given)); // Button 'Monatsabschluss' nur aktivieren wenn nach Monatsende
+		isCalc = true;
+		MainWindow.actScreen(); // Übersicht aktualisieren
 	}
 	
 	private void doDeleteLine(long id) {
@@ -493,6 +497,11 @@ public class WorkTimePanel extends JPanel {
 	//###################################################################################################################################################
 	// Hilfsmethoden
 	//###################################################################################################################################################
+	
+	public static void isButtonEnabled() {
+		btn[1].setEnabled(isCalc && isAfter);
+		isCalc = false;
+	}
 	
 	private void setIcon(String fileName) {
 		try {
@@ -604,6 +613,14 @@ public class WorkTimePanel extends JPanel {
 
 	public static BigDecimal getOvertime() {
 		return overtime;
+	}
+
+	public static boolean isCalc() {
+		return isCalc;
+	}
+
+	public static boolean isAfter() {
+		return isAfter;
 	}
 
 }

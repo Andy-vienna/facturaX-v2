@@ -3,7 +3,7 @@
   <dontWrapJar>false</dontWrapJar>
   <headerType>gui</headerType>
   <jar>C:\Users\andre\Documents\eclipse.workspace\facturaX-v2\lib-fXtimeRec\target\fXtimeRec-1.0.0.jar</jar>
-  <outfile>C:\Users\andre\Documents\eclipse.workspace\tools.release\facturaX\tray-app\fXTime.exe</outfile>
+  <outfile>C:\Users\andre\Documents\eclipse.workspace\tools.release\facturaX\fXtime\fXTime.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>
   <chdir>.</chdir>
