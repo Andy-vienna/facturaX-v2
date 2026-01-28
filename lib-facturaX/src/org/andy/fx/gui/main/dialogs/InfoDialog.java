@@ -97,9 +97,9 @@ public final class InfoDialog extends JDialog {
         
         JsonAI ai = CheckEnvAI.getSettingsAI();
         String aiState = "not enabled";
-        boolean aiAny = ai.isOAuth2Login || ai.isGeminiAPI || ai.isDocumentAI;
+        boolean aiAny = ai.isOAuth2Login || ai.isDocumentAI;
         if (aiAny) aiState = "partially enabled";
-        if (ai.isOAuth2Login && ai.isGeminiAPI && ai.isDocumentAI) aiState = "fully enabled";
+        if (ai.isOAuth2Login && ai.isDocumentAI) aiState = "fully enabled";
 
         // Right: Titel, Untertitel, Lizenztext
         JPanel right = new JPanel(new GridBagLayout());

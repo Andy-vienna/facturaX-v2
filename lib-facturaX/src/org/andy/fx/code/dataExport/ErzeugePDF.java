@@ -54,6 +54,38 @@ public class ErzeugePDF {
 		PdfStandardsConverter converter = new PdfStandardsConverter(sFilePDF); // pdf zu pdf-A wandeln
 		converter.toPdfA1A(sFilePDF);
 	}
+	
+	public void wordToPDF(String sFileWord, String sFilePDF) {
+	    // Word Instanz starten
+	    ActiveXComponent word = new ActiveXComponent("Word.Application");
+	    Dispatch document = null;
+	    try {
+	        word.setProperty("Visible", false); // Im Hintergrund
+	        Dispatch documents = word.getProperty("Documents").toDispatch();
+	        
+	        // Dokument öffnen
+	        document = Dispatch.call(documents, "Open", sFileWord).toDispatch();
+
+	        // ExportAsFixedFormat für Word
+	        // Parameter 17 steht für wdExportFormatPDF
+	        Dispatch.call(document, "ExportAsFixedFormat", sFilePDF, 17);
+
+	    } catch (Exception e) {
+	        logger.error("wordToPDF - Fehler: " + e.getMessage());
+	    } finally {
+	        if (document != null) {
+	            Dispatch.call(document, "Close", false);
+	        }
+	        word.invoke("Quit", 0);
+	        word = null;
+	        System.gc();
+	        ComThread.Release();
+	    }
+
+	    // Dein PDF-A Konverter bleibt gleich
+	    PdfStandardsConverter converter = new PdfStandardsConverter(sFilePDF);
+	    converter.toPdfA1A(sFilePDF);
+	}
 
 	public void setPdfMetadata(String sNr, String sTyp, String sPdf) throws Exception {
 		//String[] tmp = SQLmasterData.getsArrOwner();

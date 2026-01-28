@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileLock;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import javax.swing.JOptionPane;
 
@@ -27,9 +26,6 @@ public class Einstellungen {
 
 	private static String sMasterData;
 	private static String sProductiveData;
-
-	private static String htmlBaseText;
-	private static String htmlBaseStyle;
 
 	// ###################################################################################################################################################
 	// public teil
@@ -61,7 +57,6 @@ public class Einstellungen {
 		} else {
 			JsonAI aiSettings = CheckEnvAI.getSettingsAI();
 			aiSettings.isDocumentAI = false;
-			aiSettings.isGeminiAPI = false;
 			aiSettings.isOAuth2Login = false;
 			CheckEnvAI.setSettingsAI(aiSettings);
 		}
@@ -89,39 +84,11 @@ public class Einstellungen {
     		break;
     	}
 		
-		htmlBaseText = htmlBaseText();
-		htmlBaseStyle = htmlBaseStyle();
-		
-		
 	}
 
 	// ###################################################################################################################################################
 	// Hilfsmethoden
 	// ###################################################################################################################################################
-	
-	private static String htmlBaseText() {
-		if (appSettings.tplDescriptionBase.equals("---") || appSettings.tplDescriptionBase.isEmpty()) return null;
-		Path path = Path.of(appSettings.tplDescriptionBase);
-        String content = null;
-		try {
-			content = Files.readString(path);
-		} catch (IOException e) {
-			logger.error("error reading htmlbasetext: " + e.getMessage());
-		}
-        return content;
-	}
-	
-	private static String htmlBaseStyle() {
-		if (appSettings.tplDescriptionStyle.equals("---") || appSettings.tplDescriptionStyle.isEmpty()) return null;
-		Path path = Path.of(appSettings.tplDescriptionStyle);
-        String content = null;
-		try {
-			content = Files.readString(path);
-		} catch (IOException e) {
-			logger.error("error reading htmlbasestyle: " + e.getMessage());
-		}
-        return content;
-	}
 	
 	static boolean fileExist(String fileName) {
 		File f = new File(fileName);
@@ -159,14 +126,6 @@ public class Einstellungen {
 
 	public static String getsProductiveData() {
 		return sProductiveData;
-	}
-
-	public static String getHtmlBaseText() {
-		return htmlBaseText;
-	}
-
-	public static String getHtmlBaseStyle() {
-		return htmlBaseStyle;
 	}
 
 	public static void setAppSettings(JsonApp appSettings) {

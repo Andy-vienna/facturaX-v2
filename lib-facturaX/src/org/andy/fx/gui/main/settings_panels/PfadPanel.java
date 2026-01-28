@@ -40,7 +40,7 @@ public class PfadPanel extends JPanel {
 	Font font = new Font("Tahoma", Font.BOLD, 11);
 	Color titleColor = Color.BLUE; // oder z. B. new Color(30, 60, 150);
 	
-	private JTextField[] txtFields = new JTextField[15];
+	private JTextField[] txtFields = new JTextField[13];
 	
 	//###################################################################################################################################################
 	// public Teil
@@ -70,9 +70,7 @@ public class PfadPanel extends JPanel {
 		String labels[] = {
 				"Angebot Vorlage (Excel-Vorlage *.xlsx)",
 				"Angebotsrevision Vorlage (Excel-Vorlage *.xlsx)",
-				"Leistungsbeschreibung Vorlage (pdf-Vorlage *.pdf)",
-				"Leistungsbeschreibung Basistext (html-Vorlage *.html)",
-				"Leistungsbeschreibung StyleSheet (css-Struktur *.css)",
+				"Leistungsbeschreibung Vorlage (Word-Vorlage *.docx)",
 				"Auftragsbestätigung Vorlage (Excel-Vorlage *.xlsx)",
 				"Rechnung Vorlage (Excel-Vorlage *.xlsx)",
 				"Zahlungserinnerung Vorlage (Excel-Vorlage *.xlsx)",
@@ -117,18 +115,16 @@ public class PfadPanel extends JPanel {
 	                	s.tplOffer = txtFields[0].getText();
 	                	s.tplOfferRev = txtFields[1].getText();
 	                	s.tplDescription = txtFields[2].getText();
-	                	s.tplDescriptionBase = txtFields[3].getText();
-	                	s.tplDescriptionStyle = txtFields[4].getText();
-	                	s.tplOfferConfirm = txtFields[5].getText();
-	                	s.tplBill = txtFields[6].getText();
-	                	s.tplReminder = txtFields[7].getText();
-	                	s.tplStrictReminder = txtFields[8].getText();
-	                	s.tplOrder = txtFields[9].getText();
-	                	s.tplDeliveryNote = txtFields[10].getText();
-	                	s.tplP109a = txtFields[11].getText();
-	                	s.tplSpesen = txtFields[12].getText();
-	                	s.tplArbeitszeit = txtFields[13].getText();
-	                	s.work = txtFields[14].getText();
+	                	s.tplOfferConfirm = txtFields[3].getText();
+	                	s.tplBill = txtFields[4].getText();
+	                	s.tplReminder = txtFields[5].getText();
+	                	s.tplStrictReminder = txtFields[6].getText();
+	                	s.tplOrder = txtFields[7].getText();
+	                	s.tplDeliveryNote = txtFields[8].getText();
+	                	s.tplP109a = txtFields[9].getText();
+	                	s.tplSpesen = txtFields[10].getText();
+	                	s.tplArbeitszeit = txtFields[11].getText();
+	                	s.work = txtFields[12].getText();
 	                	
 	                	try {
 							JsonUtil.saveAPP(StartUp.getFileApp(), s);
@@ -170,8 +166,6 @@ public class PfadPanel extends JPanel {
         _ -> Einstellungen.getAppSettings().tplOffer,
         _ -> Einstellungen.getAppSettings().tplOfferRev,
         _ -> Einstellungen.getAppSettings().tplDescription,
-        _ -> Einstellungen.getAppSettings().tplDescriptionBase,
-        _ -> Einstellungen.getAppSettings().tplDescriptionStyle,
         _ -> Einstellungen.getAppSettings().tplOfferConfirm,
         _ -> Einstellungen.getAppSettings().tplBill,
         _ -> Einstellungen.getAppSettings().tplReminder,

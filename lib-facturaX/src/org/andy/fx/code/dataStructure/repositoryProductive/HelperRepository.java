@@ -17,14 +17,15 @@ public class HelperRepository {
 		}
 	}
 	
-	public Helper findByUser(String userName) {
-		try (Session session = HibernateUtil.getSessionFactoryDb2().openSession()) {
-            return session.createQuery("FROM Helper s where s.userName = :u", Helper.class)
-                .setParameter("u", userName)
-                .getSingleResult();
-        } catch (NoResultException e) {
-        	return null;
-        }
+	public Helper findByUserAndYear(String userName, int year) {
+	    try (Session session = HibernateUtil.getSessionFactoryDb2().openSession()) {
+	        return session.createQuery("FROM Helper s WHERE s.userName = :u AND s.year = :y", Helper.class)
+	            .setParameter("u", userName)
+	            .setParameter("y", year)
+	            .getSingleResult();
+	    } catch (NoResultException e) {
+	        return null;
+	    }
 	}
 	
 	public void save(Helper helper) {

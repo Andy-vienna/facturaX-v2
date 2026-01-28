@@ -343,6 +343,7 @@ public class SvTaxPanel extends EditPanel {
     
     private boolean checkInput() {
     	if (datePicker[0].getDate() == null) return false;
+    	if (datePicker[1].getDate() == null) return false;
     	if (cmbOrganisation.getSelectedIndex() < 1) return false;
     	if (cmbOrganisation.getSelectedIndex() > 0 && cmbBezeichnung.getSelectedIndex() == 0) {
     		for (int i = 0; i < txtFields.length - 1; i++) {

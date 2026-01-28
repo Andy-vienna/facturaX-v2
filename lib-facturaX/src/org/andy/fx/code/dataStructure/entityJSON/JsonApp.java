@@ -15,8 +15,6 @@ public class JsonApp {
 	public String tplReminder;
 	public String tplStrictReminder;
 	public String tplDescription;
-	public String tplDescriptionBase;
-	public String tplDescriptionStyle;
 	public String work;
 	public int year;
 	

@@ -109,9 +109,10 @@ public class TimeRangePanelFactory extends JPanel {
         LocalDate to   = LocalDate.of(yearInt, m, days);
 
         ls = new ArrayList<>(); hlp = new Helper();
-        ls = repo.findByDateBetween(from, to); hlp = hlpRepo.findByUser(user);
+        ls = repo.findByDateBetween(from, to); hlp = hlpRepo.findByUserAndYear(user, yearInt);
         if (hlp == null) {
         	Helper h = new Helper();
+        	h.setYear(yearInt);
         	h.setSpPrinted(0);
         	h.setUserName(user);
         	hlpRepo.save(h);
@@ -188,7 +189,7 @@ public class TimeRangePanelFactory extends JPanel {
 		add(hinweis);
 		
 		btn[0].setVisible(true); btn[1].setVisible(true);
-		hlp = hlpRepo.findByUser(user);
+		hlp = hlpRepo.findByUserAndYear(user, jahr);
 		if (hlp.getSpPrinted() > 0 && getBit(hlp.getSpPrinted(), monthIndex)) {
 			btn[0].setVisible(false);
 			btn[1].setVisible(false);

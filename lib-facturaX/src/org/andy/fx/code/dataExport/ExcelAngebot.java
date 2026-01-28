@@ -58,6 +58,8 @@ public class ExcelAngebot implements Identified {
 	public static void anExport(String sNr) throws Exception {
 		String sExcelIn = Einstellungen.getAppSettings().tplOffer;
 		String sExcelOut = Einstellungen.getAppSettings().work + "Angebot_" + sNr + ".xlsx";
+		String sWordIn = Einstellungen.getAppSettings().tplDescription;
+		String sWordOut = Einstellungen.getAppSettings().work + "Leistungsbeschreibung_Angebot_" + sNr + ".docx";
 		String sPdfOut = Einstellungen.getAppSettings().work + "Angebot_" + sNr + ".pdf";
 		String sPdfDesc = Einstellungen.getAppSettings().work + "Leistungsbeschreibung_Angebot_" + sNr + ".pdf";
 
@@ -203,7 +205,7 @@ public class ExcelAngebot implements Identified {
 		// wenn erforderlich Leistungsbeschreibung.pdf erzeugen
 		//#######################################################################
 		if (angebot.getPage2() == 1) {
-			ErzeugeLeistungsbeschreibung.doLeistungsbeschreibung(angebot, sPdfDesc);
+			WordLeistungsbeschreibung.doLeistungsbeschreibung(angebot, sWordIn, sWordOut, sPdfDesc);
 			String DescNamePath = sPdfDesc;
 			File DescFn = new File(DescNamePath);
 			
@@ -242,16 +244,18 @@ public class ExcelAngebot implements Identified {
 		boolean bLockedpdf = Einstellungen.isLocked(sPdfOut);
 		boolean bLockedDesc = Einstellungen.isLocked(sPdfDesc);
 		boolean bLockedxlsx = Einstellungen.isLocked(sExcelOut);
-		while(bLockedpdf || bLockedDesc || bLockedxlsx) {
+		boolean bLockeddocx = Einstellungen.isLocked(sWordOut);
+		while(bLockedpdf || bLockedDesc || bLockedxlsx || bLockeddocx) {
 			System.out.println("warte auf Dateien ...");
 		}
 		File xlFile = new File(sExcelOut);
+		File doFile = new File(sWordOut);
 		File pdFile = new File(sPdfOut);
 		File descFile = new File(sPdfDesc);
-		if(xlFile.delete() && pdFile.delete() && descFile.delete()) {
+		if(xlFile.delete() && doFile.delete() && pdFile.delete() && descFile.delete()) {
 
 		}else {
-			logger.error("anExport(String sNr) - xlsx- und pdf-Datei konnte nicht gelöscht werden");
+			logger.error("anExport(String sNr) - xlsx-, docx- und pdf-Datei konnte nicht gelöscht werden");
 		}
 	}
 

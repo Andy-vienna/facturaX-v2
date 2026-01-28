@@ -8,7 +8,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public class FileSelect {
 
 	private static final String NOT_SELECTED = "---";
-	private static final String[] FILE_EXTENSIONS = {"css", "csv", "html", "jpg", "msg", "pdf", "png", "rar", "xlsm", "xlsx", "xml", "zip"};
+	private static final String[] FILE_EXTENSIONS = {"csv", "docx", "html", "jpg", "msg", "pdf", "png", "rar", "xlsm", "xlsx", "xml", "zip"};
 
 	// ###################################################################################################################################################
 	// public Teil
