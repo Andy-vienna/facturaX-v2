@@ -19,6 +19,7 @@ import org.andy.code.dataStructure.entity.WorkTime;
 import org.andy.code.dataStructure.repository.WorkTimeRepository;
 import org.andy.code.main.Settings;
 import org.andy.code.misc.BD;
+import org.andy.code.misc.ExportHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
@@ -86,7 +87,7 @@ public class ExcelWorkTimeSheet {
 			//#######################################################################
 			Header header = ws.getHeader();
 	        header.setCenter(HEADER_STYLE + monat + " " + jahr);
-			//ExportHelper.applyOwnerAndFooter(wb, ws);
+			ExportHelper.applyFooter(wb, ws);
 			
 			//#######################################################################
 			// Zellen in Tabelle Enummerieren

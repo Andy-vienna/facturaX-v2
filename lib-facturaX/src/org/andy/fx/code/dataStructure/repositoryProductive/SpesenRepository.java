@@ -55,8 +55,9 @@ public class SpesenRepository {
 	// optional: Datumsspanne
 	public List<Spesen> findByDateBetween(LocalDate from, LocalDate to) {
 		try (Session session = HibernateUtil.getSessionFactoryDb2().openSession()) {
-			return session.createQuery("FROM Spesen s WHERE s.date BETWEEN :from AND :to ORDER BY s.date, s.timeStart",
-					Spesen.class).setParameter("from", from).setParameter("to", to).list();
+			return session.createQuery("FROM Spesen s WHERE s.date BETWEEN :from AND :to ORDER BY s.date, s.timeStart",	Spesen.class)
+					.setParameter("from", from)
+					.setParameter("to", to).list();
 		}
 	}
 }

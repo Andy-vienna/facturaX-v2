@@ -1,7 +1,0 @@
-*.lic
-*.log
-/target/
-/secrets/*.json
-
-
-

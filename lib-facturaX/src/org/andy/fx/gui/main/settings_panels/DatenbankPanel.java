@@ -11,8 +11,6 @@ import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -61,9 +59,8 @@ public class DatenbankPanel extends JPanel {
 
     private void buildPanel() {
     	
-    	JLabel[] lbl = new JLabel[7];
-    	String[] labels = {"database type", "computer", "port", "database for MasterData", "database for ProductiveData", "user", "pass"};
-    	String[] cmb = {"Microsoft SQL", "PostgreSQL"};
+    	JLabel[] lbl = new JLabel[6];
+    	String[] labels = {"computer", "port", "database for MasterData", "database for ProductiveData", "user", "pass"};
     	
     	for (int n = 0; n < labels.length; n++) {
     		lbl[n] = new JLabel(labels[n]);
@@ -71,27 +68,19 @@ public class DatenbankPanel extends JPanel {
     		add(lbl[n]);
     	}
     	
-    	JComboBox<String> cmbDBtyp = new JComboBox<>(cmb);
-    	cmbDBtyp.setBounds(190, 20, 215, 25);
-    	add(cmbDBtyp);
-    	
 		JTextField textDBcomputer = new JTextField(s.dbHost);
 		JTextField textDBport = new JTextField(s.dbPort);
 		JTextField textDBnameSource = new JTextField(s.dbMaster);
 		JTextField textDBnameDest = new JTextField(s.dbData);
 		JTextField textDBuser = new JTextField(s.dbUser);
 		JTextField textDBpass = new JTextField(s.dbPass);
-		JCheckBox chkEncryption = new JCheckBox("encrypt database");
-		JCheckBox chkServerCert = new JCheckBox("trust server certificate");
 
-		textDBcomputer.setBounds(190, 45, 215, 25);
-		textDBport.setBounds(190, 70, 215, 25);
-		textDBnameSource.setBounds(190, 95, 215, 25);
-		textDBnameDest.setBounds(190, 120, 215, 25);
-		textDBuser.setBounds(190, 145, 215, 25);
-		textDBpass.setBounds(190, 170, 215, 25);
-		chkEncryption.setBounds(190, 195, 155, 25);
-		chkServerCert.setBounds(190, 220, 155, 25);
+		textDBcomputer.setBounds(190, 20, 215, 25);
+		textDBport.setBounds(190, 45, 215, 25);
+		textDBnameSource.setBounds(190, 70, 215, 25);
+		textDBnameDest.setBounds(190, 95, 215, 25);
+		textDBuser.setBounds(190, 120, 215, 25);
+		textDBpass.setBounds(190, 145, 215, 25);
 
 		btnDBEdit = createButton(null, ButtonIcon.EDIT.icon(), null);
 		btnDBOK = createButton(null, ButtonIcon.OK.icon(), null);
@@ -106,62 +95,31 @@ public class DatenbankPanel extends JPanel {
 		add(textDBnameDest);
 		add(textDBuser);
 		add(textDBpass);
-		add(chkEncryption);
-		add(chkServerCert);
 		
 		add(btnDBEdit);
 		add(btnDBOK);
-		
-		switch(s.dbType) {
-			case "mssql" -> {cmbDBtyp.setSelectedIndex(0); chkEncryption.setVisible(true); chkServerCert.setVisible(true);}
-			case "postgre" -> {cmbDBtyp.setSelectedIndex(1); chkEncryption.setVisible(false); chkServerCert.setVisible(false);}
-			default -> cmbDBtyp.setSelectedIndex(-1);
-		}
 
-		cmbDBtyp.setEnabled(false);
 		textDBcomputer.setEnabled(false);
 		textDBport.setEnabled(false);
 		textDBnameSource.setEnabled(false);
 		textDBnameDest.setEnabled(false);
 		textDBuser.setEnabled(false);
 		textDBpass.setEnabled(false);
-		chkEncryption.setEnabled(false);
-		chkServerCert.setEnabled(false);
 		btnDBOK.setEnabled(false);
-
-		chkEncryption.setSelected(s.dbEncrypt);
-		chkServerCert.setSelected(s.dbCert);
 		
 		//###################################################################################################################################################
 		// ActionListener
 		//###################################################################################################################################################
-
-		cmbDBtyp.addActionListener(new ActionListener() {
-	        @Override
-	        public void actionPerformed(ActionEvent actionEvent) {
-	        	int idx = cmbDBtyp.getSelectedIndex();
-	        	if (idx > 0) {
-	        		chkEncryption.setVisible(false);
-	        		chkServerCert.setVisible(false);
-	        	} else {
-	        		chkEncryption.setVisible(true);
-	        		chkServerCert.setVisible(true);
-	        	}
-	        }
-		});
 		
 		btnDBEdit.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				cmbDBtyp.setEnabled(true);
 				textDBcomputer.setEnabled(true);
 				textDBport.setEnabled(true);
 				textDBnameSource.setEnabled(true);
 				textDBnameDest.setEnabled(true);
 				textDBuser.setEnabled(true);
 				textDBpass.setEnabled(true);
-				chkEncryption.setEnabled(true);
-				chkServerCert.setEnabled(true);
 				btnDBEdit.setEnabled(false);
 				btnDBOK.setEnabled(true);
 			}
@@ -171,30 +129,19 @@ public class DatenbankPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
-				switch(cmbDBtyp.getSelectedIndex()) {
-					case 0 -> s.dbType = "mssql";
-					case 1 -> s.dbType = "postgre";
-				}
-				
 				s.dbHost = textDBcomputer.getText();
 				s.dbPort = textDBport.getText();
 				s.dbMaster = textDBnameSource.getText();
 				s.dbData = textDBnameDest.getText();
 				s.dbUser = textDBuser.getText();
 				s.dbPass = textDBpass.getText();
-				
-				s.dbEncrypt = chkEncryption.isSelected();
-				s.dbCert = chkServerCert.isSelected();
 
-				cmbDBtyp.setEnabled(false);
 				textDBcomputer.setEnabled(false);
 				textDBport.setEnabled(false);
 				textDBnameSource.setEnabled(false);
 				textDBnameDest.setEnabled(false);
 				textDBuser.setEnabled(false);
 				textDBpass.setEnabled(false);
-				chkEncryption.setEnabled(false);
-				chkServerCert.setEnabled(false);
 				btnDBEdit.setEnabled(true);
 				btnDBOK.setEnabled(false);
 				
@@ -206,6 +153,6 @@ public class DatenbankPanel extends JPanel {
 			}
 		});
 		
-		setPreferredSize(new Dimension(550, 265));
+		setPreferredSize(new Dimension(550, 190));
 	}
 }

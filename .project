@@ -7,7 +7,6 @@
 		<project>lib-fXtimeRec</project>
 		<project>lib-fXtrayApp</project>
 		<project>lib-fXstarterApp</project>
-		<project>lib-fXhtmlApp</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

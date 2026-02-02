@@ -5,6 +5,10 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -62,11 +66,13 @@ public class ServiceDescriptionPanel extends JFrame {
   	// Getter und Setter
   	//###################################################################################################################################################
 
-  	public void setText(String content) {
-  		String[] teile = content.split("~");
-  		this.headLine.setText(teile[0]);
-  		this.textBlock.setText(teile[1]);
-	}
+    public void setText(String content) {
+        // Erzeugt eine modifizierbare ArrayList aus dem Split-Ergebnis
+        List<String> teile = new ArrayList<>(Arrays.asList(content.split("~")));
+        if (teile.size() < 2) teile.add("kein Text vorhanden");
+        this.headLine.setText(teile.get(0));
+        this.textBlock.setText(teile.get(1));
+    }
 
 	public String getText() {
 	    return content;

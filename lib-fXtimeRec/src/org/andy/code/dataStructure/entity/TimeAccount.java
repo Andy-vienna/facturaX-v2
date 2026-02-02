@@ -29,6 +29,9 @@ public class TimeAccount {
 	@Column(name = "overtime")
 	private BigDecimal overTime;
 	
+	@Column(name = "year")
+	private int year;
+	
 	//###################################################################################################################################################
 	// Getter und Setter
 	//###################################################################################################################################################
@@ -71,6 +74,14 @@ public class TimeAccount {
 
 	public void setOverTime(BigDecimal overTime) {
 		this.overTime = overTime;
+	}
+
+	public int getYear() {
+		return year;
+	}
+
+	public void setYear(int year) {
+		this.year = year;
 	}
 	
 }

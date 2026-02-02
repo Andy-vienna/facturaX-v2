@@ -53,11 +53,14 @@ public class StatisticYearPanel extends JPanel {
         setBorder(border);
         
         ta = new TimeAccount();
-        ta = taRepo.findByUser(user);
+        ta = taRepo.findByUserAndYear(user, year);
         if (ta == null) {
         	TimeAccount h = new TimeAccount();
         	h.setTiPrinted(0);
         	h.setUserName(user);
+        	h.setContractHours(BD.ZERO);
+        	h.setOverTime(BD.ZERO);
+        	h.setYear(year);
         	taRepo.save(h);
         }
         hM = getOvertimePerMonth();

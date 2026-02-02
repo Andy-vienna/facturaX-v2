@@ -64,26 +64,15 @@ public class Einstellungen {
 		// ------------------------------------------------------------------------------
 		// Datenbank Connection strings für Hibernate
 		// ------------------------------------------------------------------------------
-		if (dbSettings.dbType == null) {
+		if (dbSettings.dbMaster == null || dbSettings.dbData == null) {
 			JOptionPane.showMessageDialog(null, "<html>settingsDb.json - Inhalt unklar oder nicht lesbar<br>Anwendung wird beendet ...",
 					"FacturaX v2", JOptionPane.ERROR_MESSAGE);
 			StartUp.gracefulQuit(91);
 		}
-		switch(dbSettings.dbType) {
-    	case "mssql":
-    		sMasterData = "jdbc:sqlserver://" + dbSettings.dbHost + ":" + dbSettings.dbPort + ";databaseName="
-    				+ dbSettings.dbMaster + ";encrypt=" + dbSettings.dbEncrypt + ";trustServerCertificate=" + dbSettings.dbCert;
-    		sProductiveData = "jdbc:sqlserver://" + dbSettings.dbHost + ":" + dbSettings.dbPort + ";databaseName="
-    				+ dbSettings.dbData + ";encrypt=" + dbSettings.dbEncrypt + ";trustServerCertificate=" + dbSettings.dbCert;
-    		break;
-    	case "postgre":
-    		sMasterData = "jdbc:postgresql://" + dbSettings.dbHost + ":" + dbSettings.dbPort + "/"
-    				+ dbSettings.dbMaster + "?currentSchema=public&sslmode=disable";
-    		sProductiveData = "jdbc:postgresql://" + dbSettings.dbHost + ":" + dbSettings.dbPort + "/"
-    				+ dbSettings.dbData + "?currentSchema=public&sslmode=disable";
-    		break;
-    	}
-		
+		sMasterData = "jdbc:postgresql://" + dbSettings.dbHost + ":" + dbSettings.dbPort + "/"
+				+ dbSettings.dbMaster + "?currentSchema=public&sslmode=disable";
+		sProductiveData = "jdbc:postgresql://" + dbSettings.dbHost + ":" + dbSettings.dbPort + "/"
+				+ dbSettings.dbData + "?currentSchema=public&sslmode=disable";
 	}
 
 	// ###################################################################################################################################################

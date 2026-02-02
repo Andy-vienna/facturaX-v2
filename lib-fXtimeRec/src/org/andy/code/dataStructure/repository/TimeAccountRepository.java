@@ -25,10 +25,11 @@ public class TimeAccountRepository {
 		}
 	}
 	
-	public TimeAccount findByUser(String userName) {
+	public TimeAccount findByUserAndYear(String userName, int year) {
 		try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.createQuery("FROM TimeAccount s where s.username = :u", TimeAccount.class)
+            return session.createQuery("FROM TimeAccount s where s.username = :u AND s.year = :y", TimeAccount.class)
                 .setParameter("u", userName)
+                .setParameter("y", year)
                 .getSingleResult();
         } catch (NoResultException e) {
         	return null;

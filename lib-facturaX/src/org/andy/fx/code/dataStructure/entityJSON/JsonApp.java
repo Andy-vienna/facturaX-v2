@@ -11,7 +11,6 @@ public class JsonApp {
 	public String tplOrder;
 	public String tplP109a;
 	public String tplSpesen;
-	public String tplArbeitszeit;
 	public String tplReminder;
 	public String tplStrictReminder;
 	public String tplDescription;
