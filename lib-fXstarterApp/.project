@@ -3,6 +3,7 @@
 	<name>lib-fXstarterApp</name>
 	<comment></comment>
 	<projects>
+		<project>facturaX-v2</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

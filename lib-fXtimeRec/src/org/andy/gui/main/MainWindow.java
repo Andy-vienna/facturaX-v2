@@ -335,7 +335,20 @@ public class MainWindow extends JFrame {
 		String benutzer = cmbUser.getSelectedItem().toString();
 		
 		TimeAccountRepository taRepo = new TimeAccountRepository();
-		TimeAccount ta = taRepo.findByUser(benutzer);
+		TimeAccount ta = taRepo.findByUserAndYear(benutzer, Settings.getSettings().year);
+		
+		if (ta == null) {
+        	TimeAccount h = new TimeAccount();
+        	h.setTiPrinted(0);
+        	h.setUserName(benutzer);
+        	h.setContractHours(BD.ZERO);
+        	h.setOverTime(BD.ZERO);
+        	h.setYear(Settings.getSettings().year);
+        	taRepo.save(h);
+        	
+        	ta = taRepo.findByUserAndYear(benutzer, Settings.getSettings().year);
+        }
+		
 		BigDecimal hoursDay = ta.getContractHours().divide(BD.FIVE);
 		
 		JPanel panel = new JPanel(new BorderLayout(5, 5));

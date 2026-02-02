@@ -74,11 +74,14 @@ public class TimeAccountPanel extends JPanel {
         Month m = Month.from(fmt.parse(month)); // z.B. "Februar", "März"
       
         ta = new TimeAccount();
-        ta = taRepo.findByUser(user);
+        ta = taRepo.findByUserAndYear(user, yearInt);
         if (ta == null) {
         	TimeAccount h = new TimeAccount();
         	h.setTiPrinted(0);
         	h.setUserName(user);
+        	h.setContractHours(BD.ZERO);
+        	h.setOverTime(BD.ZERO);
+        	h.setYear(yearInt);
         	taRepo.save(h);
         }
         
@@ -152,7 +155,7 @@ public class TimeAccountPanel extends JPanel {
     }
     
     private void loadData(int year, Month m) {
-    	ta = taRepo.findByUser(user); ts = tsRepo.findByUserYear(user, year);
+    	ta = taRepo.findByUserAndYear(user, year); ts = tsRepo.findByUserYear(user, year);
     	kumulOvertime = BD.ZERO;
     	for (int n = 0; n < ts.size(); n++) {
     		WorkTimeSheet wts = ts.get(n);

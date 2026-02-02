@@ -129,11 +129,14 @@ public class WorkTimePanel extends JPanel {
         LocalDate to   = LocalDate.of(yearInt, m, days);
 
         wt = new ArrayList<>(); ta = new TimeAccount();
-        wt = wtRepo.findDaysForUser(from, to, user); ta = taRepo.findByUser(user);
+        wt = wtRepo.findDaysForUser(from, to, user); ta = taRepo.findByUserAndYear(user, yearInt);
         if (ta == null) {
         	TimeAccount h = new TimeAccount();
         	h.setTiPrinted(0);
         	h.setUserName(user);
+        	h.setContractHours(BD.ZERO);
+        	h.setOverTime(BD.ZERO);
+        	h.setYear(yearInt);
         	taRepo.save(h);
         }
         
@@ -283,7 +286,7 @@ public class WorkTimePanel extends JPanel {
 		int heightExtension = 155;
 		
 		btn[0].setVisible(true); btn[1].setVisible(true);
-		ta = taRepo.findByUser(user);
+		ta = taRepo.findByUserAndYear(user, jahr);
 		if (ta.getTiPrinted() > 0) {
 			if (getBit(ta.getTiPrinted(), monthIndex)) {
 				WorkTimeSheetRepository azRepo = new WorkTimeSheetRepository();
@@ -367,11 +370,7 @@ public class WorkTimePanel extends JPanel {
 	}
 	
 	private void doInsertLine(int daysInMonth, Month m, int year) {
-		LocalTime lt = null;
-		switch(Settings.getSettings().dbType) {
-        	case "mssql" -> lt = LocalTime.of(0, 0);
-        	case "postgre" -> lt = LocalTime.of(1, 0);
-		}
+		LocalTime lt = LocalTime.of(1, 0);
 		LocalDate ld = LocalDate.of(year, m, daysInMonth);
 		ZoneId zone = ZoneId.of("Europe/Vienna");
 		OffsetDateTime odt = LocalDateTime.of(ld, lt).atZone(zone).toOffsetDateTime();

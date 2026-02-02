@@ -15,6 +15,9 @@ public class Helper {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 	
+	@Column(name = "year")
+	private int year;
+	
 	@Column(name = "spprinted")
     private int spPrinted;
 	
@@ -32,6 +35,14 @@ public class Helper {
 	public void setId(Long id) {
 		this.id = id;
 	}
+	
+	public int getYear() {
+		return year;
+	}
+
+	public void setYear(int year) {
+		this.year = year;
+	}
 
 	public int getSpPrinted() {
 		return spPrinted;
@@ -48,5 +59,5 @@ public class Helper {
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
-	
+
 }

@@ -5,7 +5,6 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.andy.fx.code.dataStructure.HibernateUtil;
 import org.andy.fx.code.dataStructure.entityMaster.Kunde;
-import org.andy.fx.code.main.Einstellungen;
 
 public class KundeRepository {
 
@@ -26,10 +25,7 @@ public class KundeRepository {
     
     public String findMaxNummer() {
     	String sql = null;
-    	switch(Einstellungen.getDbSettings().dbType) {
-    	case "mssql" -> sql ="SELECT ISNULL(MAX(TRY_CAST(SUBSTRING(s.id, 1, 10) AS int)), 0) + 1 FROM dbo.tblKunde s";
-    	case "postgre" -> sql = "SELECT COALESCE(MAX(SUBSTR(s.id,1,10)::int), 0) + 1 FROM public.tblkunde s";
-    	}
+    	sql = "SELECT COALESCE(MAX(SUBSTR(s.id,1,10)::int), 0) + 1 FROM public.tblkunde s";
     	try (Session session = HibernateUtil.getSessionFactoryDb1().openSession()) {
     		Integer next = ((Number) session.createNativeQuery(sql, Integer.class)
     		    .getSingleResult()).intValue();

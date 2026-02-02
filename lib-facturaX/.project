@@ -3,8 +3,9 @@
 	<name>facturaX</name>
 	<comment></comment>
 	<projects>
-		<project>fXtrayApp</project>
 		<project>fXhtmlRunner</project>
+		<project>fXtimeRec</project>
+		<project>fXtrayApp</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

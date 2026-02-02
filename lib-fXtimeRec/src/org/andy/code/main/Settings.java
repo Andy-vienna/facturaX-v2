@@ -18,7 +18,6 @@ public class Settings {
 	private static final Logger logger = LogManager.getLogger(Settings.class);
 	private App a = new App();
 	
-	private final String msSql = "jdbc:sqlserver://%s:%s;databaseName=%s;encrypt=%s;trustServerCertificate=%s";
 	private final String pgSql = "jdbc:postgresql://%s:%s/%s?currentSchema=public&sslmode=disable";
 
 	private static JsonSettings settings = new JsonSettings();
@@ -51,15 +50,12 @@ public class Settings {
 		// ------------------------------------------------------------------------------
 		// Datenbank Connection strings für Hibernate
 		// ------------------------------------------------------------------------------
-		if (settings.dbType == null) {
+		if (settings.dbData == null) {
 			JOptionPane.showMessageDialog(null, "<html>settings.json - Inhalt unklar oder nicht lesbar<br>Anwendung wird beendet ...",
 					"fXtimeRec", JOptionPane.ERROR_MESSAGE);
 			StartUp.gracefulQuit(91);
 		}
-		switch(settings.dbType) {
-    	case "mssql" -> sData = String.format(msSql, settings.dbHost, settings.dbPort, settings.dbData, settings.dbEncrypt, settings.dbCert);
-    	case "postgre" -> sData = String.format(pgSql, settings.dbHost, settings.dbPort, settings.dbData);
-    	}
+		sData = String.format(pgSql, settings.dbHost, settings.dbPort, settings.dbData);
 		
 		if (a.DEBUG) System.out.println(sData);
 		

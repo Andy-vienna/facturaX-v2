@@ -70,13 +70,6 @@ public class CheckEnvAI {
 		}
 		
 		//-----------------------------------------------------------------------------------------------------------------------
-		// Prüfung ob Gemini-API freigeschaltet ist oder Gemini-API-Key vorhanden ist
-		if (settingsAI.isGeminiAPI) {
-			if (settingsAI.geminiApiKey == null || settingsAI.geminiApiKey.isEmpty()) settingsAI.isGeminiAPI = false;
-			if (!gem.equals(settingsAI.geminiApiKey)) settingsAI.isGeminiAPI = false;
-		}
-		
-		//-----------------------------------------------------------------------------------------------------------------------
 		// Prüfung ob DocumentAI zur Verfügung steht
 		if (settingsAI.isDocumentAI) {
 			if (goo == null || goo.isEmpty()) settingsAI.isDocumentAI = false;

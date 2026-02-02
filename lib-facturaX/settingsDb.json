@@ -1,12 +1,11 @@
 {
   "dbCert": true,
-  "dbData": "dbFacturaX-02TEST",
+  "dbData": "fxDBwork",
   "dbEncrypt": true,
   "dbHost": "localhost",
-  "dbMaster": "FxMaster",
+  "dbMaster": "fxDBdata",
   "dbMode": "none",
   "dbPass": "P@ssw0rd",
-  "dbPort": "1433",
-  "dbType": "mssql",
+  "dbPort": "5433",
   "dbUser": "data"
 }

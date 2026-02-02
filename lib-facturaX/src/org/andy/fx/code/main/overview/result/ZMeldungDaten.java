@@ -53,9 +53,9 @@ public class ZMeldungDaten {
 	    for (int i = 0; i < 4; i++) {
 	        mapProQuartal.add(new HashMap<>());
 	    }
-
+	    
 	    try {
-	        for (int x = 1; x < rechnungListe.size(); x++) {
+	        for (int x = 0; x < rechnungListe.size(); x++) {
 	        	Rechnung rechnung = rechnungListe.get(x);
 	            int quartal = getQuartalFromString(rechnung.getDatum().toString(), "yyyy-MM-dd") - 1;
 	            String sKunde = rechnung.getIdKunde().trim();

@@ -66,12 +66,6 @@ public class HibernateUtil {
         settings.put("hibernate.connection.provider_class",
                 "org.hibernate.hikaricp.internal.HikariCPConnectionProvider");
 
-        // Dialekt (optional, aber bei SQL Server sinnvoll)
-        //switch(Einstellungen.getDbSettings().dbType) {
-        //	case "mssql" -> settings.put("hibernate.dialect", "org.hibernate.dialect.SQLServerDialect");
-        //	case "postgre" -> settings.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
-        //}
-
         // ---- HikariCP-Einstellungen (DB1) ----
         settings.put("hibernate.hikari.jdbcUrl", Einstellungen.getsMasterData());
         settings.put("hibernate.hikari.username", Einstellungen.getDbSettings().dbUser);
@@ -115,12 +109,6 @@ public class HibernateUtil {
         // ---- HikariCP aktivieren ----
         settings.put("hibernate.connection.provider_class",
                 "org.hibernate.hikaricp.internal.HikariCPConnectionProvider");
-
-        // Dialekt (optional, aber bei SQL Server sinnvoll)
-        //switch(Einstellungen.getDbSettings().dbType) {
-        //	case "mssql" -> settings.put("hibernate.dialect", "org.hibernate.dialect.SQLServerDialect");
-        //	case "postgre" -> settings.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
-        //}
 
         // ---- HikariCP-Einstellungen (DB2) ----
         settings.put("hibernate.hikari.jdbcUrl", Einstellungen.getsProductiveData());

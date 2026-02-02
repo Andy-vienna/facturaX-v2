@@ -1,6 +1,7 @@
 package org.andy.code.dataStructure;
 
 import org.andy.code.dataStructure.entity.Employee;
+import org.andy.code.dataStructure.entity.Owner;
 import org.andy.code.dataStructure.entity.TimeAccount;
 import org.andy.code.dataStructure.entity.WorkTime;
 import org.andy.code.dataStructure.entity.WorkTimeRaw;
@@ -71,6 +72,7 @@ public class HibernateUtil {
                 .build();
 
         MetadataSources sources = new MetadataSources(serviceRegistry);
+        sources.addAnnotatedClass(Owner.class);
         sources.addAnnotatedClass(Employee.class);
         sources.addAnnotatedClass(TimeAccount.class);
         sources.addAnnotatedClass(WorkTime.class);

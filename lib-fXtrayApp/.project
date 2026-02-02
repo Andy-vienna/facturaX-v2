@@ -3,6 +3,7 @@
 	<name>fXtrayApp</name>
 	<comment></comment>
 	<projects>
+		<project>fXtimeRec</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

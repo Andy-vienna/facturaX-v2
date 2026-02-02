@@ -77,7 +77,7 @@ public class AngebotNeuPanel extends EditPanel {
     private JTextField txtBank, txtIBAN, txtBIC;
 
     private JTextField txtNummer, txtReferenz;
-    private JCheckBox chkPage2; private JLabel lblHinweis;
+    private JCheckBox chkPage2;
     private DatePicker datePicker;
 
     private final JLabel[] lblPos = new JLabel[POS_COUNT];
@@ -97,7 +97,7 @@ public class AngebotNeuPanel extends EditPanel {
     private boolean bankGewählt = false;
     private boolean mind1ArtikelGewählt = false;
     
-    private String htmlText = null;
+    private String baseText = null;
 
 	//###################################################################################################################################################
 	// public Teil
@@ -127,9 +127,6 @@ public class AngebotNeuPanel extends EditPanel {
                 																								  {155,280}, {155,305}, {155,330},
                 																								 {1010,280},{1010,305},{1010,330}};
         
-        final String preFlightLabel = "<html>Bei Erstellung des Angebots wird ein Standardtext hinterlegt. Quelle ist die Datei:<br>"
-				   					+ "<font color='blue'><b>%s</b></font><br>";
-        
         List<JLabel> left = new ArrayList<>();
         for (int i=0;i<leftLabels.length;i++){
             JLabel l=new JLabel(leftLabels[i]);
@@ -153,9 +150,6 @@ public class AngebotNeuPanel extends EditPanel {
         JLabel lbl25=new JLabel("Angebotsnummer:"); lbl25.setBounds(1010,55,125,25); add(lbl25);
         JLabel lbl26=new JLabel("Angebotsdatum:");  lbl26.setBounds(1010,80,125,25); add(lbl26);
         JLabel lbl29=new JLabel("Referenz");        lbl29.setBounds(1010,105,60,25);  add(lbl29);
-        
-        lblHinweis = new JLabel(String.format(preFlightLabel, Einstellungen.getAppSettings().tplDescriptionBase));
-        lblHinweis.setBounds(1130,155,700,75); lblHinweis.setVisible(false); add(lblHinweis);
 
         // Combos/Textfelder links
         cmbKunde = new JComboBox<>(kunden.stream().map(k -> nullToEmpty(k.getName())).toArray(String[]::new));
@@ -327,11 +321,9 @@ public class AngebotNeuPanel extends EditPanel {
     
     private void onPage2Activated() {
     	if (chkPage2.isSelected()) {
-    		htmlText = Einstellungen.getHtmlBaseText();
-        	lblHinweis.setVisible(true);
+    		baseText = "Leistungsbeschreibung zu Angebot " + nextAnNummer() + "~hier Leitungsbeschreibung einfügen ...";
     	} else {
-    		htmlText = null;
-        	lblHinweis.setVisible(false);
+    		baseText = null;
     	}
     }
     
@@ -357,7 +349,7 @@ public class AngebotNeuPanel extends EditPanel {
         a.setRef(txtReferenz.getText().trim());
         a.setRevCharge(chkRevCharge.isSelected()?1:0);
         a.setPage2(chkPage2.isSelected()?1:0);
-        a.setBeschreibungHtml(htmlText); // Liefer- und Leistungsbeschreibung
+        a.setBeschreibungHtml(baseText); // Liefer- und Leistungsbeschreibung
         
         int posCount = countFilledPositions();
         a.setAnzPos(posCount);
