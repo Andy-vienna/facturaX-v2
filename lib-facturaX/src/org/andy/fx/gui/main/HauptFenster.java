@@ -27,12 +27,8 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.time.Month;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoUnit;
-import java.util.Locale;
-
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -91,7 +87,6 @@ import org.andy.fx.gui.main.overview_panels.SummenPanelA;
 import org.andy.fx.gui.main.overview_panels.SummenPanelB;
 import org.andy.fx.gui.main.overview_panels.edit_panels.EditPanel;
 import org.andy.fx.gui.main.overview_panels.edit_panels.EditPanelFactory;
-import org.andy.fx.gui.main.overview_panels.edit_panels.TimeRangePanelFactory;
 import org.andy.fx.gui.main.overview_panels.edit_panels.factory.AngebotPanel;
 import org.andy.fx.gui.main.overview_panels.edit_panels.factory.AusgabenPanel;
 import org.andy.fx.gui.main.overview_panels.edit_panels.factory.BestellungPanel;
@@ -132,11 +127,6 @@ public class HauptFenster extends JFrame {
 
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LogManager.getLogger(HauptFenster.class);
-    
-    private final DateTimeFormatter fmt = new DateTimeFormatterBuilder()
-            .parseCaseInsensitive()
-            .appendPattern("[MMMM][MMM]") // voll oder kurz
-            .toFormatter(Locale.GERMAN);
 	
     private static App a = new App();
 
@@ -163,7 +153,7 @@ public class HauptFenster extends JFrame {
     private final JPanel pagePU = new JPanel(new BorderLayout());
     private final JPanel pageEX = new JPanel(new BorderLayout());
     private final JPanel pageST = new JPanel(new BorderLayout());
-    private JPanel status, pageTravel, pageTR, pageOv, pageErg, pageAdmin, pageSetting, pageMigration, pageVersuch;
+    private JPanel status, pageOv, pageErg, pageAdmin, pageSetting, pageMigration, pageVersuch;
 
     // Panels, Tabellen, Summen
     private EditPanel offerPanel, billPanel, bestellungPanel, lieferscheinPanel, purchasePanel, svTaxPanel, expensesPanel;
@@ -182,7 +172,6 @@ public class HauptFenster extends JFrame {
 
     // Auswahl
     private String vZelleAN, vStateAN, vZelleRE, vStateRE, vZelleBE, vStateBE, vZelleLS, vStateLS;
-    private int monthSP = LocalDate.now().getMonthValue();
 
     private static String u, r, m; // user, Rolle, Mail
     private static int tc; // Tab-Config
@@ -325,14 +314,6 @@ public class HauptFenster extends JFrame {
         tabPanel = new JTabbedPane(JTabbedPane.TOP);
         tabPanel.setFont(new Font("Tahoma", Font.BOLD, 12));
         
-        if (TabMask.visible(tc, TabMask.Tab.TRAVEL)) {
-			try {
-				doSpesenPanel(u);
-			} catch (IOException e) {
-				logger.error("error creating panel for travel expenses: " + e.getMessage());
-			}
-			tabPanel.addTab("Reisespesen", TabIcon.TRAVEL.icon(), pageTR);
-		}
         if (TabMask.visible(tc, TabMask.Tab.OFFER)) {
         	doAngebotPanel(0);
         	tabPanel.addTab("Angebote", TabIcon.OFFER.icon(), pageAN);
@@ -382,47 +363,6 @@ public class HauptFenster extends JFrame {
 
     //###################################################################################################################################################
     // Panels
-    
-    private void doSpesenPanel(String user) throws IOException {
-    	
-    	String[] select = { "", "Januar", "Februar", "März", "April", "Mai", "Juni",
-                "Juli", "August", "September", "Oktober", "November", "Dezember"};
-
-        TitledBorder border = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.GRAY), null);
-        border.setTitleJustification(TitledBorder.LEFT);
-        border.setTitlePosition(TitledBorder.TOP);
-
-        pageTR = new JPanel(new BorderLayout());
-        pageTR.setBorder(border);
-
-        JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 5));
-        JLabel lbl = new JLabel("Auswahl Monat für Spesenabrechnung:");
-        lbl.setFont(new Font("Arial", Font.BOLD, 12));
-        JComboBox<String> cmbSelect = new JComboBox<>(select);
-        cmbSelect.setFont(new Font("Arial", Font.BOLD, 12));
-        top.add(lbl); top.add(cmbSelect);
-
-        pageTravel = new JPanel(new WrapLayout(FlowLayout.LEFT, 5, 5));
-        pageTR.add(top, BorderLayout.NORTH);
-        pageTR.add(new JScrollPane(pageTravel), BorderLayout.CENTER);
-    	
-    	cmbSelect.addActionListener(_ -> {
-    		pageTravel.removeAll();
-    		if (cmbSelect.getSelectedIndex() == 0) {
-    			pageTravel.revalidate(); pageTravel.repaint();
-    			return;
-    		}
-            pageTravel.add(new TimeRangePanelFactory(cmbSelect.getSelectedItem().toString(), user));
-            Month m = Month.from(fmt.parse(cmbSelect.getSelectedItem().toString())); // z.B. "Februar", "März"
-    		monthSP = m.ordinal() + 1; // 1..12
-            pageTravel.revalidate(); pageTravel.repaint();
-        });
-    	
-    	cmbSelect.setSelectedIndex(monthSP); // aktuellen Monat laden
-    	
-    }
-    
-    //###################################################################################################################################################
 
     private void doAngebotPanel(int use) {
 
@@ -1352,21 +1292,12 @@ public class HauptFenster extends JFrame {
     	int oldIdx = tabPanel.getSelectedIndex(); // aktuell angewählten Tab sichern
 
     	sTempAN = sTempRE = sTempBE = sTempLS = sTempPU = sTempEX = sTempST = null;
-        pageTR = null; pageOv = null; pageErg = null; 
+        pageOv = null; pageErg = null; 
         
         status.removeAll();
         this.remove(status);
         loadData(); // Daten neu laden
         
-        if (TabMask.visible(tc, TabMask.Tab.TRAVEL)) {
-			tabPanel.removeTabAt(tabPanel.indexOfTab("Reisespesen"));
-			try {
-				doSpesenPanel(u);
-			} catch (IOException e) {
-				logger.error("error creating panel for travel expenses: " + e.getMessage());
-			}
-			tabPanel.addTab("Reisespesen", TabIcon.TRAVEL.icon(), pageTR);
-		}
         if (TabMask.visible(tc, TabMask.Tab.OFFER)) {
         	pageAN.removeAll();
         	doAngebotPanel(0);

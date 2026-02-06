@@ -1,4 +1,4 @@
-package org.andy.fx.code.dataExport;
+package org.andy.code.dataExport;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -14,10 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import org.andy.fx.code.dataStructure.entityProductive.Spesen;
-import org.andy.fx.code.dataStructure.repositoryProductive.SpesenRepository;
-import org.andy.fx.code.main.Einstellungen;
-import org.andy.fx.code.misc.ExportHelper;
+import org.andy.code.dataStructure.entity.Spesen;
+import org.andy.code.dataStructure.repository.SpesenRepository;
+import org.andy.code.main.Settings;
+import org.andy.code.misc.ExportHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
@@ -28,7 +28,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class ExcelSpesen {
 	
 	private static final Logger logger = LogManager.getLogger(ExcelSpesen.class);
-	private static ErzeugePDF doPdf = new ErzeugePDF();
+	private static CreatePdf doPdf = new CreatePdf();
 	private static final String HEADER_STYLE = "&\"Arial,Regular\"&11&K7F7F7F";
 	private static final DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 	private static XSSFWorkbook wb = null;
@@ -57,9 +57,9 @@ public class ExcelSpesen {
 		String monat = m.getDisplayName(TextStyle.FULL, Locale.GERMAN);
 		String jahr = String.valueOf(year);
 		
-		String sExcelIn = Einstellungen.getAppSettings().tplSpesen;
-		sExcelOut = Einstellungen.getAppSettings().work + "Spesen_" + monat + "_" + jahr + ".xlsx";
-		sPdfOut = Einstellungen.getAppSettings().work + "Spesen_" + monat + "_" + jahr + ".pdf";
+		String sExcelIn = Settings.getSettings().tplSpesen;
+		sExcelOut = Settings.getSettings().workpath + "Spesen_" + monat + "_" + jahr + ".xlsx";
+		sPdfOut = Settings.getSettings().workpath + "Spesen_" + monat + "_" + jahr + ".pdf";
 
 		final Cell spDatum[] = new Cell[31]; final Cell spVon[] = new Cell[31];	final Cell spBis[] = new Cell[31];
 		final Cell spStunden[] = new Cell[31]; final Cell spBetrag[] = new Cell[31]; final Cell spLand[] = new Cell[31];
@@ -141,10 +141,10 @@ public class ExcelSpesen {
 		// Datei als pdf speichern
 		//#######################################################################
 		doPdf.toPDF(sExcelOut, sPdfOut);
-		doPdf.setPdfMetadata(monat, "SP", sPdfOut);
+		doPdf.setPdfMetadata(monat, sPdfOut);
 
-		boolean bLockedXLSX = Einstellungen.isLocked(sExcelOut);
-		boolean bLockedPDF = Einstellungen.isLocked(sPdfOut);
+		boolean bLockedXLSX = Settings.isLocked(sExcelOut);
+		boolean bLockedPDF = Settings.isLocked(sPdfOut);
 		while(bLockedXLSX || bLockedPDF) {
 			System.out.println("warte auf Datei ...");
 		}

@@ -1,7 +1,7 @@
-package org.andy.fx.gui.main.overview_panels.edit_panels;
+package org.andy.gui.main.panels;
 
-import static org.andy.fx.code.misc.ArithmeticHelper.parseStringToBigDecimalSafe;
-import static org.andy.fx.gui.misc.CreateButton.createButton;
+import static org.andy.code.misc.ArithmeticHelper.parseStringToBigDecimalSafe;
+import static org.andy.gui.misc.CreateButton.createButton;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -38,20 +38,20 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import org.andy.fx.code.dataExport.ExcelSpesen;
-import org.andy.fx.code.dataStructure.entityProductive.Ausgaben;
-import org.andy.fx.code.dataStructure.entityProductive.Helper;
-import org.andy.fx.code.dataStructure.entityProductive.Spesen;
-import org.andy.fx.code.dataStructure.repositoryProductive.AusgabenRepository;
-import org.andy.fx.code.dataStructure.repositoryProductive.HelperRepository;
-import org.andy.fx.code.dataStructure.repositoryProductive.SpesenRepository;
-import org.andy.fx.code.main.Einstellungen;
-import org.andy.fx.code.misc.ArithmeticHelper.LocaleFormat;
-import org.andy.fx.code.misc.BD;
-import org.andy.fx.code.misc.ExportHelper;
-import org.andy.fx.gui.iconHandler.ButtonIcon;
-import org.andy.fx.gui.main.HauptFenster;
-import org.andy.fx.gui.misc.BusyDialog;
+import org.andy.code.dataExport.ExcelSpesen;
+import org.andy.code.dataStructure.entity.Ausgaben;
+import org.andy.code.dataStructure.entity.Helper;
+import org.andy.code.dataStructure.entity.Spesen;
+import org.andy.code.dataStructure.repository.AusgabenRepository;
+import org.andy.code.dataStructure.repository.HelperRepository;
+import org.andy.code.dataStructure.repository.SpesenRepository;
+import org.andy.code.main.Settings;
+import org.andy.code.misc.ArithmeticHelper.LocaleFormat;
+import org.andy.code.misc.BD;
+import org.andy.code.misc.ExportHelper;
+import org.andy.gui.iconHandler.ButtonIcon;
+import org.andy.gui.main.MainWindow;
+import org.andy.gui.misc.BusyDialog;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -91,7 +91,7 @@ public class TimeRangePanelFactory extends JPanel {
         this.month = month; this.user = user;
         TitledBorder border = BorderFactory.createTitledBorder(
             BorderFactory.createLineBorder(Color.GRAY),
-            "Spesenabrechnung " + month + " " + Einstellungen.getAppSettings().year
+            "Spesenabrechnung " + month + " " + Settings.getSettings().year
         );
         border.setTitleFont(font);
         border.setTitleColor(titleColor);
@@ -99,7 +99,7 @@ public class TimeRangePanelFactory extends JPanel {
         border.setTitlePosition(TitledBorder.TOP);
         setBorder(border);
 
-        int yearInt = Einstellungen.getAppSettings().year;
+        int yearInt = Settings.getSettings().year;
         Month m = Month.from(fmt.parse(month)); // z.B. "Februar", "März"
         int days = YearMonth.of(yearInt, m).lengthOfMonth();
 
@@ -109,7 +109,9 @@ public class TimeRangePanelFactory extends JPanel {
         LocalDate to   = LocalDate.of(yearInt, m, days);
 
         ls = new ArrayList<>(); hlp = new Helper();
-        ls = repo.findByDateBetween(from, to); hlp = hlpRepo.findByUserAndYear(user, yearInt);
+        ls = repo.findByDateBetweenAndUser(from, to, user);
+        //ls = repo.findByDateBetween(from, to);
+        hlp = hlpRepo.findByUserAndYear(user, yearInt);
         if (hlp == null) {
         	Helper h = new Helper();
         	h.setYear(yearInt);
@@ -129,7 +131,7 @@ public class TimeRangePanelFactory extends JPanel {
 		
 		for (int i = 0; i < trp.length; i++) trp[i] = null;
 		for (int i = 0; i < daysInMonth; i++) {
-			LocalDate d = LocalDate.of(Einstellungen.getAppSettings().year, m, i + 1);
+			LocalDate d = LocalDate.of(Settings.getSettings().year, m, i + 1);
 			try { trp[i] = new TimeRangePanel(); } catch (IOException e) { logger.error("error creating TimeRangePanel: ", e); }
 			size = trp[0].getPreferredSize();
 			trp[i].setDatum(d);
@@ -173,12 +175,12 @@ public class TimeRangePanelFactory extends JPanel {
 		add(summe);
 		
 		btn[0] = createButton("<html>Spesen<br>speichern</html>", ButtonIcon.SAVE.icon(), null);
-		btn[0].setBounds(1150, (daysInMonth * 25) + 60, HauptFenster.getButtonx(), HauptFenster.getButtony());
+		btn[0].setBounds(1150, (daysInMonth * 25) + 60, MainWindow.getButtonx(), MainWindow.getButtony());
 		btn[0].setEnabled(true);
 		add(btn[0]);
 		
 		btn[1] = createButton("<html>Spesen<br>export.</html>", ButtonIcon.EXPORT.icon(), null);
-		btn[1].setBounds(1280, (daysInMonth * 25) + 60, HauptFenster.getButtonx(), HauptFenster.getButtony());
+		btn[1].setBounds(1280, (daysInMonth * 25) + 60, MainWindow.getButtonx(), MainWindow.getButtony());
 		btn[1].addActionListener(e -> doWriteExpenses(e, daysInMonth, m, jahr, stunden.getText(), summe.getText()));
 		add(btn[1]);
 		
@@ -236,6 +238,7 @@ public class TimeRangePanelFactory extends JPanel {
 				s.setSumHours(trp[i].getStunden());
 				s.setAmount(trp[i].getBetrag());
 				s.setComment(trp[i].getGrund());
+				s.setUser(user);
 				repo.save(s);
 			}
 		}
@@ -249,6 +252,7 @@ public class TimeRangePanelFactory extends JPanel {
 				s.setSumHours(trp[i].getStunden());
 				s.setAmount(trp[i].getBetrag());
 				s.setComment(trp[i].getGrund());
+				s.setUser(user);
 				repo.update(s);
 			}
 		}
@@ -272,7 +276,7 @@ public class TimeRangePanelFactory extends JPanel {
 	        	doExpenses(daysInMonth, m, jahr, stunden, summe);
 	        	doSavePrinted(monthIndex); // Monat für Änderungen sperren
 			},
-	        HauptFenster::actScreen // Übersicht aktualisieren
+	        MainWindow::actScreen // Übersicht aktualisieren
 	    );
 	}
 	
@@ -289,8 +293,8 @@ public class TimeRangePanelFactory extends JPanel {
 		String name = Paths.get(sPdfOut).getFileName().toString(); // Dateiname aus Pfad extrahieren
 		String sumClean = summe.replace(" EUR", "").trim(); // "1.234,56 EUR" -> "1.234,56"
 		
-		a.setJahr(Einstellungen.getAppSettings().year);
-		a.setDatum(LocalDate.of(Einstellungen.getAppSettings().year, m, daysInMonth));
+		a.setJahr(Settings.getSettings().year);
+		a.setDatum(LocalDate.of(Settings.getSettings().year, m, daysInMonth));
 		a.setArt("Diäten für Dienstreisen " + m.getDisplayName(TextStyle.FULL, Locale.GERMAN) + " " + jahr);
 		a.setLand(ExportHelper.getOwner().getLand());
 		a.setWaehrung(ExportHelper.getOwner().getCurrency());
@@ -311,8 +315,8 @@ public class TimeRangePanelFactory extends JPanel {
 		//#######################################################################
 		// Ursprungs-Excel und -pdf löschen
 		//#######################################################################
-		boolean bLockedpdf = Einstellungen.isLocked(sPdfOut);
-		boolean bLockedxlsx = Einstellungen.isLocked(sExcelOut);
+		boolean bLockedpdf = Settings.isLocked(sPdfOut);
+		boolean bLockedxlsx = Settings.isLocked(sExcelOut);
 		while(bLockedpdf || bLockedxlsx) {
 			System.out.println("warte auf Dateien ...");
 		}

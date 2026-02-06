@@ -1,4 +1,4 @@
-package org.andy.fx.code.dataStructure.entityProductive;
+package org.andy.code.dataStructure.entity;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
@@ -33,6 +33,9 @@ public class Spesen {
     
     @Column(name = "timeend")
     private LocalTime timeEnd;
+    
+    @Column(name = "user", nullable = false)
+    private String user;
     
 	//###################################################################################################################################################
 	// Getter und Setter
@@ -100,6 +103,14 @@ public class Spesen {
 
 	public void setTimeEnd(LocalTime timeEnd) {
 		this.timeEnd = timeEnd;
+	}
+
+	public String getUser() {
+		return user;
+	}
+
+	public void setUser(String user) {
+		this.user = user;
 	}
 
 }

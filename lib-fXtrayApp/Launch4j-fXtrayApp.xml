@@ -3,7 +3,7 @@
   <dontWrapJar>false</dontWrapJar>
   <headerType>gui</headerType>
   <jar>C:\Users\andre\Documents\eclipse.workspace\facturaX-v2\lib-fXtrayApp\target\fXTray-1.0.6.jar</jar>
-  <outfile>C:\Users\andre\Documents\eclipse.workspace\tools.release\facturaX\tray-app\fXTray.exe</outfile>
+  <outfile>C:\Users\andre\Documents\eclipse.workspace\tools.release\facturaX\fXtime\fXTray.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>
   <chdir>.</chdir>

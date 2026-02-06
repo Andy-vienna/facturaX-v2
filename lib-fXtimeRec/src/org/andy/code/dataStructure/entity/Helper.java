@@ -1,4 +1,4 @@
-package org.andy.fx.code.dataStructure.entityProductive;
+package org.andy.code.dataStructure.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

@@ -1,6 +1,7 @@
-package org.andy.fx.gui.main.overview_panels.edit_panels;
+package org.andy.gui.main.panels;
 
-import static org.andy.fx.gui.misc.CreateButton.createButton;
+import static org.andy.gui.misc.CreateButton.createButton;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -26,9 +27,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import org.andy.fx.code.misc.BD;
-import org.andy.fx.code.misc.CodeListen;
-import org.andy.fx.gui.iconHandler.ButtonIcon;
+import org.andy.code.misc.BD;
+import org.andy.code.misc.CodeListen;
+import org.andy.gui.iconHandler.ButtonIcon;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;

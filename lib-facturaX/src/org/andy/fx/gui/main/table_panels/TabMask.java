@@ -5,8 +5,8 @@ public class TabMask {
 	private TabMask(){}
 	
 	public enum Tab {
-		TRAVEL(0), OFFER(1), INVOICE(2), ORDER(3), DELIVERY(4), PURCHASE(5),
-	    EXPENSES(6), TAX(7), RESULT(8), SETTINGS(9), MIGRATION(10), TRIALS(11);
+		OFFER(0), INVOICE(1), ORDER(2), DELIVERY(3), PURCHASE(4),
+	    EXPENSES(5), TAX(6), RESULT(7), SETTINGS(8), MIGRATION(9), TRIALS(10);
 
 	    public final int bitIndex;
 	    public final int bit;
