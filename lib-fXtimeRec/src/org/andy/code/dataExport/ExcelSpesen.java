@@ -53,7 +53,7 @@ public class ExcelSpesen {
 	// Angebot erzeugen und pdf exportieren
 	//###################################################################################################################################################
 
-	public static void spExport(int daysInMonth, Month m, int year, String stunden, String summe) throws Exception {
+	public static void spExport(int daysInMonth, Month m, int year, String stunden, String summe, String user) throws Exception {
 		String monat = m.getDisplayName(TextStyle.FULL, Locale.GERMAN);
 		String jahr = String.valueOf(year);
 		
@@ -68,7 +68,7 @@ public class ExcelSpesen {
     	LocalDate from = LocalDate.of(year, m, 1);
     	LocalDate to = LocalDate.of(year, m, daysInMonth);
 		
-		ls = new ArrayList<>(); ls = repo.findByDateBetween(from, to);
+		ls = new ArrayList<>(); ls = repo.findByDateBetweenAndUser(from, to, user);
 		
 		//#######################################################################
 		// Angebots-Excel erzeugen
@@ -84,7 +84,7 @@ public class ExcelSpesen {
 			//#######################################################################
 			Header header = ws.getHeader();
 	        header.setCenter(HEADER_STYLE + monat + " " + jahr);
-			ExportHelper.applyOwnerAndFooter(wb, ws);
+	        ExportHelper.applyFooter(wb, ws);
 			
 			//#######################################################################
 			// Zellen in Tabelle Enummerieren

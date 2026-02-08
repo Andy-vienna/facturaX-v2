@@ -34,7 +34,7 @@ public class Spesen {
     @Column(name = "timeend")
     private LocalTime timeEnd;
     
-    @Column(name = "user", nullable = false)
+    @Column(name = "username", nullable = false)
     private String user;
     
 	//###################################################################################################################################################

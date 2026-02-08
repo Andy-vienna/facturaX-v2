@@ -284,7 +284,7 @@ public class TimeRangePanelFactory extends JPanel {
 		AusgabenRepository ausgabenRepo = new AusgabenRepository();
 		Ausgaben a = new Ausgaben();
 		try {
-			ExcelSpesen.spExport(daysInMonth, m, jahr, stunden, summe); // Excel und pdf erzeugen
+			ExcelSpesen.spExport(daysInMonth, m, jahr, stunden, summe, user); // Excel und pdf erzeugen
 		} catch (Exception e1) {
 			logger.error("error exporting travel expenses to excel(pdf: ", e1);
 			return;
