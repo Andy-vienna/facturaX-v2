@@ -17,11 +17,9 @@ import org.andy.fx.code.dataStructure.entityProductive.Ausgaben;
 import org.andy.fx.code.dataStructure.entityProductive.Bestellung;
 import org.andy.fx.code.dataStructure.entityProductive.Einkauf;
 import org.andy.fx.code.dataStructure.entityProductive.FileStore;
-import org.andy.fx.code.dataStructure.entityProductive.Helper;
 import org.andy.fx.code.dataStructure.entityProductive.Lieferschein;
 import org.andy.fx.code.dataStructure.entityProductive.Rechnung;
 import org.andy.fx.code.dataStructure.entityProductive.SVSteuer;
-import org.andy.fx.code.dataStructure.entityProductive.Spesen;
 import org.andy.fx.code.main.Einstellungen;
 import org.andy.fx.code.misc.App;
 import org.apache.logging.log4j.Level;
@@ -132,7 +130,6 @@ public class HibernateUtil {
                 .build();
 
         MetadataSources sources = new MetadataSources(serviceRegistry);
-        sources.addAnnotatedClass(Helper.class);
         sources.addAnnotatedClass(Angebot.class);
         sources.addAnnotatedClass(Rechnung.class);
         sources.addAnnotatedClass(Bestellung.class);
@@ -140,7 +137,6 @@ public class HibernateUtil {
         sources.addAnnotatedClass(FileStore.class);
         sources.addAnnotatedClass(Einkauf.class);
         sources.addAnnotatedClass(Ausgaben.class);
-        sources.addAnnotatedClass(Spesen.class);
         sources.addAnnotatedClass(SVSteuer.class);
 
         Metadata metadata = sources.getMetadataBuilder().build();

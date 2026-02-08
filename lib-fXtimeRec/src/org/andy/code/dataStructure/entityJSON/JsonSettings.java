@@ -9,6 +9,6 @@ public class JsonSettings {
 	public String dbUser;
 	public int year;
 	public String workpath;
-	public String template;
-	
+	public String tplTime;
+	public String tplSpesen;
 }

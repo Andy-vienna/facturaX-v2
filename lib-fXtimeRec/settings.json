@@ -1,10 +1,11 @@
 {
-  "dbData": "fxDBtime",
+  "dbData": "fxDBwork",
   "dbHost": "localhost",
   "dbPass": "P@ssw0rd",
   "dbPort": "5433",
   "dbUser": "data",
   "year": "2026",
   "workpath": "C:\\Users\\andre\\Documents\\",
-  "template": "C:\\Users\\andre\\Documents\\eclipse.workspace\\facturaX-v2\\lib-fXtimeRec\\templates\\template-arbeitszeit-deu_v2.12.xlsx"
+  "tplTime": "C:\\Users\\andre\\Documents\\eclipse.workspace\\facturaX-v2\\lib-fXtimeRec\\templates\\template-arbeitszeit-deu_v2.12.xlsx",
+  "tplSpesen": "C:\\Users\\andre\\Documents\\eclipse.workspace\\facturaX-v2\\lib-fXtimeRec\\templates\\template-spesen-deu_v2.12.xlsx"
 }

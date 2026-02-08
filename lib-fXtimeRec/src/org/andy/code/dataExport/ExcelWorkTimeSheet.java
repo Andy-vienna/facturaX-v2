@@ -58,7 +58,7 @@ public class ExcelWorkTimeSheet {
 		String monat = m.getDisplayName(TextStyle.FULL, Locale.GERMAN);
 		String jahr = String.valueOf(year);
 		
-		String sExcelIn = Settings.getSettings().template;
+		String sExcelIn = Settings.getSettings().tplTime;
 		sExcelOut = Settings.getSettings().workpath + "Arbeitszeit_" + monat + "_" + jahr + ".xlsx";
 		sPdfOut = Settings.getSettings().workpath + "Arbeitszeit_" + monat + "_" + jahr + ".pdf";
 

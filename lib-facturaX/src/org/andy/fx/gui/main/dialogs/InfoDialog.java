@@ -46,7 +46,7 @@ public final class InfoDialog extends JDialog {
 	private static final String TEXT_B_HTML =
             """
             <html style='font-family:sans-serif;'>
-              <b>Copyright &copy; 2024-2025 Andreas Fischer</b><br><br>
+              <b>Copyright &copy; 2024-2026 Andreas Fischer</b><br><br>
               Licensed under the Apache License, Version 2.0 (the "License");<br>
               you may not use this file except in compliance with the License.<br>
               You may obtain a copy of the License at<br><br>
@@ -68,7 +68,7 @@ public final class InfoDialog extends JDialog {
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setContentPane(buildContent(a));
         pack();
-        setMinimumSize(new Dimension(250, 750));
+        setMinimumSize(new Dimension(250, 600));
         setLocationRelativeTo(owner);
         getRootPane().setDefaultButton(closeButton);
         bindEscToClose();
@@ -89,11 +89,6 @@ public final class InfoDialog extends JDialog {
         root.setBorder(new EmptyBorder(8, 5, 8, 5));
         
         String[] idStarter = id.appInfo("starter");
-        String[] idHtml = id.appInfo("html");
-        if (idHtml == null) {
-        	idHtml = new String[4];
-        	idHtml[0] = "unknown"; idHtml[1] = "unknown"; idHtml[2] = "unknown"; idHtml[3] = "fXhtmlApp";
-        }
         
         JsonAI ai = CheckEnvAI.getSettingsAI();
         String aiState = "not enabled";
@@ -149,12 +144,6 @@ public final class InfoDialog extends JDialog {
         modA.setForeground(new Color(20, 20, 20));
         gc.insets = new Insets(0, 6, 1, 6);
         gc.gridy = 5; right.add(modA, gc);
-        
-        String moduleB = String.format(MODULE_HTML, idHtml[3], idHtml[0], idHtml[1], idHtml[2]);
-		JLabel modB = new JLabel(moduleB);
-        modB.setForeground(new Color(20, 20, 20));
-        gc.insets = new Insets(0, 6, 1, 6);
-        gc.gridy = 6; right.add(modB, gc);
 
         root.add(right, BorderLayout.CENTER);
 

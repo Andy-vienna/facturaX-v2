@@ -2,7 +2,7 @@
 <launch4jConfig>
   <dontWrapJar>false</dontWrapJar>
   <headerType>gui</headerType>
-  <jar>C:\Users\andre\Documents\eclipse.workspace\facturaX-v2\lib-fXtimeRec\target\fXtimeRec-1.0.0.jar</jar>
+  <jar>C:\Users\andre\Documents\eclipse.workspace\facturaX-v2\lib-fXtimeRec\target\fXtimeRec-1.1.3.jar</jar>
   <outfile>C:\Users\andre\Documents\eclipse.workspace\tools.release\facturaX\fXtime\fXTime.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>

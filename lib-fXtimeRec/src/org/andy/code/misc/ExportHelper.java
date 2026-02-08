@@ -23,12 +23,9 @@ public class ExportHelper {
 	private static App a = new App();
 	private static final String FOOTER_STYLE = "&\"Arial,Regular\"&9&K7F7F7F";
 	
-	private static String senderOwner;
 	private static String footerLeft;
 	private static String footerCenter;
-	private static String kontaktName;
-	private static String steuerNummer;
-	
+
 	private static Owner owner = new Owner();
 	
 	//###################################################################################################################################################
@@ -80,7 +77,7 @@ public class ExportHelper {
         footer.setRight(FOOTER_STYLE + a.VERSION);
 
     }
-
+	
     //###################################################################################################################################################
     
     public static void placeQRinExcel(XSSFWorkbook wb, Sheet ws, String picQR) throws FileNotFoundException, IOException {
@@ -106,24 +103,12 @@ public class ExportHelper {
 		return owner;
 	}
 	
-	public static String getSenderOwner() {
-		return senderOwner;
-	}
-
 	public static String getFooterLeft() {
 		return footerLeft;
 	}
 
 	public static String getFooterCenter() {
 		return footerCenter;
-	}
-
-	public static String getKontaktName() {
-		return kontaktName;
-	}
-
-	public static String getSteuerNummer() {
-		return steuerNummer;
 	}
 
 }

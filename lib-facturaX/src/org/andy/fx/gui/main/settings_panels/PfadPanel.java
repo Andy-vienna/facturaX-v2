@@ -40,7 +40,7 @@ public class PfadPanel extends JPanel {
 	Font font = new Font("Tahoma", Font.BOLD, 11);
 	Color titleColor = Color.BLUE; // oder z. B. new Color(30, 60, 150);
 	
-	private JTextField[] txtFields = new JTextField[12];
+	private JTextField[] txtFields = new JTextField[11];
 	
 	//###################################################################################################################################################
 	// public Teil
@@ -78,7 +78,6 @@ public class PfadPanel extends JPanel {
 				"Bestellung Vorlage (Excel-Vorlage *.xlsx)",
 				"Lieferschein Vorlage (Excel-Vorlage *.xlsx)",
 				"§109a (E/A-Rechnung) Vorlage (Excel-Vorlage *.xlsx",
-				"Spesenabrechnung Vorlage (Excel-Vorlage *.xlsx)",
 				"Arbeitsverzeichnis",
 				};
 		
@@ -121,8 +120,7 @@ public class PfadPanel extends JPanel {
 	                	s.tplOrder = txtFields[7].getText();
 	                	s.tplDeliveryNote = txtFields[8].getText();
 	                	s.tplP109a = txtFields[9].getText();
-	                	s.tplSpesen = txtFields[10].getText();
-	                	s.work = txtFields[11].getText();
+	                	s.work = txtFields[10].getText();
 	                	
 	                	try {
 							JsonUtil.saveAPP(StartUp.getFileApp(), s);
@@ -171,7 +169,6 @@ public class PfadPanel extends JPanel {
         _ -> Einstellungen.getAppSettings().tplOrder,
         _ -> Einstellungen.getAppSettings().tplDeliveryNote,
         _ -> Einstellungen.getAppSettings().tplP109a,
-        _ -> Einstellungen.getAppSettings().tplSpesen,
         _ -> Einstellungen.getAppSettings().work
     };
 
