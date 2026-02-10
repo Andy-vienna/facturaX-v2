@@ -97,7 +97,7 @@ public class TimeAccountPanel extends JPanel {
 		
 		JLabel[] label = new JLabel[10];
 		String[] lbl = new String[] { "Stunden pro Woche lt. Vertrag:", "Stunden pro Tag entsprechend:", "", "Arbeitstage im Monat:",
-				"Stunden im akt. Monat SOLL:", "", "Stunden im akt. Monat IST:", "Überstunden akt. Monat:", "", "Überstunden aus abgeschl. Monaten:"  };
+				"Stunden im akt. Monat SOLL:", "", "Stunden im akt. Monat IST:", "Mehrstunden akt. Monat:", "", "Mehrstunden aus abgeschl. Monaten:"  };
 		for (int i = 0; i < lbl.length; i++) {
 			label[i] = new JLabel(lbl[i]);
 			label[i].setHorizontalAlignment(SwingConstants.RIGHT);

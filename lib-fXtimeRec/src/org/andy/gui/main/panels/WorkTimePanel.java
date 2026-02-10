@@ -47,14 +47,17 @@ import javax.swing.event.DocumentListener;
 import org.andy.code.dataExport.ExcelWorkTimeSheet;
 import org.andy.code.dataStructure.entity.TimeAccount;
 import org.andy.code.dataStructure.entity.WorkTime;
+import org.andy.code.dataStructure.entity.WorkTimeRaw;
 import org.andy.code.dataStructure.entity.WorkTimeSheet;
 import org.andy.code.dataStructure.repository.TimeAccountRepository;
+import org.andy.code.dataStructure.repository.WorkTimeRawRepository;
 import org.andy.code.dataStructure.repository.WorkTimeRepository;
 import org.andy.code.dataStructure.repository.WorkTimeSheetRepository;
 import org.andy.code.main.Settings;
 import org.andy.code.misc.App;
 import org.andy.code.misc.BD;
 import org.andy.code.misc.FileSelect;
+import org.andy.code.workTime.WorkTimeLoader;
 import org.andy.gui.dialogs.WorkTimeDialog;
 import org.andy.gui.iconHandler.ButtonIcon;
 import org.andy.gui.iconHandler.FileIcon;
@@ -63,6 +66,7 @@ import org.andy.gui.main.panels.elements.WorkTimeElement;
 import org.andy.gui.misc.BusyDialog;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.JSONObject;
 
 public class WorkTimePanel extends JPanel {
 
@@ -366,6 +370,43 @@ public class WorkTimePanel extends JPanel {
 	private void doImportRawData(ActionEvent e, Month m, int year, String user) {
 		Component c = (Component) e.getSource();
     	Window owner = SwingUtilities.getWindowAncestor(c);
+    	
+    	WorkTimeRawRepository repo = new WorkTimeRawRepository();
+    	WorkTimeRaw wtr = new WorkTimeRaw();
+    	
+    	WorkTimeLoader wtl = new WorkTimeLoader();
+    	List<String> events = wtl.syncEvents(user);
+    	
+    	for (String jsonEvent : events) {
+    	    // Den String wieder zu einem Objekt machen
+    	    JSONObject eventObj = new JSONObject(jsonEvent);
+    	    
+    	    // Einzelne Werte über ihre Keys abgreifen
+    	    String event = eventObj.getString("event");
+    	    String userName = eventObj.getString("username");
+    	    String source = eventObj.getString("source");
+    	    String deviceId = eventObj.getString("deviceid");
+    	    String tz = eventObj.getString("tz");
+    	    String sts = eventObj.getString("ts");
+    	    
+    	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    	    LocalDateTime ldt = LocalDateTime.parse(sts, formatter);
+
+    	    // In die Zelle "einbetten" und dann zu OffsetDateTime konvertieren
+    	    OffsetDateTime ts = ldt.atZone(ZoneId.of(tz)).toOffsetDateTime();
+    	    
+    	    wtr.setId(null);
+    	    wtr.setEvent(event);
+    	    wtr.setUserName(userName);
+    	    wtr.setSource(source);
+    	    wtr.setDeviceId(deviceId);
+    	    wtr.setTimeZoneId(tz);
+    	    wtr.setTs(ts);
+    	    
+    	    repo.save(wtr);
+    	    
+    	}
+
     	WorkTimeDialog.show(owner, m, year, user);
 	}
 	

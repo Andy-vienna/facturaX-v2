@@ -5,6 +5,8 @@
   "dbPort": "5433",
   "dbUser": "data",
   "year": "2026",
+  "urlGetData": "https://www.aw-net.eu/php/",
+  "urlXKey": "kHxX16-ZtrzT-6pZPtR",
   "workpath": "C:\\Users\\andre\\Documents\\",
   "tplTime": "C:\\Users\\andre\\Documents\\eclipse.workspace\\facturaX-v2\\lib-fXtimeRec\\templates\\template-arbeitszeit-deu_v2.12.xlsx",
   "tplSpesen": "C:\\Users\\andre\\Documents\\eclipse.workspace\\facturaX-v2\\lib-fXtimeRec\\templates\\template-spesen-deu_v2.12.xlsx"
