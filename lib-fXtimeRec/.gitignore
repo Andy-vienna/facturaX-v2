@@ -1,5 +1,6 @@
 *.lic
 *.log
+/php-scripts/*.php
 /target/
 /secrets/*.json
 

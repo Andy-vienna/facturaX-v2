@@ -8,6 +8,8 @@ public class JsonSettings {
 	public String dbPort;
 	public String dbUser;
 	public int year;
+	public String urlGetData;
+	public String urlXKey;
 	public String workpath;
 	public String tplTime;
 	public String tplSpesen;

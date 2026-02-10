@@ -44,7 +44,7 @@ public class StatisticYearPanel extends JPanel {
 		this.year = year; this.user = user;
         TitledBorder border = BorderFactory.createTitledBorder(
             BorderFactory.createLineBorder(Color.GRAY),
-            "Überstunden-Übersicht für " + year
+            "Mehrstunden-Übersicht für " + year
         );
         border.setTitleFont(font);
         border.setTitleColor(titleColor);

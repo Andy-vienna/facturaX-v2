@@ -24,6 +24,15 @@ public class WorkTimeRawRepository {
         }
     }
 	
+	public void save(WorkTimeRaw wt) {
+		Transaction tx = null;
+		try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+			tx = session.beginTransaction();
+			session.persist(wt); // INSERT
+			tx.commit();
+		}
+	}
+	
 	public void delete(long id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Transaction tx = session.beginTransaction();

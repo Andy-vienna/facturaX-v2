@@ -17,6 +17,10 @@ import org.apache.logging.log4j.Logger;
 
 import com.formdev.flatlaf.FlatIntelliJLaf;
 
+/**
+ * @deprecated - wird nciht mehr verwendet
+ */
+@Deprecated
 public class StartUp {
 
 	private static final Logger logger = LogManager.getLogger(StartUp.class);
