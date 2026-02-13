@@ -57,13 +57,16 @@ public class HibernateUtil {
         settings.put("hibernate.hikari.jdbcUrl", Settings.getsData());
         settings.put("hibernate.hikari.username", Settings.getSettings().dbUser);
         settings.put("hibernate.hikari.password", Settings.getSettings().dbPass);
-
+        settings.put("hibernate.hikari.connectionInitSql", "SET TIME ZONE 'Europe/Berlin'");
+        
         settings.put("hibernate.hikari.maximumPoolSize", "10");
         settings.put("hibernate.hikari.minimumIdle", "2");
         settings.put("hibernate.hikari.idleTimeout", "300000");
         settings.put("hibernate.hikari.maxLifetime", "1800000");
         settings.put("hibernate.hikari.connectionTimeout", "30000");
         settings.put("hibernate.hikari.poolName", "FX-DB2");
+        
+        settings.put("hibernate.jdbc.time_zone", "Europe/Berlin");
 
         // Hibernate
         settings.put("hibernate.show_sql", "false");

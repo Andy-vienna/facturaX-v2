@@ -1,6 +1,7 @@
 package org.andy.code.dataStructure.entity;
 
 import java.time.OffsetDateTime;
+import org.andy.code.misc.BerlinDateTimeConverter;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -33,6 +34,7 @@ public class WorkTimeRaw {
 	private String timeZoneId;
 
 	@Column(name = "ts", nullable = false)
+	@jakarta.persistence.Convert(converter = BerlinDateTimeConverter.class)
 	private OffsetDateTime ts;
 
 	// ###################################################################################################################################################
@@ -90,7 +92,7 @@ public class WorkTimeRaw {
 	public OffsetDateTime getTs() {
 		return ts;
 	}
-
+	
 	public void setTs(OffsetDateTime ts) {
 		this.ts = ts;
 	}
