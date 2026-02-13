@@ -3,6 +3,8 @@ package org.andy.code.dataStructure.entity;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
+import org.andy.code.misc.BerlinDateTimeConverter;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -25,9 +27,11 @@ public class WorkTime {
 	private String reason;
 	
 	@Column(name = "ts_in", nullable = false)
+	@jakarta.persistence.Convert(converter = BerlinDateTimeConverter.class)
 	private OffsetDateTime tsIn;
 	
 	@Column(name = "ts_out", nullable = false)
+	@jakarta.persistence.Convert(converter = BerlinDateTimeConverter.class)
 	private OffsetDateTime tsOut;
 	
 	@Column(name = "username", nullable = false, length = 64)

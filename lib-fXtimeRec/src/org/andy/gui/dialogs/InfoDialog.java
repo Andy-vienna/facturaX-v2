@@ -31,7 +31,7 @@ public final class InfoDialog extends JDialog {
 	private static final String TEXT_B_HTML =
             """
             <html style='font-family:sans-serif;'>
-              <b>Copyright &copy; 2024-2025 Andreas Fischer</b><br><br>
+              <b>Copyright &copy; 2024-2026 Andreas Fischer</b><br><br>
               Licensed under the Apache License, Version 2.0 (the "License");<br>
               you may not use this file except in compliance with the License.<br>
               You may obtain a copy of the License at<br><br>

@@ -17,7 +17,6 @@
 	<modules>
 		<module>lib-facturaX</module>
 		<module>lib-fXtimeRec</module>
-		<!--<module>lib-fXtrayApp</module>-->
 		<module>lib-fXstarterApp</module>
 	</modules>
 
@@ -31,11 +30,6 @@
 				<groupId>org.andy</groupId>
 				<artifactId>lib-fXtimeRec</artifactId>
 			</dependency>
-			<!-- die TrayApp wird nicht mehr verwendet -->
-			<!--<dependency>
-				<groupId>org.andy</groupId>
-				<artifactId>lib-fXtrayApp</artifactId>
-			</dependency>-->
 			<dependency>
 				<groupId>org.andy</groupId>
 				<artifactId>lib-fXstarterApp</artifactId>

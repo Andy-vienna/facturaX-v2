@@ -217,7 +217,7 @@
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>42.7.9</version>
+			<version>42.7.10</version>
 		</dependency>
 
 		<!-- Passwort Verschlüsselung -->
@@ -236,7 +236,7 @@
 		<dependency>
 			<groupId>com.formdev</groupId>
 			<artifactId>flatlaf</artifactId>
-			<version>3.6.2</version>
+			<version>3.7</version>
 		</dependency>
 
 		<!-- Datepicker -->
@@ -262,7 +262,7 @@
 		<dependency>
 			<groupId>org.mustangproject</groupId>
 			<artifactId>library</artifactId>
-			<version>2.21.0</version>
+			<version>2.22.0</version>
 		</dependency>
 		<!--<dependency>
 			<groupId>org.mustangproject</groupId>
