@@ -1,14 +1,21 @@
-package org.andy.code.dataStructure.entityJSON;
+package org.andy.code.dataStructure;
 
-import com.google.gson.*;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
+import java.io.IOException;
+import java.io.Reader;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 
-import java.io.*;
-import static java.nio.charset.StandardCharsets.UTF_8;
+import org.andy.code.dataStructure.entityJSON.JsonSettings;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 public class JsonUtil {
 

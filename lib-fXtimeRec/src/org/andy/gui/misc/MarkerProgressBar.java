@@ -1,7 +1,10 @@
 package org.andy.gui.misc;
 
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+
 import javax.swing.JProgressBar;
-import java.awt.*;
 import javax.swing.SwingConstants; 
 
 public class MarkerProgressBar extends JProgressBar {

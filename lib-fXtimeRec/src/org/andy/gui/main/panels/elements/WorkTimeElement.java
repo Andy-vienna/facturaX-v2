@@ -15,7 +15,6 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
-import java.util.Locale;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -29,17 +28,17 @@ import javax.swing.text.AbstractDocument;
 import org.andy.code.misc.BD;
 import org.andy.code.misc.CommaHelper;
 import org.andy.gui.iconHandler.ButtonIcon;
+import org.andy.gui.misc.DateTimePickerSettings;
 
 import com.github.lgooddatepicker.components.DatePicker;
-import com.github.lgooddatepicker.components.DatePickerSettings;
 import com.github.lgooddatepicker.components.TimePicker;
-import com.github.lgooddatepicker.components.TimePickerSettings;
-import com.github.lgooddatepicker.components.TimePickerSettings.TimeIncrement;
 import com.github.lgooddatepicker.optionalusertools.TimeChangeListener;
 
 public final class WorkTimeElement extends JPanel {
 
 	private static final long serialVersionUID = 1L;
+	
+	private DateTimePickerSettings dtp = new DateTimePickerSettings();
 	
 	private int posx = 0; private int posy = 0;	private final int w = 150; private final int h = 25; private final int w2 = 100;
 	private BigDecimal hours = BD.ZERO;
@@ -62,22 +61,13 @@ public final class WorkTimeElement extends JPanel {
 		
 		setLayout(null);
 		
-		DatePickerSettings d = new DatePickerSettings(Locale.GERMAN);
-		d.setFormatForDatesCommonEra("dd.MM.yyyy");
-
-		TimePickerSettings s = new TimePickerSettings(Locale.GERMAN);
-		s.use24HourClockFormat();
-		s.initialTime = LocalTime.of(0, 0);
-		s.generatePotentialMenuTimes(TimeIncrement.FifteenMinutes, null, null);
-		s.setDisplaySpinnerButtons(true);
-		
-		datum.setSettings(d); datum.setBounds(posx, posy, w, h);
+		datum.setSettings(dtp.dpSettings()); datum.setBounds(posx, posy, w, h);
 		JTextField dt = datum.getComponentDateTextField(); dt.setHorizontalAlignment(SwingConstants.CENTER);
 		add(datum);
 		posx = posx + w;
 		
 		for (int i = 0; i < zeit.length; i++) {
-			zeit[i] = new TimePicker(s); zeit[i].setBounds(posx + (i * w), posy, w, h);
+			zeit[i] = new TimePicker(dtp.tpSettings()); zeit[i].setBounds(posx + (i * w), posy, w, h);
 			ztf[i] = zeit[i].getComponentTimeTextField(); ztf[i].setHorizontalAlignment(SwingConstants.CENTER);
 			ztf[i].setOpaque(true);
 			add(zeit[i]);
@@ -143,7 +133,9 @@ public final class WorkTimeElement extends JPanel {
 		if (txt.getText().isBlank()) return;
 		BigDecimal val = new BigDecimal(txt.getText().replace(" h", ""));
 		if (val.compareTo(BD.ZERO) == 0) { txt.setBackground(Color.WHITE); return; } // white
-		if (val.compareTo(BD.ZERO) == -1) { txt.setBackground(Color.PINK); return; } // light green
+		if (val.compareTo(BD.ZERO) == -1) { txt.setBackground(Color.PINK); return; } // pink
+		if (val.compareTo(BD.TWELVE) == 1) { txt.setBackground(Color.RED); return; } // red
+		if (val.compareTo(BD.TEN) == 1) { txt.setBackground(new Color(255,250,205)); return; } // light yellow
 		txt.setBackground(new Color(144,238,144)); // light green
 	}
 	private void projektOnChange() {

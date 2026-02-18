@@ -1,7 +1,7 @@
 package org.andy.code.dataStructure.repository;
 
 import org.andy.code.dataStructure.HibernateUtil;
-import org.andy.code.dataStructure.entity.Ausgaben;
+import org.andy.code.dataStructure.entity.OperatingExpenses;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -9,33 +9,33 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-public class AusgabenRepository {
+public class OperatingExpensesRepository {
 	
-	public List<Ausgaben> findAll() {
+	public List<OperatingExpenses> findAll() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.createQuery("FROM Ausgaben ORDER BY id", Ausgaben.class).list();
+            return session.createQuery("FROM OperatingExpenses ORDER BY id", OperatingExpenses.class).list();
         }
     }
 
-    public List<Ausgaben> findAllByJahr(int jahr) {
+    public List<OperatingExpenses> findAllByJahr(int jahr) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.createQuery(
-                    "FROM Ausgaben r WHERE r.jahr = :jahr ORDER BY r.datum", Ausgaben.class)
+                    "FROM OperatingExpenses r WHERE r.jahr = :jahr ORDER BY r.datum", OperatingExpenses.class)
                     .setParameter("jahr", jahr)
                     .getResultList();
         }
     }
     
-    public Ausgaben findById(int id){
+    public OperatingExpenses findById(int id){
     	try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.createQuery(
-                    "FROM Ausgaben r WHERE r.id = :id", Ausgaben.class)
+                    "FROM OperatingExpenses r WHERE r.id = :id", OperatingExpenses.class)
                     .setParameter("id", id)
                     .getSingleResult();
         }
     }
 
-    public void save(Ausgaben ausgaben) {
+    public void save(OperatingExpenses ausgaben) {
         Transaction tx = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
@@ -44,7 +44,7 @@ public class AusgabenRepository {
         }
     }
 
-    public void update(Ausgaben ausgaben) {
+    public void update(OperatingExpenses ausgaben) {
         Transaction tx = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
@@ -55,7 +55,7 @@ public class AusgabenRepository {
     
     public void exportFileById(int id, Path targetDir) throws Exception {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Ausgaben ausgaben = session.find(Ausgaben.class, id);
+            OperatingExpenses ausgaben = session.find(OperatingExpenses.class, id);
             if (ausgaben == null) throw new IllegalArgumentException("Keine Datei mit Id=" + id + " gefunden");
             byte[] data = ausgaben.getDatei();
             if (data == null) throw new IllegalStateException("Dateiinhalt ist NULL");

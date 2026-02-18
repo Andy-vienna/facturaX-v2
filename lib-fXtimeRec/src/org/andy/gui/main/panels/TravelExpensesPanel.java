@@ -38,30 +38,31 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import org.andy.code.dataExport.ExcelSpesen;
-import org.andy.code.dataStructure.entity.Ausgaben;
+import org.andy.code.dataExport.ExcelTravelExpenses;
 import org.andy.code.dataStructure.entity.Helper;
-import org.andy.code.dataStructure.entity.Spesen;
-import org.andy.code.dataStructure.repository.AusgabenRepository;
+import org.andy.code.dataStructure.entity.OperatingExpenses;
+import org.andy.code.dataStructure.entity.TravelExpenses;
 import org.andy.code.dataStructure.repository.HelperRepository;
-import org.andy.code.dataStructure.repository.SpesenRepository;
+import org.andy.code.dataStructure.repository.OperatingExpensesRepository;
+import org.andy.code.dataStructure.repository.TravelExpensesRepository;
 import org.andy.code.main.Settings;
 import org.andy.code.misc.ArithmeticHelper.LocaleFormat;
 import org.andy.code.misc.BD;
 import org.andy.code.misc.ExportHelper;
 import org.andy.gui.iconHandler.ButtonIcon;
 import org.andy.gui.main.MainWindow;
+import org.andy.gui.main.panels.elements.TravelExpensesElement;
 import org.andy.gui.misc.BusyDialog;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class TimeRangePanelFactory extends JPanel {
+public class TravelExpensesPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = LogManager.getLogger(TimeRangePanelFactory.class);
+	private static final Logger logger = LogManager.getLogger(TravelExpensesPanel.class);
 	private final Font font = new Font("Tahoma", Font.BOLD, 14);
     private final Color titleColor = Color.BLUE;
-    private TimeRangePanel[] trp = new TimeRangePanel[31];
+    private TravelExpensesElement[] trp = new TravelExpensesElement[31];
     private JTextField stunden = new JTextField();
     private JTextField summe = new JTextField();
     private JButton[] btn = new JButton[2];
@@ -76,9 +77,9 @@ public class TimeRangePanelFactory extends JPanel {
 			+ "<span style='font-size:12px;color:black;font-weight:plain;'>mehr möglich, bist du sicher ?</span>";
     private final Object[] opt = {"Ja", "Abbruch"};
     
-    private final SpesenRepository repo = new SpesenRepository();
+    private final TravelExpensesRepository repo = new TravelExpensesRepository();
     private final HelperRepository hlpRepo = new HelperRepository();
-    private List<Spesen> ls = null; private Helper hlp = null;
+    private List<TravelExpenses> ls = null; private Helper hlp = null;
     private int monthIndex = 0; private String month = null;
     private String user;
 	
@@ -86,7 +87,7 @@ public class TimeRangePanelFactory extends JPanel {
 	// public Teil
 	//###################################################################################################################################################
 	
-    public TimeRangePanelFactory(String month, String user) {
+    public TravelExpensesPanel(String month, String user) {
         setLayout(null);
         this.month = month; this.user = user;
         TitledBorder border = BorderFactory.createTitledBorder(
@@ -132,7 +133,7 @@ public class TimeRangePanelFactory extends JPanel {
 		for (int i = 0; i < trp.length; i++) trp[i] = null;
 		for (int i = 0; i < daysInMonth; i++) {
 			LocalDate d = LocalDate.of(Settings.getSettings().year, m, i + 1);
-			try { trp[i] = new TimeRangePanel(); } catch (IOException e) { logger.error("error creating TimeRangePanel: ", e); }
+			try { trp[i] = new TravelExpensesElement(); } catch (IOException e) { logger.error("error creating TravelExpensesElement: ", e); }
 			size = trp[0].getPreferredSize();
 			trp[i].setDatum(d);
 			trp[i].setBounds(10, 30 + (i * 25), size.width, size.height);
@@ -230,7 +231,7 @@ public class TimeRangePanelFactory extends JPanel {
 		if (reason == 0) return;
 		if (reason == 1) { // Neuanlage Datensatz
 			for (int i = 0; i < days; i++) {
-				Spesen s = new Spesen();
+				TravelExpenses s = new TravelExpenses();
 				s.setDate(trp[i].getDatum());
 				s.setTimeStart(trp[i].getStart());
 				s.setTimeEnd(trp[i].getEnd());
@@ -244,7 +245,7 @@ public class TimeRangePanelFactory extends JPanel {
 		}
 		if (reason == 2) { // Update Datensatz
 			for (int i = 0; i < days; i++) {
-				Spesen s = ls.get(i);
+				TravelExpenses s = ls.get(i);
 				s.setDate(trp[i].getDatum());
 				s.setTimeStart(trp[i].getStart());
 				s.setTimeEnd(trp[i].getEnd());
@@ -281,15 +282,15 @@ public class TimeRangePanelFactory extends JPanel {
 	}
 	
 	private void doExpenses(int daysInMonth, Month m, int jahr, String stunden, String summe) {
-		AusgabenRepository ausgabenRepo = new AusgabenRepository();
-		Ausgaben a = new Ausgaben();
+		OperatingExpensesRepository ausgabenRepo = new OperatingExpensesRepository();
+		OperatingExpenses a = new OperatingExpenses();
 		try {
-			ExcelSpesen.spExport(daysInMonth, m, jahr, stunden, summe, user); // Excel und pdf erzeugen
+			ExcelTravelExpenses.spExport(daysInMonth, m, jahr, stunden, summe, user); // Excel und pdf erzeugen
 		} catch (Exception e1) {
 			logger.error("error exporting travel expenses to excel(pdf: ", e1);
 			return;
 		}
-		String sExcelOut = ExcelSpesen.getsExcelOut(); String sPdfOut = ExcelSpesen.getsPdfOut();
+		String sExcelOut = ExcelTravelExpenses.getsExcelOut(); String sPdfOut = ExcelTravelExpenses.getsPdfOut();
 		String name = Paths.get(sPdfOut).getFileName().toString(); // Dateiname aus Pfad extrahieren
 		String sumClean = summe.replace(" EUR", "").trim(); // "1.234,56 EUR" -> "1.234,56"
 		

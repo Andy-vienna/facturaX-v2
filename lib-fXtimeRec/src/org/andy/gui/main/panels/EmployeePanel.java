@@ -5,7 +5,6 @@ import static org.andy.gui.misc.CreateButton.createButton;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.util.Locale;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -22,13 +21,16 @@ import org.andy.code.dataStructure.repository.EmployeeRepository;
 import org.andy.code.main.Settings;
 import org.andy.gui.iconHandler.ButtonIcon;
 import org.andy.gui.main.MainWindow;
+import org.andy.gui.misc.DateTimePickerSettings;
 
 import com.github.lgooddatepicker.components.DatePicker;
-import com.github.lgooddatepicker.components.DatePickerSettings;
 
 public class EmployeePanel extends JPanel {
 	
 	private static final long serialVersionUID = 1L;
+	
+	private DateTimePickerSettings dtp = new DateTimePickerSettings();
+	
 	private final Font font = new Font("Tahoma", Font.BOLD, 14);
     private final Color titleColor = Color.BLUE;
     
@@ -83,19 +85,16 @@ public class EmployeePanel extends JPanel {
 			employee[i].setHorizontalAlignment(SwingConstants.LEFT);
 			employee[i].setBounds(220, y + (i * 25), 400, 25);
 			employee[i].getDocument().addDocumentListener(new DocumentListener() {
+				  @Override public void changedUpdate(DocumentEvent e) { }
 				  @Override public void insertUpdate(DocumentEvent e) { onChange(); }
 				  @Override public void removeUpdate(DocumentEvent e) { onChange(); }
-				  @Override public void changedUpdate(DocumentEvent e) { }
 			});
 			add(employee[i]);
 		}
 		employee[0].setFocusable(false); employee[7].setVisible(false);
     	employee[0].setFont(new Font("Arial", Font.BOLD, 12));
     	
-    	DatePickerSettings d = new DatePickerSettings(Locale.GERMAN);
-		d.setFormatForDatesCommonEra("dd.MM.yyyy");
-		
-		datum.setSettings(d); datum.setBounds(222, y + (7 * 25), 150, 25);
+		datum.setSettings(dtp.dpSettings()); datum.setBounds(222, y + (7 * 25), 150, 25);
 		JTextField dt = datum.getComponentDateTextField(); dt.setHorizontalAlignment(SwingConstants.CENTER);
 		datum.setDateToToday();
 		add(datum);
@@ -131,24 +130,10 @@ public class EmployeePanel extends JPanel {
 	// Hilfsmethoden
 	//###################################################################################################################################################
 
-    private void loadData(Employee em) {
-    	if (em.getId() != null) employee[0].setText(em.getId().toString());
-    	if (em.getUserName() != null) employee[1].setText(em.getUserName());
-    	if (em.getFirstName() != null) employee[2].setText(em.getFirstName());
-    	if (em.getLastName() != null) employee[3].setText(em.getLastName());
-    	if (em.getAddress() != null) employee[4].setText(em.getAddress());
-    	if (em.getZip() != null) employee[5].setText(em.getZip());
-    	if (em.getTown() != null) employee[6].setText(em.getTown());
-    	if (em.getBirthday() != null) datum.setDate(em.getBirthday());
-    	if (em.getInsuranceNo() != null) employee[8].setText(em.getInsuranceNo());
+    private void doDeleteEmployee(Employee em) {
+    	emRepo.delete(em.getId()); // Datensatz löschen
     	
-    	boolean enbl = false;
-    	if (em.getId() != null) enbl = true;
-    	
-    	btn[0].setEnabled(!enbl);
-    	btn[1].setEnabled(enbl);
-    	btn[2].setEnabled(enbl);
-    	
+    	MainWindow.actScreen();
     }
     
     private void doInsertEmployee(Employee em) {
@@ -185,10 +170,24 @@ public class EmployeePanel extends JPanel {
     	MainWindow.actScreen();
     }
     
-    private void doDeleteEmployee(Employee em) {
-    	emRepo.delete(em.getId()); // Datensatz löschen
+    private void loadData(Employee em) {
+    	if (em.getId() != null) employee[0].setText(em.getId().toString());
+    	if (em.getUserName() != null) employee[1].setText(em.getUserName());
+    	if (em.getFirstName() != null) employee[2].setText(em.getFirstName());
+    	if (em.getLastName() != null) employee[3].setText(em.getLastName());
+    	if (em.getAddress() != null) employee[4].setText(em.getAddress());
+    	if (em.getZip() != null) employee[5].setText(em.getZip());
+    	if (em.getTown() != null) employee[6].setText(em.getTown());
+    	if (em.getBirthday() != null) datum.setDate(em.getBirthday());
+    	if (em.getInsuranceNo() != null) employee[8].setText(em.getInsuranceNo());
     	
-    	MainWindow.actScreen();
+    	boolean enbl = false;
+    	if (em.getId() != null) enbl = true;
+    	
+    	btn[0].setEnabled(!enbl);
+    	btn[1].setEnabled(enbl);
+    	btn[2].setEnabled(enbl);
+    	
     }
     
     private void onChange() {

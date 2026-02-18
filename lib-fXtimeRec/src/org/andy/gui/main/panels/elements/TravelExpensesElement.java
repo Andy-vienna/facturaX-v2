@@ -1,4 +1,4 @@
-package org.andy.gui.main.panels;
+package org.andy.gui.main.panels.elements;
 
 import static org.andy.gui.misc.CreateButton.createButton;
 
@@ -30,20 +30,20 @@ import javax.swing.event.DocumentListener;
 import org.andy.code.misc.BD;
 import org.andy.code.misc.CodeListen;
 import org.andy.gui.iconHandler.ButtonIcon;
+import org.andy.gui.misc.DateTimePickerSettings;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.lgooddatepicker.components.DatePicker;
-import com.github.lgooddatepicker.components.DatePickerSettings;
 import com.github.lgooddatepicker.components.TimePicker;
-import com.github.lgooddatepicker.components.TimePickerSettings;
-import com.github.lgooddatepicker.components.TimePickerSettings.TimeIncrement;
 import com.github.lgooddatepicker.optionalusertools.DateChangeListener;
 import com.github.lgooddatepicker.optionalusertools.TimeChangeListener;
 
-public final class TimeRangePanel extends JPanel {
+public final class TravelExpensesElement extends JPanel {
 
 	private static final long serialVersionUID = 1L;
+	
+	private DateTimePickerSettings dtp = new DateTimePickerSettings();
 	private final File file = Path.of("spesen.json").toFile();
 	
 	private CodeListen cl = new CodeListen();
@@ -67,28 +67,19 @@ public final class TimeRangePanel extends JPanel {
 	// public Teil
 	//###################################################################################################################################################
 	
-	public TimeRangePanel() throws IOException {
+	public TravelExpensesElement() throws IOException {
 		
 		setLayout(null);
 		values = loadIsoValues(file);
 		
-		DatePickerSettings d = new DatePickerSettings(Locale.GERMAN);
-		d.setFormatForDatesCommonEra("dd.MM.yyyy");
-
-		TimePickerSettings s = new TimePickerSettings(Locale.GERMAN);
-		s.use24HourClockFormat();
-		s.initialTime = LocalTime.of(0, 0);
-		s.generatePotentialMenuTimes(TimeIncrement.FifteenMinutes, null, null);
-		s.setDisplaySpinnerButtons(true);
-		
-		datum.setSettings(d); datum.setBounds(posx, posy, w, h);
+		datum.setSettings(dtp.dpSettings()); datum.setBounds(posx, posy, w, h);
 		JTextField dt = datum.getComponentDateTextField(); dt.setHorizontalAlignment(SwingConstants.CENTER);
 		datum.addDateChangeListener(dcl);
 		add(datum);
 		posx = posx + w;
 		
 		for (int i = 0; i < zeit.length; i++) {
-			zeit[i] = new TimePicker(s); zeit[i].setBounds(posx + (i * w), posy, w, h);
+			zeit[i] = new TimePicker(dtp.tpSettings()); zeit[i].setBounds(posx + (i * w), posy, w, h);
 			ztf[i] = zeit[i].getComponentTimeTextField(); ztf[i].setHorizontalAlignment(SwingConstants.CENTER);
 			ztf[i].setOpaque(true);
 			zeit[i].setEnabled(false);

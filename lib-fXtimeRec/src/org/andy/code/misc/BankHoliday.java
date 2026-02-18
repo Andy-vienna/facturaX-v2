@@ -1,6 +1,5 @@
 package org.andy.code.misc;
 
-
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.YearMonth;

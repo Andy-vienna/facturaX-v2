@@ -2,7 +2,7 @@
 <launch4jConfig>
   <dontWrapJar>false</dontWrapJar>
   <headerType>gui</headerType>
-  <jar>C:\Users\andre\Documents\eclipse.workspace\facturaX-v2\lib-fXstarterApp\target\fXStarter.jar</jar>
+  <jar>C:\Users\andre\Documents\eclipse.workspace\facturaX-v2\lib-facturaX\target\fX-2.0.3.jar</jar>
   <outfile>C:\Users\andre\Documents\eclipse.workspace\tools.release\facturaX\facturaX.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>

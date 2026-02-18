@@ -10,6 +10,8 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 
 import org.andy.code.dataStructure.entity.TimeAccount;
@@ -18,8 +20,6 @@ import org.andy.code.dataStructure.repository.TimeAccountRepository;
 import org.andy.code.dataStructure.repository.WorkTimeSheetRepository;
 import org.andy.code.misc.BD;
 import org.andy.gui.misc.MarkerProgressBar;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 
 public class StatisticYearPanel extends JPanel {
 

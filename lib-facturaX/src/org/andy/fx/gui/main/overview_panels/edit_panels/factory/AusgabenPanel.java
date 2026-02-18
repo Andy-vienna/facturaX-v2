@@ -61,12 +61,12 @@ import org.andy.fx.gui.main.HauptFenster;
 import org.andy.fx.gui.main.dialogs.DateianzeigeDialog;
 import org.andy.fx.gui.main.overview_panels.edit_panels.EditPanel;
 import org.andy.fx.gui.misc.BusyDialog;
+import org.andy.fx.gui.misc.DateTimePickerSettings;
 import org.andy.fx.gui.misc.RoundedBorder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.github.lgooddatepicker.components.DatePicker;
-import com.github.lgooddatepicker.components.DatePickerSettings;
 import com.github.lgooddatepicker.zinternaltools.DemoPanel;
 
 public class AusgabenPanel extends EditPanel {
@@ -74,6 +74,7 @@ public class AusgabenPanel extends EditPanel {
 	// Serialisierungs-ID für die Klasse
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = LogManager.getLogger(AusgabenPanel.class);
+	private DateTimePickerSettings dtp = new DateTimePickerSettings();
 	
 	JPanel panel = new JPanel();
 	private Border b;
@@ -156,10 +157,7 @@ public class AusgabenPanel extends EditPanel {
 	    // Datepicker für Belegdatum
 	    DemoPanel panelDate = new DemoPanel();
 		panelDate.scrollPaneForButtons.setEnabled(false);
-		DatePickerSettings dateSettings = new DatePickerSettings();
-		dateSettings.setWeekNumbersDisplayed(true, true);
-		dateSettings.setFormatForDatesCommonEra("dd.MM.yyyy");
-		datePicker = new DatePicker(dateSettings);
+		datePicker = new DatePicker(dtp.dpSettings());
 		datePicker.getComponentDateTextField().setBorder(new RoundedBorder(10));
 		datePicker.setBounds(212, 20, 180, 25);
 		add(datePicker);
