@@ -7,7 +7,7 @@ import java.time.LocalTime;
 
 @Entity
 @Table(name = "tblSp")
-public class Spesen {
+public class TravelExpenses {
 	
 	@Column(name = "amount")
     private BigDecimal amount;

@@ -34,8 +34,8 @@ public class LieferscheinRepository {
     }
     
     public Integer findMaxNummerByJahr(int jahr) {
-        String prefix = "AN-" + jahr + "-";
-        int prefixLength = prefix.length();
+        String prefix = "LS-" + jahr + "-";
+        //int prefixLength = prefix.length();
 
         try (Session session = HibernateUtil.getSessionFactoryDb2().openSession()) {
 
@@ -44,15 +44,15 @@ public class LieferscheinRepository {
                          split_part(split_part(r.idnummer, '-', 3), '/', 1),
                          ''
                        )::int AS num
-                FROM public.tblan r
+                FROM public.tblls r
                 WHERE r.jahr = :jahr AND r.idnummer LIKE :prefix
                 ORDER BY num DESC
                 """;
 
             var q = session.createNativeQuery(sql, Integer.class)
                            .setParameter("jahr", jahr)
-                           .setParameter("prefix", prefix + "%")
-            			   .setParameter("prefixLen", prefixLength);
+                           .setParameter("prefix", prefix + "%");
+            			   //.setParameter("prefixLen", prefixLength);
 
             Integer maxNummer = q.setMaxResults(1).uniqueResult();
             return maxNummer == null ? 0 : maxNummer;

@@ -35,7 +35,7 @@ public class AngebotRepository {
     
     public Integer findMaxNummerByJahr(int jahr) {
         String prefix = "AN-" + jahr + "-";
-        int prefixLength = prefix.length();
+        //int prefixLength = prefix.length();
 
         try (Session session = HibernateUtil.getSessionFactoryDb2().openSession()) {
 
@@ -51,8 +51,8 @@ public class AngebotRepository {
 
             var q = session.createNativeQuery(sql, Integer.class)
                            .setParameter("jahr", jahr)
-                           .setParameter("prefix", prefix + "%")
-            			   .setParameter("prefixLen", prefixLength);
+                           .setParameter("prefix", prefix + "%");
+            			   //.setParameter("prefixLen", prefixLength);
 
             Integer maxNummer = q.setMaxResults(1).uniqueResult();
             return maxNummer == null ? 0 : maxNummer;

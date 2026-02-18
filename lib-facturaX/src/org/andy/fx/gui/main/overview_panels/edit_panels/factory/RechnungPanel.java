@@ -50,12 +50,12 @@ import org.andy.fx.code.misc.ArithmeticHelper.LocaleFormat;
 import org.andy.fx.gui.iconHandler.ButtonIcon;
 import org.andy.fx.gui.main.HauptFenster;
 import org.andy.fx.gui.main.overview_panels.edit_panels.EditPanel;
+import org.andy.fx.gui.misc.DateTimePickerSettings;
 import org.andy.fx.gui.misc.RoundedBorder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.github.lgooddatepicker.components.DatePicker;
-import com.github.lgooddatepicker.components.DatePickerSettings;
 import com.github.lgooddatepicker.optionalusertools.DateChangeListener;
 import com.github.lgooddatepicker.zinternaltools.DateChangeEvent;
 import com.github.lgooddatepicker.zinternaltools.DemoPanel;
@@ -65,6 +65,8 @@ public class RechnungPanel extends EditPanel {
 	// Serialisierungs-ID für die Klasse
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = LogManager.getLogger(RechnungPanel.class);
+	private DateTimePickerSettings dtp = new DateTimePickerSettings();
+	
 	private static final Pattern P = Pattern.compile("^(\\d{2})\\.(\\d{2})\\.(\\d{4})-(\\d{2})\\.(\\d{2})\\.(\\d{4})$");
 	private static final DateTimeFormatter F = DateTimeFormatter.ofPattern("dd.MM.uuuu").withResolverStyle(ResolverStyle.STRICT);
 	
@@ -73,7 +75,6 @@ public class RechnungPanel extends EditPanel {
 	
 	private TitledBorder border;
 	private DemoPanel[] panelDate = new DemoPanel[2];
-	private DatePickerSettings[] dateSettings = new DatePickerSettings[2];
 	private DatePicker[] datePicker = new DatePicker[2];
 	private JTextField[] txtFieldsHead = new JTextField[2];
 	private JTextField[] txtFieldsPos = new JTextField[12];
@@ -176,12 +177,8 @@ public class RechnungPanel extends EditPanel {
 	    for (int i = 0; i < panelDate.length; i++) {
 	    	final int ii = i; // final für Lambda-Ausdruck
 	    	panelDate[ii] = new DemoPanel();
-		    dateSettings[ii] = new DatePickerSettings();
-		    datePicker[ii] = new DatePicker(new DatePickerSettings());
+		    datePicker[ii] = new DatePicker(dtp.dpSettings());
 			panelDate[ii].scrollPaneForButtons.setEnabled(false);
-			dateSettings[ii].setWeekNumbersDisplayed(true, true);
-			dateSettings[ii].setFormatForDatesCommonEra("dd.MM.yyyy");
-			datePicker[ii] = new DatePicker(dateSettings[i]);
 			datePicker[ii].getComponentDateTextField().setBorder(new RoundedBorder(10));
 			datePicker[ii].addDateChangeListener(new DateChangeListener() {
 				@Override

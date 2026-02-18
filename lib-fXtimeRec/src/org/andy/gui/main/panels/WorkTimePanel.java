@@ -343,7 +343,7 @@ public class WorkTimePanel extends JPanel {
 				times[num] = new DayTimes(w.getId(), wDay, wStart, wEnd, breakTime, workTime, plusMinus, reason);
 			}
 		} catch (IndexOutOfBoundsException ex) {
-			System.out.println("da war nix mehr ...");
+			System.out.println("letzter Datensatz erreicht ...");
 		}
 		return times;
 	}
@@ -411,7 +411,7 @@ public class WorkTimePanel extends JPanel {
 	}
 	
 	private void doInsertLine(int daysInMonth, Month m, int year) {
-		LocalTime lt = LocalTime.of(1, 0);
+		LocalTime lt = LocalTime.of(0, 0);
 		LocalDate ld = LocalDate.of(year, m, daysInMonth);
 		ZoneId zone = ZoneId.of("Europe/Vienna");
 		OffsetDateTime odt = LocalDateTime.of(ld, lt).atZone(zone).toOffsetDateTime();

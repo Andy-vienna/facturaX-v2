@@ -55,7 +55,7 @@ import org.andy.gui.iconHandler.TabIcon;
 import org.andy.gui.main.panels.EmployeePanel;
 import org.andy.gui.main.panels.StatisticYearPanel;
 import org.andy.gui.main.panels.TimeAccountPanel;
-import org.andy.gui.main.panels.TimeRangePanelFactory;
+import org.andy.gui.main.panels.TravelExpensesPanel;
 import org.andy.gui.main.panels.WorkTimePanel;
 import org.andy.gui.misc.RoundedBorder;
 import org.andy.gui.misc.WrapLayout;
@@ -237,7 +237,7 @@ public class MainWindow extends JFrame {
         }
 		if (true) {
 			doEmployeePanel();
-			tabPanel.addTab("Mitarbeiter", TabIcon.INVOICE.icon(), pageEM);
+			tabPanel.addTab("Einstellungen", TabIcon.INVOICE.icon(), pageEM);
 		}
 		
         contentPane.add(tabPanel, BorderLayout.CENTER);
@@ -335,15 +335,16 @@ public class MainWindow extends JFrame {
         		.map(String::trim)
                 .toArray(String[]::new);
         String[] users = new String[tmp.length + 1];
-        users[0] = ""; for (int i = 0; i < tmp.length; i++) { users[i + 1] = tmp[i]; }
+        users[0] = ""; for (int i = 0; i < tmp.length; i++) { users[i + 1] = tmp[i]; };
         cmbEmployee = new JComboBox<>(users);
         cmbEmployee.setFont(new Font("Arial", Font.BOLD, 12));
         top.add(lblUser); top.add(cmbEmployee);
 
         pageEmployee = new JPanel(new WrapLayout(FlowLayout.LEFT, 5, 5));
+        
         pageEM.add(top, BorderLayout.NORTH);
         pageEM.add(new JScrollPane(pageEmployee), BorderLayout.CENTER);
-    	
+        
         cmbEmployee.addActionListener(_ -> changeDisplayedEmployee());
         
         cmbEmployee.setSelectedIndex(userEM);
@@ -392,7 +393,7 @@ public class MainWindow extends JFrame {
 		String month = cmbMonthSP.getSelectedItem().toString();
 		String user = cmbUserSP.getSelectedItem().toString();
 		
-        pageTravel.add(new TimeRangePanelFactory(month, user));
+        pageTravel.add(new TravelExpensesPanel(month, user));
         
         Month m = Month.from(fmt.parse(month)); // z.B. "Februar", "März"
 		monthSP = m.ordinal() + 1; userSP = cmbUserSP.getSelectedIndex();
@@ -473,9 +474,9 @@ public class MainWindow extends JFrame {
         	tabPanel.addTab("Arbeitszeit", TabIcon.OFFER.icon(), pageWT);
         }
 		if (true) {
-			tabPanel.removeTabAt(tabPanel.indexOfTab("Mitarbeiter"));
+			tabPanel.removeTabAt(tabPanel.indexOfTab("Einstellungen"));
 			doEmployeePanel();
-			tabPanel.addTab("Mitarbeiter", TabIcon.INVOICE.icon(), pageEM);
+			tabPanel.addTab("Einstellungen", TabIcon.INVOICE.icon(), pageEM);
 		}
 		
 		buildStatusBar();

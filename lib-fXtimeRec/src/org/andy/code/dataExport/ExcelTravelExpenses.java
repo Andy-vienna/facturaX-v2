@@ -14,8 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import org.andy.code.dataStructure.entity.Spesen;
-import org.andy.code.dataStructure.repository.SpesenRepository;
+import org.andy.code.dataStructure.entity.TravelExpenses;
+import org.andy.code.dataStructure.repository.TravelExpensesRepository;
 import org.andy.code.main.Settings;
 import org.andy.code.misc.ExportHelper;
 import org.apache.logging.log4j.LogManager;
@@ -25,9 +25,9 @@ import org.apache.poi.ss.usermodel.Header;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-public class ExcelSpesen {
+public class ExcelTravelExpenses {
 	
-	private static final Logger logger = LogManager.getLogger(ExcelSpesen.class);
+	private static final Logger logger = LogManager.getLogger(ExcelTravelExpenses.class);
 	private static CreatePdf doPdf = new CreatePdf();
 	private static final String HEADER_STYLE = "&\"Arial,Regular\"&11&K7F7F7F";
 	private static final DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
@@ -44,10 +44,10 @@ public class ExcelSpesen {
 	private static final int COLUMN_F = 5;
 	private static final int COLUMN_G = 6;
 	
-	private static final SpesenRepository repo = new SpesenRepository();
-    private static List<Spesen> ls = null;
+	private static final TravelExpensesRepository repo = new TravelExpensesRepository();
+    private static List<TravelExpenses> ls = null;
 	
-	private ExcelSpesen() {} // Instanzierung verhindern
+	private ExcelTravelExpenses() {} // Instanzierung verhindern
 	
 	//###################################################################################################################################################
 	// Angebot erzeugen und pdf exportieren

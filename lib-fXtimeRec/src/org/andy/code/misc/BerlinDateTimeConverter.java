@@ -1,9 +1,10 @@
 package org.andy.code.misc;
 
-import jakarta.persistence.AttributeConverter;
-import jakarta.persistence.Converter;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 
 @Converter
 public class BerlinDateTimeConverter implements AttributeConverter<OffsetDateTime, OffsetDateTime> {

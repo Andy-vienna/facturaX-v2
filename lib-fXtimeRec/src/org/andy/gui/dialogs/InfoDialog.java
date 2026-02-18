@@ -1,14 +1,36 @@
 package org.andy.gui.dialogs;
 
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Desktop;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.io.InputStream;
+
+import javax.imageio.ImageIO;
+import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
+import javax.swing.BorderFactory;
+import javax.swing.InputMap;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JEditorPane;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRootPane;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.KeyStroke;
 import javax.swing.border.EmptyBorder;
 
 import org.andy.code.misc.App;
-
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.io.InputStream;
-import javax.imageio.ImageIO;
 
 public final class InfoDialog extends JDialog {
 

@@ -9,7 +9,7 @@ import org.hibernate.type.SqlTypes;
 
 @Entity
 @Table(name = "tblex")
-public class Ausgaben {
+public class OperatingExpenses {
 
     @Id
     @Column(name = "Id", nullable = false)

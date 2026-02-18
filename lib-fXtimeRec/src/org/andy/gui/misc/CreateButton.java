@@ -22,10 +22,6 @@ public class CreateButton {
 		return doButton(btnText, icon, col);
 	}
 	
-	public static GradientButton createGradientButton(String text, ImageIcon icon, float[] fractions, Color[] colors, boolean vertical) {
-		return doGradientButton(text, icon, fractions, colors, vertical);
-	}
-
 	//###################################################################################################################################################
 	// protected Teil
 	//###################################################################################################################################################
@@ -59,31 +55,6 @@ public class CreateButton {
 		button.setEnabled(false);
 
 		return button;
-	}
-	
-	protected static GradientButton doGradientButton(String text, ImageIcon icon, float[] fractions, Color[] colors, boolean vertical) {
-		GradientButton gradient = new GradientButton(text,fractions,colors,vertical);
-		
-		if (text != null && !text.isEmpty()) {
-			gradient.setText(text);
-			gradient.setToolTipText(text);
-		}
-		
-		if (icon != null) {
-			try {
-				ImageIcon buttonIcon = icon;
-				if (buttonIcon.getImage() != null) {
-					gradient.setIcon(buttonIcon);
-				}
-			} catch (Exception e) {
-				logger.error("doGradientButton: Icon nicht gefunden: " + icon);
-			}
-		}
-		
-		gradient.setIconTextGap(10);
-		gradient.setFont(new Font("Tahoma", Font.BOLD, 11));
-		
-		return gradient;
 	}
 
 }

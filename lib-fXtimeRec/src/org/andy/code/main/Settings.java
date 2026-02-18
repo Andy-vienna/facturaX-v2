@@ -5,10 +5,11 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileLock;
 import java.nio.file.Path;
+
 import javax.swing.JOptionPane;
 
+import org.andy.code.dataStructure.JsonUtil;
 import org.andy.code.dataStructure.entityJSON.JsonSettings;
-import org.andy.code.dataStructure.entityJSON.JsonUtil;
 import org.andy.code.misc.App;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

@@ -83,7 +83,7 @@ public class LadeRechnung {
 			if (rechnung.getState() > 0) { // nicht storniert
 				switch (rechnung.getState()) {
 				case 11 -> sumOpen = sumOpen.add(rechnung.getNetto());
-				case 111 -> sumPayed = sumPayed.add(rechnung.getNetto());
+				case 111, 112, 113 -> sumPayed = sumPayed.add(rechnung.getNetto());
 				}
 			}
 		}

@@ -43,17 +43,18 @@ import org.andy.fx.code.misc.CommaHelper;
 import org.andy.fx.gui.iconHandler.ButtonIcon;
 import org.andy.fx.gui.main.HauptFenster;
 import org.andy.fx.gui.main.overview_panels.edit_panels.EditPanel;
+import org.andy.fx.gui.misc.DateTimePickerSettings;
 import org.andy.fx.gui.misc.RoundedBorder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.github.lgooddatepicker.components.DatePicker;
-import com.github.lgooddatepicker.components.DatePickerSettings;
 
 public class AngebotNeuPanel extends EditPanel {
 	
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LogManager.getLogger(AngebotNeuPanel.class);
+    private DateTimePickerSettings dtp = new DateTimePickerSettings();
 
     private static final int POS_COUNT = 12;
 
@@ -434,10 +435,7 @@ public class AngebotNeuPanel extends EditPanel {
     }
 
     private DatePicker makeDatePicker(int x,int y){
-        DatePickerSettings st = new DatePickerSettings();
-        st.setWeekNumbersDisplayed(true, true);
-        st.setFormatForDatesCommonEra("dd.MM.yyyy");
-        DatePicker dp = new DatePicker(st);
+        DatePicker dp = new DatePicker(dtp.dpSettings());
         dp.setDate(StartUp.getDateNow());
         dp.getComponentDateTextField().setBorder(new RoundedBorder(10));
         dp.getComponentDateTextField().setFont(new Font("Tahoma", Font.BOLD, 14));
