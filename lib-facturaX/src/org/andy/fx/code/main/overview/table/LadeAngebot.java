@@ -75,7 +75,7 @@ public class LadeAngebot {
 			if (angebot.getState() > 0) { // nicht storniert
 				switch (angebot.getState()) {
 				case 11 -> sumOpen = sumOpen.add(angebot.getNetto());
-				case 211 -> sumOrdered = sumOrdered.add(angebot.getNetto());
+				case 111, 211 -> sumOrdered = sumOrdered.add(angebot.getNetto());
 				}
 			}
 		}
