@@ -406,7 +406,7 @@ public class MainWindow extends JFrame {
 			pageWorkTime.revalidate(); pageWorkTime.repaint();
 			return;
 		}
-		String inhalt = cmbMonthWT.getSelectedItem().toString();
+		String monat = cmbMonthWT.getSelectedItem().toString();
 		String benutzer = cmbUserWT.getSelectedItem().toString();
 		
 		TimeAccountRepository taRepo = new TimeAccountRepository();
@@ -429,15 +429,15 @@ public class MainWindow extends JFrame {
 		JPanel panel = new JPanel(new BorderLayout(5, 5));
 		JPanel panelRe = new JPanel(new GridLayout(2, 1, 30, 5));
 		
-		panelRe.add(new TimeAccountPanel(inhalt, benutzer));
-		panelRe.add(new StatisticYearPanel(Settings.getSettings().year, benutzer));
-		panelRe.setPreferredSize(new Dimension(555, 750));
-        
-		panel.add(new WorkTimePanel(inhalt, benutzer, hoursDay));
+		panel.add(new WorkTimePanel(monat, benutzer, hoursDay));
         panel.add(panelRe, BorderLayout.EAST);
         pageWorkTime.add(panel);
+		
+		panelRe.add(new TimeAccountPanel(monat, benutzer));
+		panelRe.add(new StatisticYearPanel(Settings.getSettings().year, benutzer));
+		panelRe.setPreferredSize(new Dimension(555, 750));
 
-		Month m = Month.from(fmt.parse(inhalt)); // z.B. "Februar", "März"
+		Month m = Month.from(fmt.parse(monat)); // z.B. "Februar", "März"
 		monthWT = m.ordinal() + 1; userWT = cmbUserWT.getSelectedIndex();
 		pageWorkTime.revalidate(); pageWorkTime.repaint();
     }

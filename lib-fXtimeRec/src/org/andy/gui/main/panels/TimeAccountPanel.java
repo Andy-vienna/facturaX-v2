@@ -48,7 +48,7 @@ public class TimeAccountPanel extends JPanel {
     private TimeAccount ta = null;
     private List<WorkTimeSheet> ts = null;
     
-    private String user;  private BigDecimal kumulOvertime = BD.ZERO;
+    private BigDecimal kumulOvertime = BD.ZERO;
     
     private static BigDecimal aktWorktime = BD.ZERO;
     private static BigDecimal aktOvertime = BD.ZERO;
@@ -59,7 +59,6 @@ public class TimeAccountPanel extends JPanel {
 	
     public TimeAccountPanel(String month, String user) {
         setLayout(null);
-        this.user = user;
         TitledBorder border = BorderFactory.createTitledBorder(
             BorderFactory.createLineBorder(Color.GRAY),
             "Kontenübersicht"
@@ -85,14 +84,14 @@ public class TimeAccountPanel extends JPanel {
         	taRepo.save(h);
         }
         
-        buildPanel(m, yearInt);
+        buildPanel(m, yearInt, user);
     }
 	
 	//###################################################################################################################################################
 	// private Teil
 	//###################################################################################################################################################
     
-    private void buildPanel(Month m, int year) {
+    private void buildPanel(Month m, int year, String user) {
 		Dimension size = new Dimension(0,0); int y = 30;
 		
 		JLabel[] label = new JLabel[10];
@@ -149,12 +148,12 @@ public class TimeAccountPanel extends JPanel {
         size.width = 375;
         size.height = size.height + 45;
 		
-		loadData(year, m);
+		loadData(year, m, user);
 		
 		setPreferredSize(size);
     }
     
-    private void loadData(int year, Month m) {
+    private void loadData(int year, Month m, String user) {
     	ta = taRepo.findByUserAndYear(user, year); ts = tsRepo.findByUserYear(user, year);
     	kumulOvertime = BD.ZERO;
     	for (int n = 0; n < ts.size(); n++) {

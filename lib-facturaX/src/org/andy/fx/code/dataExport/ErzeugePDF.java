@@ -1,21 +1,18 @@
 package org.andy.fx.code.dataExport;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.jacob.activeX.ActiveXComponent;
-import com.jacob.com.ComThread;
-import com.jacob.com.Dispatch;
 import com.spire.pdf.PdfDocument;
 import com.spire.pdf.PdfDocumentInformation;
+import com.spire.pdf.PdfPageBase;
 import com.spire.pdf.conversion.PdfStandardsConverter;
+import com.spire.pdf.texts.PdfTextReplacer;
+import com.spire.xls.*;
+import com.spire.doc.*;
 
 import org.andy.fx.code.misc.App;
 import org.andy.fx.code.misc.ExportHelper;
 
 public class ErzeugePDF {
 
-	private final Logger logger = LogManager.getLogger(ErzeugePDF.class);
 	private App a = new App();
 
 	private final String OFFER = "Angebot";
@@ -26,85 +23,63 @@ public class ErzeugePDF {
 	private final String TRAVEL = "Spesenabrechnung";
 	private final String WORKTIME = "Arbeitszeit";
 	private final String UNKNOWN = "unknown";
+	
+	private final String XLS = "Evaluation Warning : The document was created with Spire.XLS for Java.";
+	private final String DOC = "Evaluation Warning : The document was created with Spire.Doc for Java.";
+	
 
 	/** Excel als pdf exportieren
 	 * @param sFileExcel
 	 * @param sFilePDF
-	 * @throws OwnException
 	 */
 	public void toPDF(String sFileExcel, String sFilePDF) {
-		ActiveXComponent excel = new ActiveXComponent("Excel.Application");
-		Dispatch workbook = null;
-		try {
-			excel.setProperty("Visible", false); // Excel im Hintergrund starten
-			Dispatch workbooks = excel.getProperty("Workbooks").toDispatch();
-			workbook = Dispatch.call(workbooks, "Open", sFileExcel).toDispatch();
+        Workbook workbook = new Workbook();
+        workbook.loadFromFile(sFileExcel); // load the workbook
+        Worksheet sheet = workbook.getWorksheets().get(0); // select the first worksheet out of the loaded workbook
 
-			Dispatch.call(workbook, "ExportAsFixedFormat", 0, sFilePDF); // Exportieren als PDF
+        sheet.getPageSetup().setPaperSize(PaperSizeType.PaperA4); // select layout for A4 pages
+        
+        sheet.getPageSetup().setFitToPagesWide(1); // shrink to fit on one page
+        sheet.getPageSetup().setFitToPagesTall(1);
 
-		} catch (Exception e) {
-			logger.error("toPDF(String sFileExcel, String sFilePDF) - " + e);
-		} finally {
-			Dispatch.call(workbook, "Close", false); // Arbeitsmappe schließen
-			excel.invoke("Quit"); // Excel beenden
-			excel = null;
-			System.gc();
-			ComThread.Release();
-		}
-		PdfStandardsConverter converter = new PdfStandardsConverter(sFilePDF); // pdf zu pdf-A wandeln
+        sheet.saveToPdf(sFilePDF); // save as pdf
+        
+        removeWatermark(sFilePDF, XLS); // remove watermark if exist
+		
+		PdfStandardsConverter converter = new PdfStandardsConverter(sFilePDF); // create pdf-A from pdf
 		converter.toPdfA1A(sFilePDF);
 	}
 	
 	public void wordToPDF(String sFileWord, String sFilePDF) {
-	    // Word Instanz starten
-	    ActiveXComponent word = new ActiveXComponent("Word.Application");
-	    Dispatch document = null;
-	    try {
-	        word.setProperty("Visible", false); // Im Hintergrund
-	        Dispatch documents = word.getProperty("Documents").toDispatch();
-	        
-	        // Dokument öffnen
-	        document = Dispatch.call(documents, "Open", sFileWord).toDispatch();
+        Document document = new Document();
+        document.loadFromFile(sFileWord); // load the document
 
-	        // ExportAsFixedFormat für Word
-	        // Parameter 17 steht für wdExportFormatPDF
-	        Dispatch.call(document, "ExportAsFixedFormat", sFilePDF, 17);
+        ToPdfParameterList parameters = new ToPdfParameterList();
+        parameters.isEmbeddedAllFonts(true); // use all fonts from source file
 
-	    } catch (Exception e) {
-	        logger.error("wordToPDF - Fehler: " + e.getMessage());
-	    } finally {
-	        if (document != null) {
-	            Dispatch.call(document, "Close", false);
-	        }
-	        word.invoke("Quit", 0);
-	        word = null;
-	        System.gc();
-	        ComThread.Release();
-	    }
+        document.saveToFile(sFilePDF, parameters); // save as pdf
 
-	    // Dein PDF-A Konverter bleibt gleich
-	    PdfStandardsConverter converter = new PdfStandardsConverter(sFilePDF);
+        removeWatermark(sFilePDF, DOC); // remove watermark if exist
+
+	    PdfStandardsConverter converter = new PdfStandardsConverter(sFilePDF); // create pdf-A from pdf
 	    converter.toPdfA1A(sFilePDF);
 	}
 
 	public void setPdfMetadata(String sNr, String sTyp, String sPdf) throws Exception {
-		//String[] tmp = SQLmasterData.getsArrOwner();
+		String sTitel = decodeTyp(sTyp); // create the title of pdf
 
-		String sTitel = decodeTyp(sTyp); // Titel festlegen
-
-		PdfDocument document = new PdfDocument(); // PDF-Dokument laden
+		PdfDocument document = new PdfDocument(); // load the pdf document
 		document.loadFromFile(sPdf);
 
-		PdfDocumentInformation info = document.getDocumentInformation(); // Zugriff auf die Dokumentinformationen
-		// Metadaten festlegen
+		PdfDocumentInformation info = document.getDocumentInformation(); // read the existing document properties
+		// create metadata
 		info.setAuthor(ExportHelper.getKontaktName());
 		info.setTitle(sTitel + " " + sNr);
 		info.setSubject(sTitel);
 		info.setKeywords(sTitel + "," + sNr + "," + ExportHelper.getKontaktName());
 		info.setCreator(a.NAME);
 
-		// PDF speichern
-		document.saveToFile(sPdf);
+		document.saveToFile(sPdf); // save the pdf
 		document.close();
 
 	}
@@ -121,5 +96,21 @@ public class ErzeugePDF {
 			default  : return UNKNOWN;
 		}
 	}
+	
+	private void removeWatermark(String filePath, String watermark) {
+        PdfDocument pdf = new PdfDocument();
+        pdf.loadFromFile(filePath); // load the generated pdf
 
+        // if the watermark exist, replace it with an empty string
+        for (Object pageObj : pdf.getPages()) {
+            PdfPageBase page = (PdfPageBase) pageObj;
+
+            PdfTextReplacer replacer = new PdfTextReplacer(page);
+            replacer.replaceAllText(watermark, " ");
+        }
+
+        pdf.saveToFile(filePath); // save and close the pdf
+        pdf.close();
+    }
+	
 }

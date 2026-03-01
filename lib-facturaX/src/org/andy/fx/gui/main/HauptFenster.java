@@ -105,6 +105,7 @@ import org.andy.fx.gui.main.settings_panels.DatenbankPanel;
 import org.andy.fx.gui.main.settings_panels.GwbTabellePanel;
 import org.andy.fx.gui.main.settings_panels.KundePanel;
 import org.andy.fx.gui.main.settings_panels.LieferantPanel;
+import org.andy.fx.gui.main.settings_panels.MailServerPanel;
 import org.andy.fx.gui.main.settings_panels.OwnerPanel;
 import org.andy.fx.gui.main.settings_panels.PfadPanel;
 import org.andy.fx.gui.main.settings_panels.QrCodePanel;
@@ -824,7 +825,7 @@ public class HauptFenster extends JFrame {
                 "Auftragsbestätigungstexte (Textbausteine)", "Rechnungstexte (Textbausteine)",
                 "Zahlungserinnerungstexte (Textbausteine)", "Mahnungstexte Mahnstufe 1 (Textbausteine)",
                 "Mahnungstexte Mahnstufe 2 (Textbausteine)", "Bestellungstexte (Textbausteine)",
-                "Lieferscheintexte (Textbausteine)", "AI Features"};
+                "Lieferscheintexte (Textbausteine)", "AI Features", "Mailserver"};
 
         TitledBorder border = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.GRAY), null);
         border.setTitleJustification(TitledBorder.LEFT);
@@ -865,6 +866,7 @@ public class HauptFenster extends JFrame {
                 case 16 -> pageSetting.add(TextPanelFactory.create("T8"));
                 case 17 -> pageSetting.add(TextPanelFactory.create("T9"));
                 case 18 -> pageSetting.add(new AIfeaturePanel());
+                case 19 -> pageSetting.add(new MailServerPanel());
                 default -> {}
             }
             pageSetting.revalidate(); pageSetting.repaint();

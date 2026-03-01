@@ -3,6 +3,10 @@ package org.andy.fx.code.dataStructure.entityJSON;
 public class JsonApp {
 	
 	public String qrScheme;
+	public String smtpHost;
+	public int smtpPort;
+	public String smtpUser;
+	public String smtpPass;
 	public String tplBill;
 	public String tplDeliveryNote;
 	public String tplOffer;

@@ -2,7 +2,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<parent>
 		<groupId>org.andy</groupId>
 		<artifactId>facturax-parent</artifactId>
@@ -11,6 +11,7 @@
 	</parent>
 
 	<artifactId>lib-facturaX</artifactId>
+	<version>2.0.3.5</version>
 	<name>FacturaX v2</name>
 
 	<properties>
@@ -139,7 +140,8 @@
 	</repositories>
 
 	<dependencies>
-	
+
+		<!-- the Maven model -->
 		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-model</artifactId>
@@ -169,11 +171,6 @@
 			<artifactId>google-api-client</artifactId>
 			<version>2.8.1</version>
 		</dependency>
-		<!--<dependency>
-			<groupId>com.google.http-client</groupId>
-			<artifactId>google-http-client-gson</artifactId>
-			<version>2.1.0</version>
-		</dependency>-->
 		<dependency>
 			<groupId>com.google.cloud</groupId>
 			<artifactId>google-cloud-document-ai</artifactId>
@@ -189,6 +186,7 @@
 			<artifactId>google-auth-library-oauth2-http</artifactId>
 			<version>1.40.0</version>
 		</dependency>
+
 		<!-- Google QR-Code Erzeugung -->
 		<dependency>
 			<groupId>com.google.zxing</groupId>
@@ -246,16 +244,23 @@
 			<version>11.2.1</version>
 		</dependency>
 
-		<dependency>
-			<groupId>io.github.osobolev</groupId>
-			<artifactId>jacob</artifactId>
-			<version>1.21</version>
-		</dependency>
-
+		<!-- Spire pdf, xls und doc -->
 		<dependency>
 			<groupId>e-iceblue</groupId>
 			<artifactId>spire.pdf.free</artifactId>
 			<version>9.13.0</version>
+		</dependency>
+		<dependency>
+			<groupId>e-iceblue</groupId>
+			<artifactId>spire.xls.free</artifactId>
+			<version>5.3.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>e-iceblue</groupId>
+			<artifactId>spire.doc.free</artifactId>
+			<version>5.3.2</version>
+			<scope>compile</scope>
 		</dependency>
 
 		<!-- ZUGFeRD / X-Rechnung implementieren -->
@@ -264,12 +269,6 @@
 			<artifactId>library</artifactId>
 			<version>2.22.0</version>
 		</dependency>
-		<!--<dependency>
-			<groupId>org.mustangproject</groupId>
-			<artifactId>validator</artifactId>
-			<version>2.19.1</version>
-			<classifier>shaded</classifier>
-		</dependency>-->
 
 		<!-- pdf erzeugen, bzw. umwandeln -->
 		<dependency>
@@ -286,6 +285,14 @@
 			<groupId>org.apache.pdfbox</groupId>
 			<artifactId>pdfbox</artifactId>
 			<version>3.0.6</version>
+		</dependency>
+
+		<!-- Jakarta Mail -->
+		<dependency>
+			<groupId>com.sun.mail</groupId>
+			<artifactId>jakarta.mail</artifactId>
+			<version>2.0.2</version>
+			<scope>compile</scope>
 		</dependency>
 
 	</dependencies>
