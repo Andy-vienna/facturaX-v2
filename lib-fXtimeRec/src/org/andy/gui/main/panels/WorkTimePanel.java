@@ -148,6 +148,8 @@ public class WorkTimePanel extends JPanel {
 		isAfter = current.isAfter(given);
         
         buildPanel(m, days, yearInt, hoursDay);
+        
+        isButtonEnabled();
     }
 	
 	//###################################################################################################################################################
@@ -308,6 +310,7 @@ public class WorkTimePanel extends JPanel {
 		
 		if (times.length > 0) { setPreferredSize(new Dimension(size.width + 20, (times.length * size.height) + heightExtension)); return; }
 		size.width = 1270; size.height = 155; setPreferredSize(size);
+		
 	}
 	
 	//###################################################################################################################################################

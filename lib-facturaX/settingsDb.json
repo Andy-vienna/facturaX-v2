@@ -1,7 +1,5 @@
 {
-  "dbCert": true,
   "dbData": "fxDBwork",
-  "dbEncrypt": true,
   "dbHost": "localhost",
   "dbMaster": "fxDBdata",
   "dbMode": "none",

@@ -11,7 +11,7 @@
 	</parent>
 
 	<artifactId>lib-fXtimeRec</artifactId>
-	<version>1.1.4.3</version>
+	<version>1.1.4.6</version>
 	<name>fXtimeRec</name>
 
 	<properties>
@@ -254,18 +254,17 @@
 			<version>5.5.1</version>
 		</dependency>
 
-		<!-- Excel über ActiveX starten und xlsx speichern als pdf -->
-		<dependency>
-			<groupId>io.github.osobolev</groupId>
-			<artifactId>jacob</artifactId>
-			<version>1.21</version>
-		</dependency>
-
-		<!-- pdf Document Informations schreiben -->
+		<!-- spire pdf und xls -->
 		<dependency>
 			<groupId>e-iceblue</groupId>
 			<artifactId>spire.pdf.free</artifactId>
 			<version>9.13.0</version>
+		</dependency>
+		<dependency>
+			<groupId>e-iceblue</groupId>
+			<artifactId>spire.xls.free</artifactId>
+			<version>5.3.0</version>
+			<scope>compile</scope>
 		</dependency>
 
 	</dependencies>

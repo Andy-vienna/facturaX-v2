@@ -23,6 +23,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -63,6 +64,7 @@ public class SvTaxPanel extends EditPanel {
 	private static final int FORDERUNG = 0;
 	private static final int ZAHLUNG = 10;
 	private static final int DATEI = 55;
+	private static final int BEZAHLT = 100;
 	
 	JPanel panel = new JPanel();
 	private Border b;
@@ -79,6 +81,7 @@ public class SvTaxPanel extends EditPanel {
 	private JRadioButton rbZahllast = new JRadioButton("Forderung");
 	private JRadioButton rbZahlung  = new JRadioButton("Zahlung");
 	private JRadioButton rbDatei  = new JRadioButton("Dateiablage");
+	private JCheckBox chkPayed = new JCheckBox("bezahlt");
 	private ButtonGroup grp = new ButtonGroup();
 	
 	private int id = 0;
@@ -170,14 +173,10 @@ public class SvTaxPanel extends EditPanel {
 	    });
 	    
 	    rbZahllast.setBounds(400, 95, 100, 25); rbZahlung.setBounds(500, 95, 100, 25); rbDatei.setBounds(400, 120, 100, 25);
+	    rbZahllast.setEnabled(false); rbZahlung.setEnabled(false); rbDatei.setEnabled(false);
 	    add(rbZahllast); add(rbZahlung); add(rbDatei);
 	    ItemListener l = _ -> {
-	        if (rbZahlung.isSelected()) {
-	            BigDecimal tmp = new BigDecimal(txtFields[1].getText().trim());
-	            if (tmp.compareTo(BD.ZERO)== 1) {
-	            	txtFields[1].setText(tmp.multiply(BD.M_ONE).setScale(2, RoundingMode.HALF_UP).toString());
-	            }
-	        } else if (rbZahllast.isSelected()) {
+	        if (rbZahllast.isSelected()) {
 	        	BigDecimal tmp = new BigDecimal(txtFields[1].getText().trim());
 	            if (tmp.compareTo(BD.ZERO)== -1) {
 	            	txtFields[1].setText(tmp.multiply(BD.M_ONE).setScale(2, RoundingMode.HALF_UP).toString());
@@ -214,7 +213,12 @@ public class SvTaxPanel extends EditPanel {
 	    lblFileTyp.setHorizontalAlignment(SwingConstants.CENTER);
 		lblFileTyp.setBounds(660, 45, 50, 40);
 		add(lblFileTyp);
-	    
+		
+		// Checkbox für 'bezahlt'
+		chkPayed.setBounds(660, 95, 100,25);
+		chkPayed.setEnabled(false);
+		add(chkPayed);
+		
 	    btnFields[0] = new JButton();
 	    btnFields[0].setToolTipText("");
 	    btnFields[0].setBounds(145, 145, 65, 25);
@@ -297,10 +301,12 @@ public class SvTaxPanel extends EditPanel {
  					if (rbZahlung.isSelected()) svsteuer.setStatus(ZAHLUNG);
  					if (rbDatei.isSelected()) svsteuer.setStatus(DATEI);
  					
+ 					if (chkPayed.isSelected()) svsteuer.setStatus(BEZAHLT);
+ 					
  					svsteuerRepository.save(svsteuer);
  				} else {
  					svsteuer = svsteuerRepository.findById(id);
- 					svsteuer.setStatus(1);
+ 					if (chkPayed.isSelected()) svsteuer.setStatus(BEZAHLT);
  					svsteuerRepository.update(svsteuer);
  				}
  				neuBeleg = false;
@@ -333,6 +339,10 @@ public class SvTaxPanel extends EditPanel {
     	for (int i = 0; i < this.txtFields.length; i++) {
 			this.txtFields[i].setFocusable(b);
 		}
+    	this.rbDatei.setEnabled(false);
+    	this.rbZahllast.setEnabled(false);
+    	this.rbZahlung.setEnabled(false);
+    	this.chkPayed.setEnabled(b);
     	this.txtFile.setFocusable(false);
     }
     
@@ -429,6 +439,7 @@ public class SvTaxPanel extends EditPanel {
     		cmbOrganisation.setEnabled(true);
         	cmbBezeichnung.setEnabled(true); cmbBezeichnung.setVisible(true);
         	rbZahllast.setSelected(false); rbZahlung.setSelected(false); rbDatei.setSelected(false);
+        	chkPayed.setSelected(false);
         	rbDatei.setEnabled(true);
     		svsteuer = new SVSteuer();
     		neuBeleg = true;
@@ -464,11 +475,15 @@ public class SvTaxPanel extends EditPanel {
     	this.txtFields[0].setText(svsteuer.getBezeichnung());
     	this.txtFields[1].setText(svsteuer.getZahllast().toString());
     	
+    	chkPayed.setSelected(false);
+    	
     	switch(svsteuer.getStatus()) {
     		case FORDERUNG -> rbZahllast.setSelected(true);
     		case ZAHLUNG -> rbZahlung.setSelected(true);
     		case DATEI -> rbDatei.setSelected(true);
     	}
+    	
+    	if (svsteuer.getStatus()==100) chkPayed.setSelected(true);
 
     	this.datePicker[1].setDate(svsteuer.getZahlungsziel());
     	this.datePicker[1].setEnabled(false);
@@ -480,7 +495,8 @@ public class SvTaxPanel extends EditPanel {
     	cmbBezeichnung.setEnabled(false);
     	this.btnFields[0].setEnabled(false);
     	neuBeleg = false;
-		if (svsteuer.getStatus() == 0) {
+		if (svsteuer.getStatus() == 0 || id == 0) {
+			if (id != 0) chkPayed.setEnabled(true); 
 			this.btnFields[1].setEnabled(true);
 		} else {
 			this.btnFields[1].setEnabled(false);
@@ -489,7 +505,7 @@ public class SvTaxPanel extends EditPanel {
 
 	public void setBtnText(int col, String value) {
 		if (value == null) {
-			this.btnFields[col].setVisible(false);
+			this.btnFields[col].setVisible(true);
 			return;
 		}
 		this.btnFields[col].setText(value);
