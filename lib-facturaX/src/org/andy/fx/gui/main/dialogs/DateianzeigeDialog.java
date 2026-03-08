@@ -4,7 +4,7 @@ import static org.andy.fx.code.dataStructure.HibernateUtil.getSessionFactoryDb2;
 import static org.andy.fx.code.misc.FileSelect.chooseFile;
 import static org.andy.fx.code.misc.FileSelect.choosePath;
 import static org.andy.fx.code.misc.FileSelect.getNotSelected;
-import static org.andy.fx.code.misc.TextFormatter.*;
+import static org.andy.fx.code.misc.TextFormatter.cutFromRight;
 
 import java.awt.BorderLayout;
 import java.awt.Desktop;
@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Properties;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -26,12 +27,14 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 
+import org.andy.fx.code.dataStructure.entityJSON.JsonApp;
 import org.andy.fx.code.dataStructure.entityMaster.Kunde;
 import org.andy.fx.code.dataStructure.entityMaster.Lieferant;
 import org.andy.fx.code.dataStructure.entityProductive.FileStore;
 import org.andy.fx.code.dataStructure.repositoryProductive.FileStoreRepository;
 import org.andy.fx.code.main.Einstellungen;
 import org.andy.fx.code.misc.App;
+import org.andy.fx.code.misc.Crypto;
 import org.andy.fx.gui.iconHandler.ButtonIcon;
 import org.andy.fx.gui.iconHandler.FileIcon;
 import org.andy.fx.gui.iconHandler.FrameIcon;
@@ -40,8 +43,12 @@ import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-import com.jacob.activeX.ActiveXComponent;
-import com.jacob.com.Dispatch;
+import jakarta.mail.Message;
+import jakarta.mail.Transport;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeBodyPart;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMultipart;
 
 public class DateianzeigeDialog extends JFrame {
 
@@ -258,41 +265,82 @@ public class DateianzeigeDialog extends JFrame {
 	//###################################################################################################################################################
 
 	private void sendMail(String sAdress, String sSubject, String sBody) {
+	    // 1. Zugangsdaten aus deinen Einstellungen holen
+	    JsonApp settings = Einstellungen.getAppSettings();
+	    String host = settings.smtpHost;
+	    int port = settings.smtpPort;
+	    String user = settings.smtpUser;
+	    
+	    // Passwort entschlüsseln
+	    String password = "";
+	    try {
+	        password = Crypto.decrypt(settings.smtpPass);
+	    } catch (Exception e) {
+	        logger.error("Fehler beim Entschlüsseln des Mail-Passworts: " + e.getMessage());
+	        return;
+	    }
 
-		ActiveXComponent outlook = new ActiveXComponent("Outlook.Application");
+	    // 2. SMTP-Properties konfigurieren
+	    Properties props = new Properties();
+	    props.put("mail.smtp.auth", "true");
+	    props.put("mail.smtp.starttls.enable", "true"); // Für Port 587 (Standard heute)
+	    props.put("mail.smtp.host", host);
+	    props.put("mail.smtp.port", String.valueOf(port));
+	    props.put("mail.smtp.timeout", "10000"); // 10 Sek. Timeout
 
-		try {
-			Dispatch mail = Dispatch.call(outlook, "CreateItem", 0).toDispatch();
-			Dispatch.put(mail, "To", sAdress);
-			Dispatch.put(mail, "Subject", sSubject);
-			Dispatch.put(mail, "Body", sBody);
+	    // 3. Session mit Authentifizierung erstellen
+	    final String finalPassword = password;
+	    jakarta.mail.Session session = jakarta.mail.Session.getInstance(props, new jakarta.mail.Authenticator() {
+	        @Override
+	        protected jakarta.mail.PasswordAuthentication getPasswordAuthentication() {
+	            return new jakarta.mail.PasswordAuthentication(user, finalPassword);
+	        }
+	    });
 
-			// Datei als Anhang hinzufügen
-			Dispatch attachments = Dispatch.get(mail, "Attachments").toDispatch();
-			Dispatch.call(attachments, "Add", Einstellungen.getAppSettings().work + "\\" + sSubject);
+	    try {
+	        // 4. E-Mail Nachricht erstellen
+	    	jakarta.mail.Message message = new MimeMessage(session);
+	        message.setFrom(new InternetAddress(user)); // Absender = Username
+	        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(sAdress));
+	        message.setSubject(sSubject);
 
-			// E-Mail senden
-			Dispatch.call(mail, "Send");
+	        // 5. Mehrteiliger Inhalt (Text + Anhang)
+	        MimeBodyPart messageBodyPart = new MimeBodyPart();
+	        messageBodyPart.setText(sBody);
 
-			JOptionPane.showMessageDialog(null, "E-Mail an [" + sAdress + "] erfolgreich versendet", "E-Mail Versand", JOptionPane.INFORMATION_MESSAGE);
+	        jakarta.mail.Multipart multipart = new MimeMultipart();
+	        multipart.addBodyPart(messageBodyPart);
 
-		} catch (Exception e1) {
-			logger.error("error sending email - " + e1);
-		} finally {
-			outlook.safeRelease();
-		}
+	        // Anhang hinzufügen (Deine PDF-Datei)
+	        String filePath = settings.work + File.separator + sSubject;
+	        File attachment = new File(filePath);
+	        
+	        if (attachment.exists()) {
+	            MimeBodyPart attachPart = new MimeBodyPart();
+	            attachPart.attachFile(attachment);
+	            multipart.addBodyPart(attachPart);
+	        } else {
+	            logger.warn("Anhang nicht gefunden: " + filePath);
+	        }
 
-		boolean bLocked = Einstellungen.isLocked(Einstellungen.getAppSettings().work + "\\" + sSubject);
-		while(bLocked) {
-			System.out.println("warte auf Dateien ...");
-		}
-		File MailFile = new File(Einstellungen.getAppSettings().work + "\\" + sSubject);
-		if(MailFile.delete()) {
+	        message.setContent(multipart);
 
-		}else {
-			logger.error("error deleting mail attachment from folder ...");
-		}
+	        // 6. Senden
+	        Transport.send(message);
 
+	        JOptionPane.showMessageDialog(null, "E-Mail an [" + sAdress + "] erfolgreich versendet", 
+	                                      "E-Mail Versand", JOptionPane.INFORMATION_MESSAGE);
+
+	        // 7. Datei löschen (Kein Loop mehr nötig, Transport.send ist blockierend)
+	        if (attachment.exists() && attachment.delete()) {
+	            logger.info("Anhang erfolgreich gelöscht.");
+	        }
+
+	    } catch (Exception e) {
+	        logger.error("Fehler beim Mailversand - " + e.getMessage());
+	        JOptionPane.showMessageDialog(null, "Fehler beim Versand: " + e.getMessage(), 
+	                                      "Fehler", JOptionPane.ERROR_MESSAGE);
+	    }
 	}
 	
 	//###################################################################################################################################################

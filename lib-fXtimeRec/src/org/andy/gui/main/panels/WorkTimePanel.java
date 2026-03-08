@@ -54,7 +54,6 @@ import org.andy.code.dataStructure.repository.WorkTimeRawRepository;
 import org.andy.code.dataStructure.repository.WorkTimeRepository;
 import org.andy.code.dataStructure.repository.WorkTimeSheetRepository;
 import org.andy.code.main.Settings;
-import org.andy.code.misc.App;
 import org.andy.code.misc.BD;
 import org.andy.code.misc.FileSelect;
 import org.andy.code.workTime.WorkTimeLoader;
@@ -72,7 +71,6 @@ public class WorkTimePanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = LogManager.getLogger(WorkTimePanel.class);
-	private static App a = new App();
 	private final Font font = new Font("Tahoma", Font.BOLD, 14);
     private final Color titleColor = Color.BLUE;
     
@@ -150,6 +148,8 @@ public class WorkTimePanel extends JPanel {
 		isAfter = current.isAfter(given);
         
         buildPanel(m, days, yearInt, hoursDay);
+        
+        isButtonEnabled();
     }
 	
 	//###################################################################################################################################################
@@ -310,6 +310,7 @@ public class WorkTimePanel extends JPanel {
 		
 		if (times.length > 0) { setPreferredSize(new Dimension(size.width + 20, (times.length * size.height) + heightExtension)); return; }
 		size.width = 1270; size.height = 155; setPreferredSize(size);
+		
 	}
 	
 	//###################################################################################################################################################
@@ -623,7 +624,6 @@ public class WorkTimePanel extends JPanel {
         if (panelToSelect == null || panelToSelect == currentlySelectedPanel) { return; }
         currentlySelectedPanel = panelToSelect;
         panelId = (int) panelToSelect.getClientProperty("panelId");
-        if (a.DEBUG) System.out.println("Panel " + panelId + " ist ausgewählt. - Datensatz-Id: " + id[(int) (panelId - 1)]);
     }
 
     private class PanelClickListener extends MouseAdapter {

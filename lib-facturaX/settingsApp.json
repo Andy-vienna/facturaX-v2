@@ -1,5 +1,9 @@
 {
   "qrScheme": "BCD/002/1/SCT/{BIC}/{KI}/{IBAN}/EUR{SUM}//{RENR}//",
+  "smtpHost": "mail.aw-net.eu",
+  "smtpPort": 587,
+  "smtpUser": "andreas.fischer@aw-net.eu",
+  "smtpPass": "f6z7h3UC6liDqeRtNnh24A==",
   "tplBill": "C:\\Users\\andre\\Documents\\eclipse.workspace\\facturaX-v2\\lib-facturaX\\templates\\template-rechnung_deu_v2.12.xlsx",
   "tplDeliveryNote": "C:\\Users\\andre\\Documents\\eclipse.workspace\\facturaX-v2\\lib-facturaX\\templates\\template-lieferschein_deu_v2.12.xlsx",
   "tplOffer": "C:\\Users\\andre\\Documents\\eclipse.workspace\\facturaX-v2\\lib-facturaX\\templates\\template-angebot_deu_v2.12.xlsx",

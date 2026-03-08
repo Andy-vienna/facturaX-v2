@@ -70,6 +70,8 @@ public class LadeSvTax {
 	        	case 0 -> status = "Forderung";
 	        	case 10 -> status = "Zahlung";
 	        	case 55 -> status = "Dateiablage";
+	        	case 100 -> status = "bezahlt";
+	        	default -> status = "unbekannt";
 	        }
 	        
 	        String zahllast = df.format(svsteuer.getZahllast()) + " " + currency.getCurrencyCode();
@@ -86,20 +88,20 @@ public class LadeSvTax {
 	        belegID[i] = svsteuer.getId();
 			
 	        if (svsteuer.getOrganisation().contains("Sozialversicherung")) {
-	        	if (status.equals("Forderung")) bdSV = bdSV.add(svsteuer.getZahllast());
+	        	if (status.equals("Forderung") || status.equals("bezahlt")) bdSV = bdSV.add(svsteuer.getZahllast());
+	        	if (status.equals("Zahlung")) bdSvEing = bdSvEing.add(svsteuer.getZahllast()); 
 	        	for (int x = 0; x < 4; x++) {
 	        	    String token = "Q" + (x + 1);
-	        	    if (svsteuer.getBezeichnung().contains(token) && status.equals("Forderung")) {
-	        	        bdSVQ[x] = bdSVQ[x].add(svsteuer.getZahllast());
+	        	    if (svsteuer.getBezeichnung().contains(token)) {
+	        	        if (status.equals("Forderung") || status.equals("bezahlt")) bdSVQ[x] = bdSVQ[x].add(svsteuer.getZahllast());
 	        	    }
 	        	}
-	        	if (status.equals("Zahlung")) bdSvEing = bdSvEing.add(svsteuer.getZahllast()); 
-	        	bdSVoffen = bdSV.add(bdSvEing);
+	        	bdSVoffen = bdSV.subtract(bdSvEing);
 	        }
 	        if (svsteuer.getOrganisation().contains("Finanzamt")) {
-	        	if (status.equals("Forderung")) bdST = bdST.add(svsteuer.getZahllast());
+	        	if (status.equals("Forderung") || status.equals("bezahlt")) bdST = bdST.add(svsteuer.getZahllast());
 	        	if (status.equals("Zahlung")) bdStEing = bdStEing.add(svsteuer.getZahllast());
-	        	bdSToffen = bdST.add(bdStEing);
+	        	bdSToffen = bdST.subtract(bdStEing);
 	        }
 		}
 		return sTemp;

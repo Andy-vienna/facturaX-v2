@@ -54,12 +54,14 @@ public final class TravelExpensesElement extends JPanel {
 	private TimePicker[] zeit = new TimePicker[2];
 	private JTextField[] ztf = new JTextField[2];
 	private JTextField diff; private final JTextField betrag; private JTextField grund;
-	private JButton btn = new JButton();
+	private JButton btnCalc = new JButton();
+	private JButton btnDel = new JButton();
 	private JComboBox<String> cmb = new JComboBox<>();
 	
 	private DateChangeListener dcl = _ -> dateOnChange();
 	private ActionListener cal = _ -> land = countryOnChange();
-	private ActionListener bal = _ -> doBtnAction();
+	private ActionListener balCalc = _ -> doBtnCalcAction();
+	private ActionListener balDel = _ -> doBtnDelAction();
 	
 	private Map<String, BigDecimal> values = Map.of();
 
@@ -125,11 +127,17 @@ public final class TravelExpensesElement extends JPanel {
 		add(grund);
 		posx = posx + (w * 3);
 		
-		btn = createButton("", ButtonIcon.CALC16.icon(), null);
-		btn.setBounds(posx, posy, 50, h);
-		btn.addActionListener(bal);
-		add(btn);
+		btnCalc = createButton("", ButtonIcon.CALC16.icon(), null);
+		btnCalc.setBounds(posx, posy, 50, h);
+		btnCalc.addActionListener(balCalc);
+		add(btnCalc);
 		posx = posx + 50;
+		
+		btnDel = createButton("", ButtonIcon.DEL16.icon(), Color.PINK);
+		btnDel.setBounds(posx, posy, 50, h);
+		btnDel.addActionListener(balDel);
+		add(btnDel);
+		posx = posx +50;
 
 		setPreferredSize(new Dimension(posx, h));
 	}
@@ -180,7 +188,8 @@ public final class TravelExpensesElement extends JPanel {
 			cmb.setBackground(Color.WHITE);
 		}
 		grund.setFocusable(true);
-		btn.setEnabled(true);
+		btnCalc.setEnabled(true);
+		btnDel.setEnabled(true);
 		return land;
 	}
 	private void diffOnChange() {
@@ -195,7 +204,7 @@ public final class TravelExpensesElement extends JPanel {
 		if (grund.getText().isBlank()) { grund.setBackground(Color.WHITE); return; }
 		grund.setBackground(new Color(191,239,255)); // light blue
 	}
-	private void doBtnAction() {
+	private void doBtnCalcAction() {
 		if (grund.getText().isBlank()) {
 			JOptionPane.showMessageDialog(this,  "Bitte geben Sie einen Grund für die Spesen an.", "Fehlende Angabe", JOptionPane.WARNING_MESSAGE);
 			return;
@@ -211,6 +220,17 @@ public final class TravelExpensesElement extends JPanel {
 		diff.setBackground(new Color(144,238,144)); // light green
 		betrag.setBackground(new Color(144,238,144)); // light green
 		diff.setText(hours.toString() + " h"); betrag.setText(wert.toString() + " EUR");
+	}
+	
+	private void doBtnDelAction() {
+		zeit[0].setTime(LocalTime.of(0, 0));
+		zeit[1].setTime(LocalTime.of(0, 0));
+		cmb.setSelectedIndex(0); land = null;
+		diff.setText("0.00 h"); diff.setBackground(Color.WHITE);
+		betrag.setText("0.00 EUR"); betrag.setBackground(Color.WHITE);
+		grund.setText("");
+		btnCalc.setEnabled(false);
+		btnDel.setEnabled(false);
 	}
 	
 	//###################################################################################################################################################

@@ -1,48 +1,58 @@
 package org.andy.code.dataExport;
 
 import org.andy.code.misc.App;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.jacob.activeX.ActiveXComponent;
-import com.jacob.com.ComThread;
-import com.jacob.com.Dispatch;
 import com.spire.pdf.PdfDocument;
 import com.spire.pdf.PdfDocumentInformation;
+import com.spire.pdf.PdfPageBase;
 import com.spire.pdf.conversion.PdfStandardsConverter;
+import com.spire.pdf.texts.PdfTextReplacer;
+import com.spire.xls.PaperSizeType;
+import com.spire.xls.Workbook;
+import com.spire.xls.Worksheet;
 
 public class CreatePdf {
 
-	private final Logger logger = LogManager.getLogger(CreatePdf.class);
 	private App a = new App();
+	
+	private final String XLS = "Evaluation Warning : The document was created with Spire.XLS for Java.";
 
 	/** Excel als pdf exportieren
 	 * @param sFileExcel
 	 * @param sFilePDF
-	 * @throws OwnException
 	 */
 	public void toPDF(String sFileExcel, String sFilePDF) {
-		ActiveXComponent excel = new ActiveXComponent("Excel.Application");
-		Dispatch workbook = null;
-		try {
-			excel.setProperty("Visible", false); // Excel im Hintergrund starten
-			Dispatch workbooks = excel.getProperty("Workbooks").toDispatch();
-			workbook = Dispatch.call(workbooks, "Open", sFileExcel).toDispatch();
+        Workbook workbook = new Workbook();
+        workbook.loadFromFile(sFileExcel); // load the workbook
+        Worksheet sheet = workbook.getWorksheets().get(0); // select the first worksheet out of the loaded workbook
 
-			Dispatch.call(workbook, "ExportAsFixedFormat", 0, sFilePDF); // Exportieren als PDF
+        sheet.getPageSetup().setPaperSize(PaperSizeType.PaperA4); // select layout for A4 pages
+        
+        sheet.getPageSetup().setFitToPagesWide(1); // shrink to fit on one page
+        sheet.getPageSetup().setFitToPagesTall(1);
 
-		} catch (Exception e) {
-			logger.error("toPDF(String sFileExcel, String sFilePDF) - " + e);
-		} finally {
-			Dispatch.call(workbook, "Close", false); // Arbeitsmappe schließen
-			excel.invoke("Quit"); // Excel beenden
-			excel = null;
-			System.gc();
-			ComThread.Release();
-		}
-		PdfStandardsConverter converter = new PdfStandardsConverter(sFilePDF); // pdf zu pdf-A wandeln
+        sheet.saveToPdf(sFilePDF); // save as pdf
+        
+        removeWatermark(sFilePDF, XLS); // remove watermark if exist
+		
+		PdfStandardsConverter converter = new PdfStandardsConverter(sFilePDF); // create pdf-A from pdf
 		converter.toPdfA1A(sFilePDF);
 	}
+	
+	private void removeWatermark(String filePath, String watermark) {
+        PdfDocument pdf = new PdfDocument();
+        pdf.loadFromFile(filePath); // load the generated pdf
+
+        // if the watermark exist, replace it with an empty string
+        for (Object pageObj : pdf.getPages()) {
+            PdfPageBase page = (PdfPageBase) pageObj;
+
+            PdfTextReplacer replacer = new PdfTextReplacer(page);
+            replacer.replaceAllText(watermark, " ");
+        }
+
+        pdf.saveToFile(filePath); // save and close the pdf
+        pdf.close();
+    }
 
 	public void setPdfMetadata(String sNr, String sPdf) throws Exception {
 		//String[] tmp = SQLmasterData.getsArrOwner();

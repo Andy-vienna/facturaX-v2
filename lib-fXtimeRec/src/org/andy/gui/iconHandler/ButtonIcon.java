@@ -13,6 +13,7 @@ public enum ButtonIcon {
     CALC("calc.png"),
     CALC16("calc16.png"),
     DEL("del.png"),
+    DEL16("del16.png"),
     DOWN("down.png"),
     EDIT("edit.png"),
     EXPORT("export.png"),
